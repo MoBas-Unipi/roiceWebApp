@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RoiceWebAppApplication {
 
     public static void main(String[] args) {
-        // Start-string
+        // Start string
         SpringApplication.run(RoiceWebAppApplication.class, args);
     }
 
