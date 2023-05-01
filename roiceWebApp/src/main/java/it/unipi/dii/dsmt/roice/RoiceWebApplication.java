@@ -14,7 +14,6 @@ public class RoiceWebApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-        // Start-string
         SpringApplication.run(RoiceWebApplication.class, args);
     }
 
