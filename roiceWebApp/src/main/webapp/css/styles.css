@@ -1,0 +1,38 @@
+/* Styling for menu */
+#menu {
+    overflow: hidden;
+    background-color: #333;
+}
+
+#menu a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#menu a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Styling for search bar */
+#searchContainer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#searchInput {
+    padding: 10px;
+    width: 300px;
+}
+
+#searchButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
