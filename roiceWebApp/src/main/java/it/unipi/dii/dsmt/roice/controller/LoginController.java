@@ -6,15 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class HomeController {
+public class LoginController {
 
 	@GetMapping({
 			"/",
-			"/home"
+			"/login"
 	})
-	public String home(@RequestParam(value = "name", defaultValue = "World",
-			required = true) String name, Model model) {
-		model.addAttribute("name", name);
-		return "home";
+	public String login() {
+		return "login";
 	}
+
 }
