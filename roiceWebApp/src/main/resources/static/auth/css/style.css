@@ -187,6 +187,10 @@ h2 {
 
 
 .main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   background: #f8f8f8; }
 
 .clear {
@@ -543,6 +547,7 @@ label.valid {
     margin-right: 0px;
     padding-left: 0px;
     /* box-sizing: border-box; */
+    margin-top: 20px;
     padding: 0 30px; }
 
   .signin-image {
@@ -576,10 +581,12 @@ label.valid {
     -ms-order: 1;
     margin-right: 0px;
     margin-left: 0px;
-    padding: 0 30px; }
+    padding: 0 30px;
+    margin-top: 20px;}
 
   .form-title {
     text-align: center; } }
+
 @media screen and (max-width: 400px) {
   .social-login {
     flex-direction: column;
