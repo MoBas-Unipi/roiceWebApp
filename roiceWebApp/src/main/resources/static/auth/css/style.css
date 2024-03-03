@@ -548,6 +548,7 @@ label.valid {
     margin-right: 0px;
     padding-left: 0px;
     /* box-sizing: border-box; */
+    margin-top: 20px;
     padding: 0 30px; }
 
   .signin-image {

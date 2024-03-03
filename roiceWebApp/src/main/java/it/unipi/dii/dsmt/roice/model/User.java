@@ -1,138 +1,47 @@
 package it.unipi.dii.dsmt.roice.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Document(collection = "users")
 @TypeAlias("user")
 public class User extends GenericUser{
 
-	public User() {
-	}
-
-	public User(String username, String salt, String hashedPassword, String _class, String gender,
-	            String firstName, String lastName, int streetNumber, String streetName, String city,
-	            String country, String email, Date dateOfBirth, int age) {
-		super(username, salt, hashedPassword, _class);
-		this.gender = gender;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.streetNumber = streetNumber;
-		this.streetName = streetName;
-		this.city = city;
-		this.country = country;
-		this.email = email;
-		this.dateOfBirth = dateOfBirth;
-		this.age = age;
-	}
-
-	private String gender;
 	private String firstName;
 	private String lastName;
 	private int streetNumber;
 	private String streetName;
 	private String city;
 	private String country;
-	private String email;
-	private Date dateOfBirth;
-	private int age;
+	private List<Phone> favoritePhones;
+	private List<Notification> notifications;
+	private List<AuctionWon> auctionsWon;
 
-	public String getId() {
-		return id;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public int getStreetNumber() {
-		return streetNumber;
-	}
-
-	public String getStreetName() {
-		return streetName;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public Date getDateOfBirth() {
-		return dateOfBirth;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public void setFirstName(String firstName) {
+	public User(String email, String salt, String hashedPassword, String _class, String firstName,
+				String lastName, int streetNumber, String streetName, String city, String country) {
+		super(email, salt, hashedPassword, _class);
 		this.firstName = firstName;
-	}
-
-	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public void setStreetNumber(int streetNumber) {
 		this.streetNumber = streetNumber;
-	}
-
-	public void setStreetName(String streetName) {
 		this.streetName = streetName;
-	}
-
-	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public void setCountry(String country) {
 		this.country = country;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
 	}
 
 	@Override
 	public String toString() {
 		return "User{" +
 				"id='" + id + '\'' +
-				", username='" + username + '\'' +
 				", salt='" + salt + '\'' +
 				", sha='" + hashedPassword + '\'' +
-				", gender='" + gender + '\'' +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
 				", streetNumber='" + streetNumber + '\'' +
@@ -140,8 +49,6 @@ public class User extends GenericUser{
 				", city='" + city + '\'' +
 				", country='" + country + '\'' +
 				", email='" + email + '\'' +
-				", dateOfBirth=" + dateOfBirth +
-				", age=" + age +
 				'}';
 	}
 }

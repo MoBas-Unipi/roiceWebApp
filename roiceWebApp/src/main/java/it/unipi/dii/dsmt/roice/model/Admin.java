@@ -10,15 +10,15 @@ public class Admin extends GenericUser{
 	public Admin() {
 	}
 
-	public Admin(String username, String salt, String hashedPassword, String _class) {
-		super(username, salt, hashedPassword, _class);
+	public Admin(String email, String salt, String hashedPassword, String _class) {
+		super(email, salt, hashedPassword, _class);
 	}
 
 	@Override
 	public String toString() {
 		return "Admin{" +
 				"id='" + id + '\'' +
-				", username='" + username + '\'' +
+				", email='" + email + '\'' +
 				", salt='" + salt + '\'' +
 				", hashedPassword='" + hashedPassword + '\'' +
 				'}';

@@ -35,7 +35,6 @@ public class GenericUserRepository {
         }
         return user;
     }
-
 }
 
 

@@ -1,66 +1,30 @@
 package it.unipi.dii.dsmt.roice.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Setter
+@Getter
+@NoArgsConstructor
 @Document(collection = "users")
 public abstract class GenericUser {
 
 	@Id
 	protected String id;
-	protected String username;
+	protected String email;
 	protected String salt;
 	protected String hashedPassword;
 	protected String _class;
 
-	protected GenericUser() {
-	}
-
-	protected GenericUser(String username, String salt, String hashedPassword, String _class) {
-		this.username = username;
+	protected GenericUser(String email, String salt, String hashedPassword, String _class) {
+		this.email = email;
 		this.salt = salt;
 		this.hashedPassword = hashedPassword;
 		this._class = _class;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getSalt() {
-		return salt;
-	}
-
-	public String getHashedPassword() {
-		return hashedPassword;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
-	}
-
-	public void setHashedPassword(String hashedPassword) {
-		this.hashedPassword = hashedPassword;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String get_class() {
-		return _class;
-	}
-
-	public void set_class(String _class) {
-		this._class = _class;
-	}
 }
 
