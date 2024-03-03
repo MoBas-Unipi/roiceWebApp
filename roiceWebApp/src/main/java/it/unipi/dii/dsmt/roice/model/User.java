@@ -23,7 +23,7 @@ public class User extends GenericUser{
 	private String country;
 	private List<Phone> favoritePhones;
 	private List<Notification> notifications;
-	private List<AuctionWon> wonAuctions;
+	private List<AuctionWon> auctionsWon;
 
 	public User(String email, String salt, String hashedPassword, String _class, String firstName,
 				String lastName, int streetNumber, String streetName, String city, String country) {
