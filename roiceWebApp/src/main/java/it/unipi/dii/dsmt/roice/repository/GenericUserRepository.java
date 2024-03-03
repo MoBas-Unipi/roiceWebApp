@@ -29,7 +29,7 @@ public class GenericUserRepository {
     public Optional<GenericUser> findByEmail(String email) {
         Optional<GenericUser> user = Optional.empty();
         try {
-            user = genericUserRepository.findByUsername(email);
+            user = genericUserRepository.findByEmail(email);
         } catch (Exception e) {
             e.printStackTrace();
         }
