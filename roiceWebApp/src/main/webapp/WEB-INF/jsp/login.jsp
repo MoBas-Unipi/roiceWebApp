@@ -53,19 +53,19 @@
 </div>
 
 <!-- JS -->
-<script src="/auth/vendor/jquery/jquery.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#login-form').submit(function(event) {
-            var email = $('#email').val().trim();
-            var password = $('#password').val().trim();
+<%--<script src="/auth/vendor/jquery/jquery.min.js"></script>--%>
+<%--<script>--%>
+<%--    $(document).ready(function() {--%>
+<%--        $('#login-form').submit(function(event) {--%>
+<%--            var email = $('#email').val().trim();--%>
+<%--            var password = $('#password').val().trim();--%>
 
-            if (email === '' || password === '') {
-                $('#error-field').text("Invalid e-mail or password").show(); // Show error message
-                event.preventDefault(); // Prevent form submission
-            }
-        });
-    });
-</script>
+<%--            if (email === '' || password === '') {--%>
+<%--                $('#error-field').text("Invalid e-mail or password").show(); // Show error message--%>
+<%--                event.preventDefault(); // Prevent form submission--%>
+<%--            }--%>
+<%--        });--%>
+<%--    });--%>
+<%--</script>--%>
 </body>
 </html>

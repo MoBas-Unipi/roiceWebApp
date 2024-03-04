@@ -1,15 +1,12 @@
 package it.unipi.dii.dsmt.roice.utils;
 
-import org.springframework.stereotype.Component;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-@Component
 public class Security {
-    public String getHashedPassword(String passwordToHash, String salt) {
+    public static String getHashedPassword(String passwordToHash, String salt) {
         String generatedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -27,7 +24,7 @@ public class Security {
         return generatedPassword;
     }
 
-    public String getSalt() {
+    public static String getSalt() {
         SecureRandom sr = new SecureRandom();
         byte[] salt = new byte[16];
         sr.nextBytes(salt);

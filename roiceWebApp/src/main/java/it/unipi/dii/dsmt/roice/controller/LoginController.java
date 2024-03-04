@@ -25,9 +25,6 @@ public class LoginController {
 
 	@Autowired
 	private GenericUserRepository genericUserMongo;
-
-	@Autowired
-	private Security security;
 	private final static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
 	@GetMapping({
@@ -46,13 +43,13 @@ public class LoginController {
 		if (isValidUser(email, password)) {
 			Optional<GenericUser> genericUser = genericUserMongo.findByEmail(email);
 			if (genericUser.isEmpty()) {
-				model.addAttribute("error", "<span style=\"color: red;\">Invalid email or password</span>");
+				model.addAttribute("error", "Invalid email or password");
 				return "login";
 			} else {
 				String salt = genericUser.get().getSalt();
-				String hashedPassword = security.getHashedPassword(password, salt);
+				String hashedPassword = Security.getHashedPassword(password, salt);
 				if (!genericUser.get().getHashedPassword().equals(hashedPassword)) {
-					model.addAttribute("error", "<span style=\"color: red;\">Invalid email or password</span>");
+					model.addAttribute("error", "Invalid email or password");
 					return "login";
 				}
 				if (genericUser.get().get_class().equals("admin")) {
@@ -69,7 +66,7 @@ public class LoginController {
 			}
 		} else {
 			// Add error message and return to the login page
-			model.addAttribute("error", "<span style=\"color: red;\">Invalid email or password</span>");
+			model.addAttribute("error", "Invalid email or password");
 			return "login"; // Return to the login page
 		}
 	}
