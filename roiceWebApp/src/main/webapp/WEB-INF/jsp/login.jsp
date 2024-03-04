@@ -43,7 +43,7 @@
                             <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
                         </div>
                         <!-- Error message -->
-                        <p id="error-field">${error}</p>
+                        <p id="error-field" style="color: red;">${error}</p>
                         <!-- End of error message -->
                     </form>
                 </div>
@@ -61,7 +61,7 @@
             var password = $('#password').val().trim();
 
             if (email === '' || password === '') {
-                $('#errors').show();
+                $('#error-field').text("Invalid e-mail or password").show(); // Show error message
                 event.preventDefault(); // Prevent form submission
             }
         });

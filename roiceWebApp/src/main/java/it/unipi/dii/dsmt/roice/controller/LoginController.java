@@ -1,10 +1,12 @@
 package it.unipi.dii.dsmt.roice.controller;
 
+import it.unipi.dii.dsmt.roice.dto.AdminDTO;
+import it.unipi.dii.dsmt.roice.dto.UserDTO;
+import it.unipi.dii.dsmt.roice.dto.mapper.UserMapper;
 import it.unipi.dii.dsmt.roice.model.Admin;
 import it.unipi.dii.dsmt.roice.model.GenericUser;
 import it.unipi.dii.dsmt.roice.model.User;
 import it.unipi.dii.dsmt.roice.repository.GenericUserRepository;
-import it.unipi.dii.dsmt.roice.service.UserService;
 import it.unipi.dii.dsmt.roice.utils.Security;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -23,9 +25,6 @@ public class LoginController {
 
 	@Autowired
 	private GenericUserRepository genericUserMongo;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private Security security;
@@ -47,26 +46,30 @@ public class LoginController {
 		if (isValidUser(email, password)) {
 			Optional<GenericUser> genericUser = genericUserMongo.findByEmail(email);
 			if (genericUser.isEmpty()) {
-				model.addAttribute("error", "Wrong username or password!");
-				return "/login";
+				model.addAttribute("error", "<span style=\"color: red;\">Invalid email or password</span>");
+				return "login";
 			} else {
 				String salt = genericUser.get().getSalt();
 				String hashedPassword = security.getHashedPassword(password, salt);
 				if (!genericUser.get().getHashedPassword().equals(hashedPassword)) {
-					model.addAttribute("error", "Wrong username or password!");
-					return "/login";
+					model.addAttribute("error", "<span style=\"color: red;\">Invalid email or password</span>");
+					return "login";
 				}
 				if (genericUser.get().get_class().equals("admin")) {
 					Admin admin = (Admin) genericUser.get();
+					AdminDTO adminDTO = UserMapper.toAdminDTO(admin);
+					session.setAttribute("currentUser", adminDTO);
+					return "redirect:/home";
 				} else {
 					User user = (User) genericUser.get();
+					UserDTO userDTO = UserMapper.toUserDTO(user);
+					session.setAttribute("currentUser", userDTO);
+					return "redirect:/home";
 				}
-				//session.setAttribute("currentUser");
 			}
-			return "redirect:/home";
 		} else {
 			// Add error message and return to the login page
-			model.addAttribute("error", "Invalid email or password");
+			model.addAttribute("error", "<span style=\"color: red;\">Invalid email or password</span>");
 			return "login"; // Return to the login page
 		}
 	}
