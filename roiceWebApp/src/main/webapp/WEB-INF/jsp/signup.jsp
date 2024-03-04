@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sign Up</title>
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="RoiceIcon.png">
 
     <!-- Font Icon -->
     <link rel="stylesheet" href="/auth/fonts/material-icon/css/material-design-iconic-font.min.css">
@@ -77,7 +77,7 @@
                     </form>
                 </div>
                 <div class="signup-image">
-                    <figure><img src="/auth/images/signup-image.jpg" alt="sing up image"></figure>
+                    <figure><img src="/auth/images/RoiceLogo2.png" alt="sing up image"></figure>
                     <a href="/login" class="signup-image-link">I am already member</a>
                 </div>
             </div>
