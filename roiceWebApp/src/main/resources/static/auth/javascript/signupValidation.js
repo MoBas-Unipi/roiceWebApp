@@ -1,5 +1,5 @@
 function validateForm() {
-    const fields = ["firstName", "lastName", "email", "password", "country", "city", "street", "streetNumber"];
+    const fields = ["firstName", "lastName", "email", "password", "country", "city", "streetName", "streetNumber"];
     let isEmpty = false;
 
     // Check if any of the required fields are empty
@@ -20,4 +20,3 @@ function validateForm() {
 
     return true; // Allow form submission if all fields are filled
 }
-

@@ -1,15 +1,14 @@
-<%@ page contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>--%>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sign Up</title>
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="RoiceIcon.png">
     <!-- Font Icon -->
     <link rel="stylesheet" href="/auth/fonts/material-icon/css/material-design-iconic-font.min.css">
     <!-- Main css -->
@@ -31,11 +30,6 @@
                         <div class="form-group">
                             <label for="firstName"><i class="zmdi zmdi-account material-icons-name"></i></label>
                             <input type="text" name="firstName" id="firstName" placeholder="First Name"/>
-                            <small class="text-danger">
-                                <c:if test="${not empty param.error && param.error == 'true'}">
-                                    <c:out value="${param.errorMessage}"/>
-                                </c:if>
-                            </small>
                         </div>
 
                         <div class="form-group">
@@ -64,8 +58,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="street"><i class="zmdi zmdi-assignment"></i></label>
-                            <input type="text" name="street" id="street" placeholder="Street"/>
+                            <label for="streetName"><i class="zmdi zmdi-assignment"></i></label>
+                            <input type="text" name="streetName" id="streetName" placeholder="Street"/>
                         </div>
 
                         <div class="form-group">
@@ -76,11 +70,14 @@
                         <div class="form-group form-button">
                             <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
                         </div>
-                        <div id="error-field" class="error-message" style="color: red; display:none;"></div>
+
+                        <div id="error-field" class="error-message" style="color: red; display: ${not empty error ? 'block' : 'none'};">
+                            ${error}
+                        </div>
                     </form>
                 </div>
                 <div class="signup-image">
-                    <figure><img src="/auth/images/signup-image.jpg" alt="sing up image"></figure>
+                    <figure><img src="/auth/images/RoiceLogo2.png" alt="sign up image"></figure>
                     <a href="/login" class="signup-image-link">I am already member</a>
                 </div>
             </div>
@@ -90,7 +87,6 @@
 
 <!-- JS -->
 <%--<script src="/auth/vendor/jquery/jquery.min.js"></script>--%>
-
 
 </body>
 </html>
