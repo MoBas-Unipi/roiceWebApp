@@ -150,20 +150,6 @@ input:focus, select:focus, textarea:focus {
   -o-box-shadow: none !important;
   -ms-box-shadow: none !important; }
 
-input[type=checkbox] {
-  appearance: checkbox !important;
-  -moz-appearance: checkbox !important;
-  -webkit-appearance: checkbox !important;
-  -o-appearance: checkbox !important;
-  -ms-appearance: checkbox !important; }
-
-input[type=radio] {
-  appearance: radio !important;
-  -moz-appearance: radio !important;
-  -webkit-appearance: radio !important;
-  -o-appearance: radio !important;
-  -ms-appearance: radio !important; }
-
 img {
   max-width: 100%;
   height: auto; }
@@ -418,14 +404,6 @@ label {
 
 .label-has-error {
   top: 22%; }
-
-label.error {
-  position: relative;
-  background: url("../images/unchecked.gif") no-repeat;
-  background-position-y: 3px;
-  padding-left: 20px;
-  display: block;
-  margin-top: 20px; }
 
 label.valid {
   display: block;
