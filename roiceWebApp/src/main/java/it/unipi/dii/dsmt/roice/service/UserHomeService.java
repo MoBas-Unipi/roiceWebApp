@@ -3,7 +3,7 @@ package it.unipi.dii.dsmt.roice.service;
 
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
 import it.unipi.dii.dsmt.roice.model.Phone;
-import it.unipi.dii.dsmt.roice.repository.PhoneRepository;
+import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +16,7 @@ import java.util.List;
 public class UserHomeService {
 
     @Autowired
-    PhoneRepository phoneRepository;
+    IPhoneRepository phoneRepository;
 
     public ArrayList<PhoneDTO> getPhones() {
         List<Phone> phones = phoneRepository.findAll(PageRequest.of(

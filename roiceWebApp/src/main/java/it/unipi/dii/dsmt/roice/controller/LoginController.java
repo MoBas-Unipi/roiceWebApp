@@ -61,7 +61,7 @@ public class LoginController {
 					User user = (User) genericUser.get();
 					UserDTO userDTO = UserMapper.toUserDTO(user);
 					session.setAttribute("currentUser", userDTO);
-					return "redirect:/home";
+					return "redirect:/userHome";
 				}
 			}
 		} else {
