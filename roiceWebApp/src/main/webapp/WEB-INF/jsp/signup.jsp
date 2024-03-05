@@ -29,43 +29,76 @@
 
                         <div class="form-group">
                             <label for="firstName"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" name="firstName" id="firstName" placeholder="First Name"/>
+                            <input type="text" name="firstName" id="firstName" placeholder="First Name" value="${userDTO.firstName}"/>
+                            <c:if test="${not empty errorMap['firstName']}">
+                                <div style="color: red;">${errorMap['firstName']}</div>
+                            </c:if>
                         </div>
 
                         <div class="form-group">
                             <label for="lastName"><i class="zmdi zmdi-account-o"></i></label>
-                            <input type="text" name="lastName" id="lastName" placeholder="Last Name"/>
+                            <input type="text" name="lastName" id="lastName" placeholder="Last Name" value="${userDTO.lastName}"/>
+                            <c:if test="${not empty errorMap['lastName']}">
+                                <div style="color: red;">${errorMap['lastName']}</div>
+                            </c:if>
                         </div>
 
                         <div class="form-group">
                             <label for="email"><i class="zmdi zmdi-email"></i></label>
-                            <input type="email" name="email" id="email" placeholder="Your Email"/>
+                            <input type="email" name="email" id="email" placeholder="Your Email" value="${userDTO.email}"/>
+                            <c:if test="${not empty errorMap['email']}">
+                                <div style="color: red;">${errorMap['email']}</div>
+                            </c:if>
                         </div>
 
                         <div class="form-group">
                             <label for="password"><i class="zmdi zmdi-lock"></i></label>
                             <input type="password" name="password" id="password" placeholder="Password"/>
+                            <c:if test="${not empty errorMap['password']}">
+                                <div style="color: red;">${errorMap['password']}</div>
+                            </c:if>
                         </div>
 
                         <div class="form-group">
                             <label for="country"><i class="zmdi zmdi-assignment"></i></label>
-                            <input type="text" name="country" id="country" placeholder="Country"/>
+                            <input type="text" name="country" id="country" placeholder="Country" value="${userDTO.country}"/>
+                            <c:if test="${not empty errorMap['country']}">
+                                <div style="color: red;">${errorMap['country']}</div>
+                            </c:if>
                         </div>
 
                         <div class="form-group">
                             <label for="city"><i class="zmdi zmdi-assignment"></i></label>
-                            <input type="text" name="city" id="city" placeholder="City"/>
+                            <input type="text" name="city" id="city" placeholder="City" value="${userDTO.city}"/>
+                            <c:if test="${not empty errorMap['city']}">
+                                <div style="color: red;">${errorMap['city']}</div>
+                            </c:if>
                         </div>
 
                         <div class="form-group">
                             <label for="streetName"><i class="zmdi zmdi-assignment"></i></label>
-                            <input type="text" name="streetName" id="streetName" placeholder="Street"/>
+                            <input type="text" name="streetName" id="streetName" placeholder="Street" value="${userDTO.streetName}"/>
+                            <c:if test="${not empty errorMap['streetName']}">
+                                <div style="color: red;">${errorMap['streetName']}</div>
+                            </c:if>
                         </div>
 
                         <div class="form-group">
                             <label for="streetNumber"><i class="zmdi zmdi-assignment"></i></label>
-                            <input type="text" name="streetNumber" id="streetNumber" placeholder="Street Number"/>
+                            <input type="text" name="streetNumber" id="streetNumber" placeholder="Street Number"
+                                   value="${not empty errorMap['streetNumber'] ? '' : userDTO.streetNumber}"/>
+                            <c:if test="${not empty errorMap['streetNumber']}">
+                                <c:choose>
+                                    <c:when test="${errorMap['streetNumber'].contains('Failed to convert property value')}">
+                                        <div style="color: red;">Street number must be a number</div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div style="color: red;">${errorMap['streetNumber']}</div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
                         </div>
+
 
                         <div class="form-group form-button">
                             <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>

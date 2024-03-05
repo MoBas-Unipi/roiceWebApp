@@ -1,6 +1,7 @@
 package it.unipi.dii.dsmt.roice.service;
 
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
+import it.unipi.dii.dsmt.roice.dto.mapper.UserMapper;
 import it.unipi.dii.dsmt.roice.model.User;
 import it.unipi.dii.dsmt.roice.repository.GenericUserRepository;
 import it.unipi.dii.dsmt.roice.utils.Security;
@@ -19,18 +20,7 @@ public class UserService {
         // Hash the password using salt
         String hashedPassword = Security.getHashedPassword(userDTO.getPassword(), salt);
         // Create a new User object and populate its fields
-        User newUser = new User(
-                userDTO.getEmail(),
-                salt,
-                hashedPassword,
-                "user", // Assuming user role
-                userDTO.getFirstName(),
-                userDTO.getLastName(),
-                userDTO.getStreetNumber(),
-                userDTO.getStreetName(),
-                userDTO.getCity(),
-                userDTO.getCountry()
-        );
+        User newUser = UserMapper.toUser(userDTO, salt, hashedPassword);
         // Save the user to the database
         return userRepository.addUser(newUser);
     }

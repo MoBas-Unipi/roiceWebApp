@@ -172,23 +172,31 @@ h2 {
   font-size: 36px; }
 
 
-.main {
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #f8f8f8; }
-
-.clear {
-  clear: both; }
-
-body {
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
   font-size: 13px;
   line-height: 1.8;
   color: #222;
   background: #f8f8f8;
   font-weight: 400;
-  font-family: Poppins; }
+  font-family: Poppins, serif;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f8f8f8;
+  text-align: center;}
+
+.clear {
+  clear: both; }
 
 .container {
   width: 900px;
@@ -238,9 +246,6 @@ body {
   -webkit-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%); }
-
-.signup {
-  margin-bottom: 150px; }
 
 .signup-content {
   padding: 75px 0; }

@@ -20,11 +20,11 @@ public class UserMapper {
         );
     }
 
-    public static User toUser(UserDTO userDTO) {
+    public static User toUser(UserDTO userDTO, String salt, String hashedPassword) {
 
         return new User(
-                userDTO.getEmail(), "",// salt
-                userDTO.getPassword(),
+                userDTO.getEmail(), salt,// salt
+                hashedPassword,
                 "user",
                 userDTO.getFirstName(),
                 userDTO.getLastName(),
