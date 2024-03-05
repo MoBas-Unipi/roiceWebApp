@@ -1,6 +1,5 @@
 package it.unipi.dii.dsmt.roice.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
