@@ -16,6 +16,9 @@
     <!-- Main css -->
     <link rel="stylesheet" href="/auth/css/style.css">
 </head>
+
+<script src="/auth/javascript/loginValidation.js"></script>
+
 <body>
 
 <div class="main">
@@ -24,13 +27,13 @@
         <div class="container">
             <div class="signin-content">
                 <div class="signin-image">
-                    <figure><img src="/auth/images/RoiceLogo2.png" alt="sign up image"></figure>
+                    <figure><img src="/auth/images/RoiceLogo.png" alt="sign up image"></figure>
                     <a href="/signup" class="signup-image-link">Create an account</a>
                 </div>
 
                 <div class="signin-form">
                     <h2 class="form-title">Login</h2>
-                    <form method="POST" class="register-form" id="login-form" action="${pageContext.request.contextPath}/login">
+                    <form method="POST" class="register-form" id="login-form" onsubmit="return validateLogin()" action="${pageContext.request.contextPath}/login">
                         <div class="form-group">
                             <label for="email"><i class="zmdi zmdi-account material-icons-name"></i></label>
                             <input type="text" name="email" id="email" placeholder="e-mail"/>
@@ -51,21 +54,5 @@
         </div>
     </section>
 </div>
-
-<!-- JS -->
-<%--<script src="/auth/vendor/jquery/jquery.min.js"></script>--%>
-<%--<script>--%>
-<%--    $(document).ready(function() {--%>
-<%--        $('#login-form').submit(function(event) {--%>
-<%--            var email = $('#email').val().trim();--%>
-<%--            var password = $('#password').val().trim();--%>
-
-<%--            if (email === '' || password === '') {--%>
-<%--                $('#error-field').text("Invalid e-mail or password").show(); // Show error message--%>
-<%--                event.preventDefault(); // Prevent form submission--%>
-<%--            }--%>
-<%--        });--%>
-<%--    });--%>
-<%--</script>--%>
 </body>
 </html>

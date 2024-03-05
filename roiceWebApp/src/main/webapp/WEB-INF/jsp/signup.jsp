@@ -110,7 +110,7 @@
                     </form>
                 </div>
                 <div class="signup-image">
-                    <figure><img src="/auth/images/RoiceLogo2.png" alt="sign up image"></figure>
+                    <figure><img src="/auth/images/RoiceLogo.png" alt="sign up image"></figure>
                     <a href="/login" class="signup-image-link">I am already member</a>
                 </div>
             </div>
