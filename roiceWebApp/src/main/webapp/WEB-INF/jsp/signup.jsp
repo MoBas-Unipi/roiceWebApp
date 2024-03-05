@@ -45,7 +45,7 @@
 
                         <div class="form-group">
                             <label for="email"><i class="zmdi zmdi-email"></i></label>
-                            <input type="email" name="email" id="email" placeholder="Your Email" value="${userDTO.email}"/>
+                            <input type="email" name="email" id="email" placeholder="E-mail" value="${userDTO.email}"/>
                             <c:if test="${not empty errorMap['email']}">
                                 <div style="color: red;">${errorMap['email']}</div>
                             </c:if>

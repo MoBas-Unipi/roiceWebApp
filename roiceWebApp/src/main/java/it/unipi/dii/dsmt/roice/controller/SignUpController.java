@@ -42,7 +42,6 @@ public class SignUpController {
                 errorMap.put(error.getField(), error.getDefaultMessage());
             }
             model.addAttribute("errorMap", errorMap);
-            model.addAttribute("userDTO", userDTO); // Add the UserDTO object back to the model
             return "signup"; // Return to the signup page
         }
 
