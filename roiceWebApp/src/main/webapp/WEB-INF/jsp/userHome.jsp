@@ -123,7 +123,7 @@
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Guest
+                                Welcome ${fullName}
                             </a>
                         </li>
                     </ul>
