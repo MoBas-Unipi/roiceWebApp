@@ -7961,9 +7961,21 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
     .switch label input[type=checkbox]:checked + .lever.switch-col-white:after {
       background-color: #ffffff; }
 
+
+/*NEW CSS*/
+
 /*used to separate the left navbar and the content of the page*/
 #main-wrapper .container-fluid {
   margin-left: 250px;
+}
+
+/*text used in the footer for the page number*/
+.small-text {
+  font-size: 12px;
+}
+
+.copyright-text {
+  font-size: 10px;
 }
 
 
