@@ -74,105 +74,19 @@
     <!-- ============================================================== -->
     <!-- Topbar header - style you can find in pages.scss -->
     <!-- ============================================================== -->
-    <div>
-        <header class="topbar">
-            <nav class="navbar top-navbar navbar-toggleable-sm navbar-light">
-                <!-- ============================================================== -->
-                <!-- Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/userHome">
-                        <!-- Logo icon -->
-                        <b>
-                            <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                            <!-- Light Logo icon -->
-                            <img src="/dashboard/assets/images/logo.png" alt="homepage" class="light-logo" />
-                        </b>
-                        <!--End Logo icon -->
-                        <!-- Logo text -->
-                        <span>
-                            <!-- Light Logo text -->
-                            <img src="/dashboard/assets/images/logo-text.png" class="light-logo" alt="homepage" />
-                        </span>
-                    </a>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-collapse">
-                    <!-- ============================================================== -->
-                    <!-- toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav mr-auto mt-md-0">
-                        <!-- This is  -->
-                        <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
-                        <!-- ============================================================== -->
-                        <!-- Search -->
-                        <!-- ============================================================== -->
-                        <li class="nav-item hidden-sm-down search-box"> <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
-                            <form class="app-search">
-                                <input type="text" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
-                        </li>
-                    </ul>
-                    <!-- ============================================================== -->
-                    <!-- User profile and search -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav my-lg-0">
-                        <!-- ============================================================== -->
-                        <!-- Profile -->
-                        <!-- ============================================================== -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Welcome ${fullName}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-    </div>
+    <jsp:include page="templates/topbar.jsp"/>
+
+
+    <!-- ============================================================== -->
+    <!-- Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- ============================================================== -->
+    <jsp:include page="templates/left-sidebar.jsp"/>
 
 
 
-
-    <div>
-        <div id="sidebar">
-            <!-- ============================================================== -->
-            <!-- Left Sidebar - style you can find in sidebar.scss  -->
-            <!-- ============================================================== -->
-            <aside class="left-sidebar">
-                <!-- Sidebar scroll-->
-                <div class="scroll-sidebar">
-                    <!-- Sidebar navigation-->
-                    <nav class="sidebar-nav">
-                        <ul id="sidebarnav">
-                            <li><a class="waves-effect waves-dark" href="userHome" aria-expanded="false"><i class="mdi mdi-cellphone"></i><span class="hide-menu">Home</span></a>
-                            </li>
-                            <li> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a>
-                            </li>
-                            <li><a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-alert-circle"></i><span class="hide-menu">Live Auctions</span></a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <!-- End Sidebar navigation -->
-                </div>
-                <!-- End Sidebar scroll-->
-                <!-- Bottom points-->
-                <div class="sidebar-footer">
-                    <!-- item-->
-                    <a href="logout" class="link" data-toggle="tooltip" title="Logout" style="display: flex; align-items: center;">
-                        <i class="mdi mdi-power" style="margin-right: 5px;"></i> Logout
-                    </a>
-                </div>
-
-
-                <!-- End Bottom points-->
-            </aside>
-        </div>
-    </div>
-
-
-
+    <!-- ============================================================== -->
+    <!-- Dynamic Container - -->
+    <!-- ============================================================== -->
     <div class="container-fluid">
         <!-- ============================================================== -->
         <!-- Bread crumb and right sidebar toggle -->
@@ -211,7 +125,6 @@
             </c:forEach>
             <!-- Column -->
         </div>
-
         <!-- Row -->
         <!-- ============================================================== -->
         <!-- End Page Content -->
@@ -219,38 +132,20 @@
     </div>
 
 
+    <div class="row page-titles">
+        <div class="col-md-5 col-8 align-self-center">
+        </div>
+    </div>
+
 
     <!-- ============================================================== -->
     <!-- Footer - the style is in style.css   -->
     <!-- ============================================================== -->
-    <footer class="footer">
-        <!-- Container for footer content -->
-        <div class="text-center">
-            <!-- Previous page button, visible if current page is greater than 0 -->
-            <c:if test="${currentPage > 0}">
-                <a href="/userHome?page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
-                    <i class="mdi mdi-chevron-left"></i> Previous
-                </a>
-            </c:if>
-            <!-- Next page button, visible if current page is less than total pages minus 1 -->
-            <c:if test="${currentPage < totalPages - 1}">
-                <a href="/userHome?page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
-                    Next <i class="mdi mdi-chevron-right"></i>
-                </a>
-            </c:if>
-            <!-- Text displaying current page number and total pages -->
-            <p class="small-text">Page ${currentPage + 1} of ${totalPages}</p>
-            <!-- Text displaying copyright information -->
-            <div class="text-left copyright-text">
-                <c:out value="© 2024 ROICE Web Application" />
-            </div>
-        </div>
-    </footer>
-
-
-
-
-
+    <jsp:include page="templates/footer.jsp">
+        <jsp:param name="currentPage" value="${currentPage}"/>
+        <jsp:param name="totalPages" value="${totalPages}"/>
+        <jsp:param name="size" value="${size}"/>
+    </jsp:include>
 
 
 
