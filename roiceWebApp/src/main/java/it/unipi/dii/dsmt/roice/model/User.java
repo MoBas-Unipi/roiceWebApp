@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -34,6 +35,9 @@ public class User extends GenericUser{
 		this.streetName = streetName;
 		this.city = city;
 		this.country = country;
+		this.favoritePhones = new ArrayList<>();
+		this.notifications = new ArrayList<>();
+		this.auctionsWon = new ArrayList<>();
 	}
 
 	@Override

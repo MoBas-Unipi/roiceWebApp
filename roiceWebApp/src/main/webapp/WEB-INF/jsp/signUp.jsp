@@ -25,7 +25,7 @@
             <div class="signup-content">
                 <div class="signup-form">
                     <h2 class="form-title">Sign up</h2>
-                    <form action="${pageContext.request.contextPath}/signup" method="POST" class="register-form" id="register-form" onsubmit="return validateForm()">
+                    <form action="${pageContext.request.contextPath}/signUp" method="POST" class="register-form" id="register-form" onsubmit="return validateForm()">
 
                         <div class="form-group">
                             <label for="firstName"><i class="zmdi zmdi-account material-icons-name"></i></label>

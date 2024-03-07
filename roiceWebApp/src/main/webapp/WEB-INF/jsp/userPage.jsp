@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>Roice</title>
+    <title>Roice Home</title>
     <!-- Bootstrap Core CSS -->
     <link href="/dashboard/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- chartist CSS -->
@@ -25,6 +25,12 @@
     <link href="/dashboard/html/css/style.css" rel="stylesheet">
     <!-- You can change the theme colors from here -->
     <link href="/dashboard/html/css/colors/blue.css" id="theme" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
     <script src="/dashboard/assets/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="/dashboard/assets/plugins/bootstrap/js/tether.min.js"></script>
@@ -47,9 +53,9 @@
     <script src="/dashboard/assets/plugins/c3-master/c3.min.js"></script>
     <!-- Chart JS -->
     <script src="/dashboard/html/js/dashboard1.js"></script>
-
-    <script src="/auth/javascript/showPhoneDetails.js"></script>
 </head>
+
+
 
 <body class="fix-header fix-sidebar card-no-border">
 <!-- ============================================================== -->
@@ -85,9 +91,9 @@
                         <!--End Logo icon -->
                         <!-- Logo text -->
                         <span>
-                                <!-- Light Logo text -->
-                                <img src="/dashboard/assets/images/logo-text.png" class="light-logo" alt="homepage" />
-                            </span>
+                            <!-- Light Logo text -->
+                            <img src="/dashboard/assets/images/logo-text.png" class="light-logo" alt="homepage" />
+                        </span>
                     </a>
                 </div>
                 <!-- ============================================================== -->
@@ -134,6 +140,9 @@
         </header>
     </div>
 
+
+
+
     <div>
         <div id="sidebar">
             <!-- ============================================================== -->
@@ -147,7 +156,7 @@
                         <ul id="sidebarnav">
                             <li><a class="waves-effect waves-dark" href="userHome" aria-expanded="false"><i class="mdi mdi-cellphone"></i><span class="hide-menu">Home</span></a>
                             </li>
-                            <li> <a class="waves-effect waves-dark" href="/userPage" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a>
+                            <li> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a>
                             </li>
                             <li><a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-alert-circle"></i><span class="hide-menu">Live Auctions</span></a>
                             </li>
@@ -163,59 +172,56 @@
                         <i class="mdi mdi-power" style="margin-right: 5px;"></i> Logout
                     </a>
                 </div>
+
+
                 <!-- End Bottom points-->
             </aside>
         </div>
     </div>
 
+
+
     <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
+        <!-- Add your breadcrumb here -->
+
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
+                <h3 class="text-themecolor m-b-0 m-t-0">Home</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/userHome">Home</a></li>
+                </ol>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- End Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Start Page Content -->
-        <!-- ============================================================== -->
-        <!-- Row -->
-        <div id="phones-container" class="row">
-            <!-- Column -->
-            <c:forEach var="phone" items="${phones}">
-                <div class="col-lg-4 col-xlg-3 col-md-5">
-                    <div class="card">
-                        <div class="card-block">
-                            <div class="m-t-30" style="text-align: center;">
-                                <!-- Trigger the function to load phone details on click -->
-                                <a href="javascript:void(0);" onclick="loadPhoneDetails('<c:out value="${phone.name}" />')">
-                                    <img src="${phone.picture}" class="img-rounded" width="150"/>
-                                </a>
-                                <h4 class="card-title m-t-10">
-                                    <a href="javascript:void(0);" onclick="loadPhoneDetails('<c:out value="${phone.name}" />')">
-                                        <c:out value="${phone.name}" />
-                                    </a>
-                                </h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </c:forEach>
-            <!-- Column -->
+
+        <!-- Buttons to display different sections -->
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block" onclick="showUserInfoFunction()">Show User Info</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block" onclick="showWonAuctions()">Won Auctions</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block" onclick="showFavoritePhones()">Favorite Phones</button>
+            </div>
         </div>
 
-        <!-- Row -->
-        <!-- ============================================================== -->
-        <!-- End Page Content -->
-        <!-- ============================================================== -->
+        <!-- Content area for user information -->
+        <div id="contentArea" class="mt-4">
+            <!-- Display user information here when the button is pressed -->
+            <c:if test="${not empty currentUser}">
+                <!-- Display all user information except the lists -->
+                <p>User Information:</p>
+                <p>First Name: ${currentUser.firstName}</p>
+                <p>Last Name: ${currentUser.lastName}</p>
+                <p>Country: ${currentUser.country}</p>
+                <p>City: ${currentUser.city}</p>
+                <p>Street Name: ${currentUser.streetName}</p>
+                <p>Street Number: ${currentUser.streetNumber}</p>
+                <!-- Add more user information fields as needed -->
+            </c:if>
+        </div>
     </div>
-
-    <!-- Phone details container -->
-    <!-- This container will be replaced with phone details -->
-    <div id="phone-details-container" class="container"></div>
 
     <footer class="footer">
         <c:out value="© 2024 ROICE Web Application" />
@@ -225,6 +231,14 @@
 <!-- ============================================================== -->
 <!-- End Wrapper -->
 <!-- ============================================================== -->
+<script>
+    function showUserInfoFunction() {
+        const contentArea = document.getElementById('contentArea');
+        contentArea.style.display = contentArea.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
 </body>
 
 </html>
+

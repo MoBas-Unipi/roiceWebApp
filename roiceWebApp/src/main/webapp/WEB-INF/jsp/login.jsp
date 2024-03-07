@@ -28,7 +28,7 @@
             <div class="signin-content">
                 <div class="signin-image">
                     <figure><img src="/auth/images/RoiceLogo.png" alt="sign up image"></figure>
-                    <a href="/signup" class="signup-image-link">Create an account</a>
+                    <a href="/signUp" class="signup-image-link">Create an account</a>
                 </div>
 
                 <div class="signin-form">

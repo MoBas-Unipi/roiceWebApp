@@ -16,14 +16,17 @@ public class UserMapper {
                 user.getCity(),
                 user.getCountry(),
                 user.getEmail(),
-                user.getHashedPassword()
+                user.getHashedPassword(),
+                user.getFavoritePhones(),
+                user.getNotifications(),
+                user.getAuctionsWon()
         );
     }
 
     public static User toUser(UserDTO userDTO, String salt, String hashedPassword) {
 
         return new User(
-                userDTO.getEmail(), salt,// salt
+                userDTO.getEmail(), salt,
                 hashedPassword,
                 "user",
                 userDTO.getFirstName(),
