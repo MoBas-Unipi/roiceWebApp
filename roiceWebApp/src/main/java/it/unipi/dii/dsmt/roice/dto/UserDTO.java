@@ -2,7 +2,6 @@ package it.unipi.dii.dsmt.roice.dto;
 
 import it.unipi.dii.dsmt.roice.model.AuctionWon;
 import it.unipi.dii.dsmt.roice.model.Notification;
-import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -68,5 +67,17 @@ public class UserDTO {
         this.favoritePhones = favoritePhones;
         this.notifications = notifications;
         this.auctionsWon = auctionsWon;
+    }
+
+    public void addAuctionWon(AuctionWon auctionWon) {
+        this.auctionsWon.add(0, auctionWon);
+    }
+
+    public void addNotification(Notification notification) {
+        this.notifications.add(0, notification);
+    }
+
+    public void addfavoritePhone(PhonePreview phonePreview) {
+        this.favoritePhones.add(0, phonePreview);
     }
 }
