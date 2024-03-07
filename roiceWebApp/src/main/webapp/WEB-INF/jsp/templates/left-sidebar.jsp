@@ -33,7 +33,6 @@
                 </a>
             </div>
 
-
             <!-- End Bottom points-->
         </aside>
     </div>

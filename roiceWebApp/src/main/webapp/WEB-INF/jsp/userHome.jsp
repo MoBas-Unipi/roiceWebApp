@@ -53,6 +53,8 @@
     <script src="/dashboard/assets/plugins/c3-master/c3.min.js"></script>
     <!-- Chart JS -->
     <script src="/dashboard/html/js/dashboard1.js"></script>
+    <!-- Scroll to Top Button JS -->
+    <script src="/dashboard/html/js/scrollToTop.js"></script>
 </head>
 
 
@@ -123,7 +125,6 @@
                     </div>
                 </div>
             </c:forEach>
-            <!-- Column -->
         </div>
         <!-- Row -->
         <!-- ============================================================== -->
@@ -148,6 +149,8 @@
     </jsp:include>
 
 
+    <!-- Scroll to top button -->
+    <a href="#" class="scroll-to-top-btn"><i class="mdi mdi-arrow-up"></i></a>
 
 </div>
 <!-- ============================================================== -->
