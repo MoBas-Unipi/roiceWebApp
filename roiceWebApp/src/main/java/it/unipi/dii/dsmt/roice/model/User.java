@@ -22,7 +22,7 @@ public class User extends GenericUser{
 	private String streetName;
 	private String city;
 	private String country;
-	private List<Phone> favoritePhones;
+	private List<PhonePreview> favoritePhones;
 	private List<Notification> notifications;
 	private List<AuctionWon> auctionsWon;
 

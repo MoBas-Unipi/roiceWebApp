@@ -3,6 +3,7 @@ package it.unipi.dii.dsmt.roice.dto;
 import it.unipi.dii.dsmt.roice.model.AuctionWon;
 import it.unipi.dii.dsmt.roice.model.Notification;
 import it.unipi.dii.dsmt.roice.model.Phone;
+import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -49,12 +50,12 @@ public class UserDTO {
     @Positive(message = "Street number must be positive")
     private int streetNumber;
 
-    private List<Phone> favoritePhones;
+    private List<PhonePreview> favoritePhones;
     private List<Notification> notifications;
     private List<AuctionWon> auctionsWon;
 
     public UserDTO(String firstName, String lastName, int streetNumber, String streetName, String city, String country,
-                   String email, String password, List<Phone> favoritePhones, List<Notification> notifications,
+                   String email, String password, List<PhonePreview> favoritePhones, List<Notification> notifications,
                    List<AuctionWon> auctionsWon) {
         this.firstName = firstName;
         this.lastName = lastName;
