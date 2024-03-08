@@ -19,19 +19,6 @@ public class UserPageController {
     public String userPage(HttpSession session) {
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
 
-//        Calendar calendar = Calendar.getInstance();
-//
-//        // Set the desired date components
-//        int year = 2024;
-//        int month = Calendar.MARCH; // Month is zero-based, so March is represented by 2
-//        int dayOfMonth = 7;
-//
-//        // Set the calendar with the desired date
-//        calendar.set(year, month, dayOfMonth);
-//
-//        // Get the Date object from the Calendar instance
-//        Date date = calendar.getTime();
-
         currentUser.addAuctionWon(new AuctionWon("Nokia 3210",
                 "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif",
                 new Date(), 120

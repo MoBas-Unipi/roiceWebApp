@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -24,12 +25,6 @@
     <link href="/dashboard/html/css/style.css" rel="stylesheet">
     <!-- You can change the theme colors from here -->
     <link href="/dashboard/html/css/colors/blue.css" id="theme" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
     <script src="/dashboard/assets/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="/dashboard/assets/plugins/bootstrap/js/tether.min.js"></script>
@@ -53,14 +48,6 @@
     <!-- Chart JS -->
     <script src="/dashboard/html/js/dashboard1.js"></script>
 
-    <style>
-        /* Style for the buttons when pressed */
-        .btn-primary:active,
-        .btn-primary:focus {
-            background-color: #00aced !important; /* Change to your desired color */
-            border-color: #00aced !important; /* Change to your desired color */
-        }
-    </style>
 
 </head>
 <body class="fix-header fix-sidebar card-no-border">
@@ -151,13 +138,12 @@
             <!-- User Information Content -->
             <div id="userInfoContent" class="content-block">
                 <c:if test="${not empty currentUser}">
-                    <p>User Information:</p>
-                    <p>First Name: ${currentUser.firstName}</p>
-                    <p>Last Name: ${currentUser.lastName}</p>
-                    <p>Country: ${currentUser.country}</p>
-                    <p>City: ${currentUser.city}</p>
-                    <p>Street Name: ${currentUser.streetName}</p>
-                    <p>Street Number: ${currentUser.streetNumber}</p>
+                    <p><strong>First Name: </strong>${currentUser.firstName}</p>
+                    <p><strong>Last Name: </strong>${currentUser.lastName}</p>
+                    <p><strong>Country: </strong>${currentUser.country}</p>
+                    <p><strong>City: </strong>${currentUser.city}</p>
+                    <p><strong>Street Name: </strong>${currentUser.streetName}</p>
+                    <p><strong>Street Number: </strong>${currentUser.streetNumber}</p>
                 </c:if>
             </div>
             <!-- Won Auctions Content -->
@@ -186,8 +172,10 @@
                                             <img src="${auction.phonePicture}" class="img-rounded" width="150"/>
                                             <h4 class="card-title m-t-10">${auction.phoneName}</h4>
                                             <!-- Additional information -->
-                                            <p>Auction Won On: ${auction.endDate}</p>
-                                            <p>Price: ${auction.price}</p>
+                                            <p><strong>Auction Won On:</strong>
+                                                <fmt:formatDate value="${auction.endDate}" pattern="dd/MM/yyyy HH:mm" />
+                                            </p>
+                                            <p><strong>Price:</strong> ${auction.price}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -234,47 +222,7 @@
     </footer>
 </div>
 
-<script>
-    function toggleContent(buttonId, contentId) {
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(button => {
-            button.classList.remove('active');
-            button.style.backgroundColor = '#26c6da'; // Set default button color
-            button.style.borderColor = '#00aced'; // Set default border color
-        });
-        document.getElementById(buttonId).classList.add('active');
-        document.getElementById(buttonId).style.backgroundColor = '#00aced'; // Set active button color
-        document.getElementById(buttonId).style.borderColor = '#26c6da'; // Set active border color
-
-        const contentBlocks = document.querySelectorAll('.content-block');
-        contentBlocks.forEach(block => {
-            block.style.display = 'none';
-        });
-        document.getElementById(contentId).style.display = 'block';
-    }
-
-    // Event listeners for button clicks
-    document.getElementById('showUserInfoBtn').addEventListener('click', function() {
-        toggleContent('showUserInfoBtn', 'userInfoContent');
-    });
-
-    document.getElementById('showWonAuctionsBtn').addEventListener('click', function() {
-        toggleContent('showWonAuctionsBtn', 'wonAuctionsContent');
-    });
-
-    document.getElementById('showFavoritePhonesBtn').addEventListener('click', function() {
-        toggleContent('showFavoritePhonesBtn', 'favoritePhonesContent');
-    });
-
-    // Function to set default button color
-    function setDefaultButtonColor() {
-        document.getElementById('showUserInfoBtn').style.backgroundColor = '#00aced'; // Set default button color
-        document.getElementById('showUserInfoBtn').style.borderColor = '#00aced'; // Set default border color
-    }
-
-    // Call the setDefaultButtonColor function when the page loads
-    window.onload = setDefaultButtonColor;
-</script>
-
+<!-- Manage buttons JS -->
+<script src="/dashboard/html/js/userPage.js"></script>
 </body>
 </html>
