@@ -16,17 +16,20 @@ public class UserPageController {
     @GetMapping("/userPage")
     public String userPage(HttpSession session) {
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
 
-        currentUser.addAuctionWon(new AuctionWon("Nokia 3210",
-                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif",
-                new Date(), 120
-                ));
-
-        currentUser.addNotification(new Notification("Notification",
-                "Body dasdkasmldmkadlmaskdlaskddmdkalmdkasldmkasldmkasldmkaldm"));
-
-        currentUser.addfavoritePhone(new PhonePreview("Nokia 3210",
-                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif"));
+//        currentUser.addAuctionWon(new AuctionWon("Nokia 3210",
+//                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif",
+//                new Date(), 120
+//                ));
+//
+//        currentUser.addNotification(new Notification("Notification",
+//                "Body dasdkasmldmkadlmaskdlaskddmdkalmdkasldmkasldmkasldmkaldm"));
+//
+//        currentUser.addfavoritePhone(new PhonePreview("Nokia 3210",
+//                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif"));
 
         return "userPage";
     }
