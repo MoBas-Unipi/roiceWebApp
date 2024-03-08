@@ -6,10 +6,8 @@ import it.unipi.dii.dsmt.roice.model.Notification;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Calendar;
 import java.util.Date;
 
 @Controller
