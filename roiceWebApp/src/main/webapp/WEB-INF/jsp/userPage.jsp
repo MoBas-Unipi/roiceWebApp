@@ -175,7 +175,7 @@
                                             <p><strong>Auction Won On:</strong>
                                                 <fmt:formatDate value="${auction.endDate}" pattern="dd/MM/yyyy HH:mm" />
                                             </p>
-                                            <p><strong>Price:</strong> ${auction.price}</p>
+                                            <p><strong>Price:</strong> ${auction.price}€</p>
                                         </div>
                                     </div>
                                 </div>
