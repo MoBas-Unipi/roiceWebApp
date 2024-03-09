@@ -24,4 +24,7 @@ public class UserService {
         // Save the user to the database
         return userRepository.addUser(newUser);
     }
+
+
+
 }

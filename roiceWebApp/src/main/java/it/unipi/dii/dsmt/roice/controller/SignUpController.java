@@ -27,14 +27,14 @@ public class SignUpController {
     private GenericUserRepository genericUserMongo;
 
     @GetMapping({
-            "/signup"
+            "/signUp"
     })
-    public String signup() {
-        return "signup";
+    public String signUp() {
+        return "signUp";
     }
 
-    @PostMapping("/signup")
-    public String signup(@Valid UserDTO userDTO, BindingResult bindingResult, Model model) {
+    @PostMapping("/signUp")
+    public String signUp(@Valid UserDTO userDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             // Collect errors for each field and add them to the error map
             Map<String, String> errorMap = new HashMap<>();
@@ -48,14 +48,14 @@ public class SignUpController {
         Optional<GenericUser> genericUser = genericUserMongo.findByEmail(userDTO.getEmail());
         if (genericUser.isPresent()) {
             model.addAttribute("error", "E-mail already in use");
-            return "signup";
+            return "signUp";
         }
 
         if (userService.registerUser(userDTO)) {
             return "login";
         } else {
             model.addAttribute("error", "Failed to register user");
-            return "signup"; // Return to the signup page
+            return "signUp"; // Return to the signup page
         }
     }
 

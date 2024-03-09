@@ -3,7 +3,6 @@ package it.unipi.dii.dsmt.roice.dto;
 import it.unipi.dii.dsmt.roice.model.Phone;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class PhoneDTO implements Serializable {
     private String id;

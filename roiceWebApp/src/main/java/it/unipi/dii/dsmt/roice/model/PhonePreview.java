@@ -1,6 +1,5 @@
 package it.unipi.dii.dsmt.roice.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,12 +7,10 @@ import lombok.Setter;
 @Setter
 public class PhonePreview {
 
-    private String id;
     private String name;
     private String picture;
 
-    public PhonePreview(String id, String name, String picture) {
-        this.id = id;
+    public PhonePreview(String name, String picture) {
         this.name = name;
         this.picture = picture;
     }

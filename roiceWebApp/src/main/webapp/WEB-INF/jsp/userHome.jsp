@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" href="favicon.png">
-    <title>Roice Home</title>
+    <title>Roice</title>
     <!-- Bootstrap Core CSS -->
     <link href="/dashboard/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- chartist CSS -->
@@ -25,12 +25,6 @@
     <link href="/dashboard/html/css/style.css" rel="stylesheet">
     <!-- You can change the theme colors from here -->
     <link href="/dashboard/html/css/colors/blue.css" id="theme" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
     <script src="/dashboard/assets/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="/dashboard/assets/plugins/bootstrap/js/tether.min.js"></script>
@@ -58,6 +52,8 @@
 </head>
 
 
+    <script src="/auth/javascript/showPhoneDetails.js"></script>
+</head>
 
 <body class="fix-header fix-sidebar card-no-border">
 <!-- ============================================================== -->
@@ -95,10 +91,6 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">Home</h3>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/userHome">Home</a></li>
-                </ol>
             </div>
         </div>
         <!-- ============================================================== -->
@@ -108,19 +100,23 @@
         <!-- Start Page Content -->
         <!-- ============================================================== -->
         <!-- Row -->
-        <div class="row">
+        <div id="phones-container" class="row">
             <!-- Column -->
             <c:forEach var="phone" items="${phones}">
                 <div class="col-lg-4 col-xlg-3 col-md-5">
                     <div class="card">
                         <div class="card-block">
-                            <!--
-                            <center class="m-t-30"><img src=value"/dashboard/assets/images/phone-sample.jpg" class="img-rounded" width="150"/>
-                            -->
-                            <center class="m-t-30"><img src=${phone.picture} class="img-rounded" width="150"/>
-                                <h4 class="card-title m-t-10"><c:out value="${phone.name}" /></h4>
-                                <h4 class="card-subtitle">Brand: <c:out value="${phone.brand}" /></h4>
-                            </center>
+                            <div class="m-t-30" style="text-align: center;">
+                                <!-- Trigger the function to load phone details on click -->
+                                <a href="javascript:void(0);" onclick="loadPhoneDetails('<c:out value="${phone.name}" />')">
+                                    <img src="${phone.picture}" class="img-rounded" width="150"/>
+                                </a>
+                                <h4 class="card-title m-t-10">
+                                    <a href="javascript:void(0);" onclick="loadPhoneDetails('<c:out value="${phone.name}" />')">
+                                        <c:out value="${phone.name}" />
+                                    </a>
+                                </h4>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,6 +128,9 @@
         <!-- ============================================================== -->
     </div>
 
+    <!-- Phone details container -->
+    <!-- This container will be replaced with phone details -->
+    <div id="phone-details-container" class="container"></div>
 
     <div class="row page-titles">
         <div class="col-md-5 col-8 align-self-center">
@@ -159,4 +158,3 @@
 </body>
 
 </html>
-
