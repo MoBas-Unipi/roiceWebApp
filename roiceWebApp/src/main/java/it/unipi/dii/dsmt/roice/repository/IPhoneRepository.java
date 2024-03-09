@@ -3,11 +3,15 @@ package it.unipi.dii.dsmt.roice.repository;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 @Repository
 public interface IPhoneRepository extends MongoRepository<Phone, String> {
-    List<Phone> findByName(String name);
+
+    // Method to search phones by name containing a specific string, ignoring case
+    Page<Phone> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }
 
