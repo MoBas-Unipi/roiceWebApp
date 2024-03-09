@@ -31,4 +31,21 @@ public class UserHomeService {
         // Returning the page of PhoneDTO objects
         return phoneDTOPage;
     }
+
+
+    public Page<PhoneDTO> searchPhonesByName(String name, int page, int size) {
+        // Create a Pageable object for pagination
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Execute a query to search phones by name using the findByNameContainingIgnoreCase method
+        Page<Phone> phonePage = phoneRepository.findByNameContainingIgnoreCase(name, pageable);
+
+        // Map each Phone entity to a PhoneDTO using the toPhoneDTO method in the PhoneDTO class
+        Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneDTO.toPhoneDTO(phone));
+
+        // Return the page of PhoneDTO objects
+        return phoneDTOPage;
+    }
+
+
 }

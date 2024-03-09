@@ -51,6 +51,43 @@ public class UserHomeController {
         return "userHome";
     }
 
+
+    @GetMapping(value = "/searchPhones")
+    public String searchPhones(@RequestParam("name") String name,
+                               @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "50") int size,
+                               Model model, HttpSession session) {
+
+        // Ensure page is not negative
+        if (page < 0) {
+            page = 0;
+        }
+
+        // Get the current user from the session
+        Object currentUser = session.getAttribute("currentUser");
+        if (currentUser == null) {
+            // User not logged in, redirect to login page
+            return "redirect:/login";
+        }
+
+        // Extract firstName and lastName from the currentUser object and combine them to get fullName
+        String fullName = ((UserDTO) currentUser).getFirstName() + " " + ((UserDTO) currentUser).getLastName();
+
+        // Execute the queryo to find phones by name
+        Page<PhoneDTO> phonesPage = service.searchPhonesByName(name, page, size);
+
+        // Add results to view
+        model.addAttribute("phones", phonesPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", phonesPage.getTotalPages());
+        model.addAttribute("fullName", fullName);
+        model.addAttribute("paramName", name);
+
+        // Return the name of the searchResults view template
+        return "searchPhones";
+    }
+
+
 }
 
 
