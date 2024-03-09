@@ -16,7 +16,7 @@
                     <ul id="sidebarnav">
                         <li><a class="waves-effect waves-dark" href="userHome" aria-expanded="false"><i class="mdi mdi-cellphone"></i><span class="hide-menu">Home</span></a>
                         </li>
-                        <li> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a>
+                        <li> <a class="waves-effect waves-dark" href="userPage" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a>
                         </li>
                         <li><a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-alert-circle"></i><span class="hide-menu">Live Auctions</span></a>
                         </li>
