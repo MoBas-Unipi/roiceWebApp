@@ -7961,9 +7961,39 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
     .switch label input[type=checkbox]:checked + .lever.switch-col-white:after {
       background-color: #ffffff; }
 
+
+/*NEW CSS*/
+
 /*used to separate the left navbar and the content of the page*/
 #main-wrapper .container-fluid {
   margin-left: 250px;
+}
+
+/*text used in the footer for the page number*/
+.small-text {
+  font-size: 12px;
+}
+
+.copyright-text {
+  font-size: 10px;
+}
+
+/*scroll to top button css*/
+.scroll-to-top-btn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #fff;
+  border: 2px solid #007bff;
+  color: #666;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.scroll-to-top-btn:hover {
+  color: #007bff;
 }
 
 

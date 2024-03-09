@@ -57,8 +57,6 @@
     <script src="/dashboard/html/js/scrollToTop.js"></script>
 </head>
 
-
-
 <body class="fix-header fix-sidebar card-no-border">
 <!-- ============================================================== -->
 <!-- Preloader - style you can find in spinners.css -->
@@ -85,7 +83,6 @@
     <jsp:include page="templates/left-sidebar.jsp"/>
 
 
-
     <!-- ============================================================== -->
     <!-- Dynamic Container - -->
     <!-- ============================================================== -->
@@ -95,29 +92,25 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">Home</h3>
+                <h3 class="text-themecolor m-b-0 m-t-0">Search</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/userHome">Home</a></li>
+                    <li class="breadcrumb-item active">Search</li>
                 </ol>
             </div>
         </div>
-        <!-- ============================================================== -->
         <!-- End Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Start Page Content -->
-        <!-- ============================================================== -->
-        <!-- Row -->
+
+        <!-- Start page content -->
         <div class="row">
-            <!-- Column -->
+            <!-- Iterate over each phone in the "phones" model -->
             <c:forEach var="phone" items="${phones}">
                 <div class="col-lg-4 col-xlg-3 col-md-5">
                     <div class="card">
                         <div class="card-block">
-                            <!--
-                            <center class="m-t-30"><img src=value"/dashboard/assets/images/phone-sample.jpg" class="img-rounded" width="150"/>
-                            -->
-                            <center class="m-t-30"><img src=${phone.picture} class="img-rounded" width="150"/>
+                            <!-- Display phone image and information -->
+                            <center class="m-t-30">
+                                <img src="${phone.picture}" class="img-rounded" width="150"/>
                                 <h4 class="card-title m-t-10"><c:out value="${phone.name}" /></h4>
                                 <h4 class="card-subtitle">Brand: <c:out value="${phone.brand}" /></h4>
                             </center>
@@ -126,37 +119,48 @@
                 </div>
             </c:forEach>
         </div>
-        <!-- Row -->
-        <!-- ============================================================== -->
-        <!-- End Page Content -->
-        <!-- ============================================================== -->
     </div>
 
 
-    <div class="row page-titles">
-        <div class="col-md-5 col-8 align-self-center">
+        <!-- End page content -->
+        <div class="row page-titles">
+            <div class="col-md-5 col-8 align-self-center">
+            </div>
         </div>
-    </div>
+
+        <!-- ============================================================== -->
+        <!-- Footer - the style is in style.css   -->
+        <!-- ============================================================== -->
+        <!-- parameter used for the phone name to search-->
+        <c:set var="paramName" value="${paramName}" />
+        <footer class="footer">
+            <div class="text-center">
+                <c:if test="${currentPage > 0}">
+                    <a href="/searchPhones?name=${paramName}&page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+                        <i class="mdi mdi-chevron-left"></i> Previous
+                    </a>
+                </c:if>
+                <c:if test="${currentPage < totalPages - 1}">
+                    <a href="/searchPhones?name=${paramName}&page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+                        Next <i class="mdi mdi-chevron-right"></i>
+                    </a>
+                </c:if>
+                <div>
+                    <p class="small-text">Page ${currentPage + 1} of ${totalPages}</p>
+                    <div class="text-left copyright-text">
+                        <c:out value="© 2024 ROICE Web Application" />
+                    </div>
+                </div>
+            </div>
+        </footer>
 
 
-    <!-- ============================================================== -->
-    <!-- Footer - the style is in style.css   -->
-    <!-- ============================================================== -->
-    <jsp:include page="templates/footerUserHome.jsp">
-        <jsp:param name="currentPage" value="${currentPage}"/>
-        <jsp:param name="totalPages" value="${totalPages}"/>
-        <jsp:param name="size" value="${size}"/>
-    </jsp:include>
+        <!-- Scroll to top button -->
+        <a href="#" class="scroll-to-top-btn"><i class="mdi mdi-arrow-up"></i></a>
 
-
-    <!-- Scroll to top button -->
-    <a href="#" class="scroll-to-top-btn"><i class="mdi mdi-arrow-up"></i></a>
-
-</div>
-<!-- ============================================================== -->
 <!-- End Wrapper -->
-<!-- ============================================================== -->
+</div>
+
 </body>
 
 </html>
-
