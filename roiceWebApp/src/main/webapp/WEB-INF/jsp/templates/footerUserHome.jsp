@@ -9,7 +9,7 @@
 <footer class="footer">
     <!-- Container for footer content -->
     <div class="text-center">
-        <%-- Definisci la variabile homePage in base al tipo di utente --%>
+        <!-- Definition of homePage variable based on the current user class -->
         <c:set var="homePage" value=""/>
         <c:choose>
             <c:when test="${userClass eq 'user'}">
