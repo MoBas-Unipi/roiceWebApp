@@ -13,7 +13,7 @@
             <!-- Logo -->
             <!-- ============================================================== -->
             <div class="navbar-header">
-                <a class="navbar-brand" href="/userHome">
+                <a class="navbar-brand" href="<c:choose><c:when test='${userClass eq "admin"}'>/adminHome</c:when><c:otherwise>/userHome</c:otherwise></c:choose>">
                     <!-- Logo icon -->
                     <b>
                         <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
@@ -41,9 +41,16 @@
                     <!-- ============================================================== -->
                     <!-- Search -->
                     <!-- ============================================================== -->
-                    <li class="nav-item hidden-sm-down search-box"> <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
-                        <form class="app-search" action="/searchPhones" method="GET">
-                            <input type="text" name="name" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a>
+                    <li class="nav-item hidden-sm-down search-box">
+                        <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)">
+                            <i class="ti-search"></i>
+                        </a>
+                        <form class="app-search" action="<c:choose>
+                                      <c:when test='${userClass eq "admin"}'>/adminSearchPhone</c:when>
+                                      <c:otherwise>/userSearchPhone</c:otherwise>
+                                    </c:choose>" method="GET">
+                            <input type="text" name="name" class="form-control" placeholder="Search & enter">
+                            <a class="srh-btn"><i class="ti-close"></i></a>
                         </form>
                     </li>
                 </ul>
