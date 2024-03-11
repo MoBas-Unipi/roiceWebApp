@@ -1,6 +1,8 @@
 package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
+import it.unipi.dii.dsmt.roice.dto.mapper.UserMapper;
+import it.unipi.dii.dsmt.roice.model.GenericUser;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import it.unipi.dii.dsmt.roice.model.User;
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class PhoneDetailsController {
 
@@ -25,18 +30,35 @@ public class PhoneDetailsController {
     private UserService userService;
 
     @GetMapping("/phoneDetails")
-    public String showPhoneDetails(HttpSession session, @RequestParam("phoneName") String phoneName) {
+    public String showPhoneDetails(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
         Phone phone = phoneRepository.findByName(phoneName);
+        UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
 
-        if (phone == null) {
+        if (phone == null || currentUser == null) {
             return "redirect:/userHome";
         }
-        // Add the phoneDTO to the model
+
+        List<PhonePreview> favoritePhones = currentUser.getFavoritePhones(); // Assuming you have a method to get favorite phones for the current user
+
+        model.addAttribute("message", "");
+        boolean isPhoneInFavorites = false;
+        // Check if the phone is already in the user's favorites
+        for (PhonePreview phonePreview :favoritePhones) {
+            if (phonePreview.getName().equals(phoneName)) {
+                isPhoneInFavorites = true;
+                model.addAttribute("message", "Phone added to the favorites!");
+                break;
+            }
+        }
+
+        // Add attributes to session
         session.setAttribute("phone", phone);
+        session.setAttribute("isPhoneInFavorites", isPhoneInFavorites);
 
         // Return the phone details view
         return "phoneDetails";
     }
+
 
     @PostMapping("/phoneDetails")
     public String addFavoritePhone(Model model, HttpSession session) {
@@ -50,8 +72,14 @@ public class PhoneDetailsController {
         if (result == -2) {
             model.addAttribute("message", "Error in updating the user information in the database!");
         } else if (result == -1) {
-            model.addAttribute("message", "Phone already added to favorites!");
+            session.setAttribute("isPhoneInFavorites", true);
+            model.addAttribute("message", "Phone added to favorites!");
         } else {
+            Optional<GenericUser> genericUser = userService.findByEmail(currentUser.getEmail());
+            User user = (User) genericUser.get();
+            UserDTO userDTO = UserMapper.toUserDTO(user);
+            session.setAttribute("currentUser", userDTO);
+            session.setAttribute("isPhoneInFavorites", true);
             model.addAttribute("message", "Phone added to favorites!");
         }
         // Redirecting to the phone details page

@@ -11,6 +11,8 @@
     <jsp:include page="templates/header.jsp"/>
 </head>
 
+<script src="/dashboard/html/js/showPhoneDetails.js"></script>
+
 <body class="fix-header fix-sidebar card-no-border">
 <div class="preloader">
     <svg class="circular" viewBox="25 25 50 50">
@@ -63,10 +65,9 @@
             </div>
         </div>
         <div class="favorites-container">
-            <form method="post" action="/addToFavorites" id="addToFavoritesForm">
-                <button type="submit" class="add-to-favorites">Add to Favorites</button>
-            </form>
-            <p id="message-field" style="color: red;">${message}</p>
+            <script>
+                showPhoneDetails(${isPhoneInFavorites}, "${message}");
+            </script>
         </div>
     </div>
 
