@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <!-- Favicon icon -->
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="RoiceIcon.png">
 <title>Roice</title>
 <!-- Bootstrap Core CSS -->
 <link href="/dashboard/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
