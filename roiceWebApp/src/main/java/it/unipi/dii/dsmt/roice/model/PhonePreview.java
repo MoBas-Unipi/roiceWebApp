@@ -7,10 +7,12 @@ import lombok.Setter;
 @Setter
 public class PhonePreview {
 
+    private String id;
     private String name;
     private String picture;
 
-    public PhonePreview(String name, String picture) {
+    public PhonePreview(String id, String name, String picture) {
+        this.id = id;
         this.name = name;
         this.picture = picture;
     }

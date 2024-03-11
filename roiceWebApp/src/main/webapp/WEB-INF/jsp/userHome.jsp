@@ -66,12 +66,12 @@
                     <div class="card">
                         <div class="card-block">
                             <div class="m-t-30" style="text-align: center;">
-                                <!-- Trigger the function to load phone details on click -->
-                                <a href="javascript:void(0);" onclick="loadPhoneDetails('<c:out value="${phone.name}" />')">
+                                <!-- Redirect to phoneDetails.jsp page on click -->
+                                <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
                                     <img src="${phone.picture}" class="img-rounded" width="150"/>
                                 </a>
                                 <h4 class="card-title m-t-10">
-                                    <a href="javascript:void(0);" onclick="loadPhoneDetails('<c:out value="${phone.name}" />')">
+                                    <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
                                         <c:out value="${phone.name}" />
                                     </a>
                                 </h4>
