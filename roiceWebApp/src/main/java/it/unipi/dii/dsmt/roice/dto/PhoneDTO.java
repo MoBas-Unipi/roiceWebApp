@@ -1,34 +1,71 @@
 package it.unipi.dii.dsmt.roice.dto;
 
+import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.model.Phone;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
+@Setter
+@Getter
 public class PhoneDTO implements Serializable {
-    private String id;
+    @NotBlank(message = "Phone name is required")
+    @Size(max = 50, message = "Phone name cannot be longer than 50 characters")
     private String name;
-    private String picture;
-    //private double price;
-    private String batterySize;
-    private String batteryType;
-    private String body;
-    private String brand;
-    private String cameraPixels;
-    private String chipset;
-    private String displayResolution;
-    private String displaySize;
-    private String os;
-    private String ram;
-    private int releaseYear;
-    private String storage;
-    private String videoPixels;
 
+    @NotBlank(message = "Phone picture is required")
+    private String picture;
+
+    @NotBlank(message = "Battery size is required")
+    private String batterySize;
+
+    @NotBlank(message = "Battery type is required")
+    private String batteryType;
+
+    @NotBlank(message = "Body is required")
+    private String body;
+
+    @NotBlank(message = "Brand is required")
+    private String brand;
+
+    @NotBlank(message = "Camera pixels are required")
+    private String cameraPixels;
+
+    @NotBlank(message = "Chipset is required")
+    private String chipset;
+
+    @NotBlank(message = "Display resolution is required")
+    private String displayResolution;
+
+    @NotBlank(message = "Display size is required")
+    private String displaySize;
+
+    @NotBlank(message = "Operating system is required")
+    private String os;
+
+    @NotBlank(message = "RAM is required")
+    private String ram;
+
+    @Positive(message = "Release year must be positive")
+    private int releaseYear;
+
+    @NotBlank(message = "Storage is required")
+    private String storage;
+
+    @NotBlank(message = "Video pixels are required")
+    private String videoPixels;
+    private Auction auction;
 
     public PhoneDTO() {
     }
 
-    public PhoneDTO(String id, String name, String picture, String batterySize, String batteryType, String body, String brand, String cameraPixels, String chipset, String displayResolution, String displaySize, String os, String ram, int releaseYear, String storage, String videoPixels) {
-        this.id = id;
+    public PhoneDTO(String name, String picture, String batterySize, String batteryType, String body,
+                    String brand, String cameraPixels, String chipset, String displayResolution, String displaySize,
+                    String os, String ram, int releaseYear, String storage, String videoPixels, Auction auction) {
         this.name = name;
         this.picture = picture;
         this.batterySize = batterySize;
@@ -44,134 +81,7 @@ public class PhoneDTO implements Serializable {
         this.releaseYear = releaseYear;
         this.storage = storage;
         this.videoPixels = videoPixels;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
-    public String getBatterySize() {
-        return batterySize;
-    }
-
-    public void setBatterySize(String batterySize) {
-        this.batterySize = batterySize;
-    }
-
-    public String getBatteryType() {
-        return batteryType;
-    }
-
-    public void setBatteryType(String batteryType) {
-        this.batteryType = batteryType;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getCameraPixels() {
-        return cameraPixels;
-    }
-
-    public void setCameraPixels(String cameraPixels) {
-        this.cameraPixels = cameraPixels;
-    }
-
-    public String getChipset() {
-        return chipset;
-    }
-
-    public void setChipset(String chipset) {
-        this.chipset = chipset;
-    }
-
-    public String getDisplayResolution() {
-        return displayResolution;
-    }
-
-    public void setDisplayResolution(String displayResolution) {
-        this.displayResolution = displayResolution;
-    }
-
-    public String getDisplaySize() {
-        return displaySize;
-    }
-
-    public void setDisplaySize(String displaySize) {
-        this.displaySize = displaySize;
-    }
-
-    public String getOs() {
-        return os;
-    }
-
-    public void setOs(String os) {
-        this.os = os;
-    }
-
-    public String getRam() {
-        return ram;
-    }
-
-    public void setRam(String ram) {
-        this.ram = ram;
-    }
-
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
-    public String getStorage() {
-        return storage;
-    }
-
-    public void setStorage(String storage) {
-        this.storage = storage;
-    }
-
-    public String getVideoPixels() {
-        return videoPixels;
-    }
-
-    public void setVideoPixels(String videoPixels) {
-        this.videoPixels = videoPixels;
+        this.auction = auction;
     }
 
 
@@ -179,7 +89,7 @@ public class PhoneDTO implements Serializable {
         if (phone == null)
             return null;
         PhoneDTO phoneDTO = new PhoneDTO();
-        phoneDTO.setId(phone.getId());
+
         phoneDTO.setName(phone.getName());
         phoneDTO.setPicture(phone.getPicture());
         phoneDTO.setBatterySize(phone.getBatterySize());
@@ -195,6 +105,7 @@ public class PhoneDTO implements Serializable {
         phoneDTO.setReleaseYear(phone.getReleaseYear());
         phoneDTO.setStorage(phone.getStorage());
         phoneDTO.setVideoPixels(phone.getVideoPixels());
+        phoneDTO.setAuction(phone.getAuction());
 
         return phoneDTO;
     }

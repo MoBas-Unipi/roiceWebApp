@@ -42,7 +42,7 @@ public class SignUpController {
                 errorMap.put(error.getField(), error.getDefaultMessage());
             }
             model.addAttribute("errorMap", errorMap);
-            return "signup"; // Return to the signup page
+            return "signUp"; // Return to the signup page
         }
 
         Optional<GenericUser> genericUser = genericUserMongo.findByEmail(userDTO.getEmail());

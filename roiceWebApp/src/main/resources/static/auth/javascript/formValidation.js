@@ -1,5 +1,4 @@
-function validateForm() {
-    const fields = ["firstName", "lastName", "email", "password", "country", "city", "streetName", "streetNumber"];
+function validateForm(fields) {
     let isEmpty = false;
 
     // Check if any of the required fields are empty

@@ -31,11 +31,11 @@ public class Phone {
 	private String batterySize;
 	private String batteryType;
 	private int releaseYear;
-	private Auction currentAuction;
+	private Auction auction;
 
 	public Phone(String brand, String name, String picture, String body, String os, String storage,
 	             String displaySize, String displayResolution, String cameraPixels, String videoPixels,
-	             String ram, String chipset, String batterySize, String batteryType, int releaseYear, Auction currentAuction) {
+	             String ram, String chipset, String batterySize, String batteryType, int releaseYear, Auction auction) {
 		this.brand = brand;
 		this.name = name;
 		this.picture = picture;
@@ -51,7 +51,7 @@ public class Phone {
 		this.chipset = chipset;
 		this.batterySize = batterySize;
 		this.batteryType = batteryType;
-		this.currentAuction = currentAuction;
+		this.auction = auction;
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class Phone {
 				", chipset='" + chipset + '\'' +
 				", batterySize='" + batterySize + '\'' +
 				", batteryType='" + batteryType + '\'' +
-				", currentAuction='" + currentAuction + '\'' +
+				", auction='" + auction + '\'' +
 				'}';
 	}
 }
