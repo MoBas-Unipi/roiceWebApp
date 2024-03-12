@@ -2,9 +2,8 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
-import it.unipi.dii.dsmt.roice.model.GenericUser;
 import it.unipi.dii.dsmt.roice.service.PhoneService;
-import it.unipi.dii.dsmt.roice.service.UserHomeService;
+import it.unipi.dii.dsmt.roice.service.HomeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,16 +14,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
-public class UserHomeController {
+public class HomeController {
 
     @Autowired
-    private UserHomeService userHomeservice;
+    private HomeService homeservice;
     @Autowired
     private PhoneService phoneService;
 
 
-    @GetMapping("/userHome")
-    public String userHome(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page,
+    @GetMapping("/homePage")
+    public String homePage(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "50") int size) {
 
         // Ensure page is not negative
@@ -42,18 +41,9 @@ public class UserHomeController {
         // Extract user class (admin or normal user)
         String userClass = (String) session.getAttribute("userClass");
 
-        // Set fullName attribute (TODO add firsName and lastName to admin also)
-        if (userClass.equals("user")) { //user class is "user"
-            // Extract firstName and lastName from the currentUser object and combine them to get fullName
-            String fullName = ((UserDTO) currentUser).getFirstName() + " " + ((UserDTO) currentUser).getLastName();
-            model.addAttribute("fullName", fullName); //there is no firstName and lastName in admin
-        }
-        else { //user class is "admin"
-
-        }
 
         // Get a page of PhoneDTO objects from the service layer
-        Page<PhoneDTO> phonesPage = userHomeservice.getPhones(page, size);
+        Page<PhoneDTO> phonesPage = homeservice.getPhones(page, size);
 
         // Add the list of phones, current page number, total number of pages, and the user full name to the model
         model.addAttribute("phones", phonesPage.getContent());
@@ -61,12 +51,12 @@ public class UserHomeController {
         model.addAttribute("totalPages", phonesPage.getTotalPages());
         model.addAttribute("userClass", userClass);
 
-        // Return the name of the userHome view template
-        return "userHome";
+        // Return the name of the homePage view template
+        return "homePage";
     }
 
 
-    @GetMapping(value = "/userSearchPhone")
+    @GetMapping(value = "/searchPhone")
     public String searchPhones(@RequestParam("name") String name,
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "50") int size,
@@ -109,7 +99,7 @@ public class UserHomeController {
         model.addAttribute("userClass", userClass);
 
         // Return the name of the searchResults view template
-        return "userSearchPhone";
+        return "searchPhone";
     }
 
 

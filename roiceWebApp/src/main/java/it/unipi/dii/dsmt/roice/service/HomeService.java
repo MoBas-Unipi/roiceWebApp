@@ -12,7 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserHomeService {
+public class HomeService {
 
     @Autowired
     IPhoneRepository phoneRepository;

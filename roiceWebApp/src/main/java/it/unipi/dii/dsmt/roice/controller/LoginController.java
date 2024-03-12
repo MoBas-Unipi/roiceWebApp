@@ -57,13 +57,13 @@ public class LoginController {
 					AdminDTO adminDTO = UserMapper.toAdminDTO(admin);
 					session.setAttribute("currentUser", adminDTO);
 					session.setAttribute("userClass", "admin");
-					return "redirect:/adminHome";
+					return "redirect:/homePage";
 				} else {
 					User user = (User) genericUser.get();
 					UserDTO userDTO = UserMapper.toUserDTO(user);
 					session.setAttribute("currentUser", userDTO);
 					session.setAttribute("userClass", "user");
-					return "redirect:/userHome";
+					return "redirect:/homePage";
 				}
 			}
 		} else {

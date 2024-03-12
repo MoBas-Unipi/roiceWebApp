@@ -13,7 +13,7 @@
             <!-- Logo -->
             <!-- ============================================================== -->
             <div class="navbar-header">
-                <a class="navbar-brand" href="<c:choose><c:when test='${userClass eq "admin"}'>/adminHome</c:when><c:otherwise>/userHome</c:otherwise></c:choose>">
+                <a class="navbar-brand" href="/homePage">
                     <!-- Logo icon -->
                     <b>
                         <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
@@ -45,10 +45,7 @@
                         <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)">
                             <i class="ti-search"></i>
                         </a>
-                        <form class="app-search" action="<c:choose>
-                                      <c:when test='${userClass eq "admin"}'>/adminSearchPhone</c:when>
-                                      <c:otherwise>/userSearchPhone</c:otherwise>
-                                    </c:choose>" method="GET">
+                        <form class="app-search" action="/searchPhone" method="GET">
                             <input type="text" name="name" class="form-control" placeholder="Search & enter">
                             <a class="srh-btn"><i class="ti-close"></i></a>
                         </form>
@@ -63,7 +60,15 @@
                     <!-- ============================================================== -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Welcome ${fullName}
+                            Welcome
+                            <c:choose>
+                                <c:when test='${userClass eq "user"}'>
+                                    ${currentUser.firstName} ${currentUser.lastName}
+                                </c:when>
+                                <c:otherwise>
+                                    Admin
+                                </c:otherwise>
+                            </c:choose>
                         </a>
                     </li>
                 </ul>
