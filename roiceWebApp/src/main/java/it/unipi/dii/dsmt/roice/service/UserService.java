@@ -76,4 +76,16 @@ public class UserService {
         return -2;
     }
 
+    public UserDTO deleteFavoritePhone(String userEmail, String phoneId) {
+        Optional<GenericUser> optionalUser = userRepository.findByEmail(userEmail);
+        if (optionalUser.isPresent()) {
+            User user = (User) optionalUser.get();
+            user.getFavoritePhones().removeIf(phone -> phone.getId().equals(phoneId));
+            userRepository.save(user);
+            return UserMapper.toUserDTO(user);
+        } else {
+            // Handle case when user with specified email is not found
+        }
+        return null;
+    }
 }

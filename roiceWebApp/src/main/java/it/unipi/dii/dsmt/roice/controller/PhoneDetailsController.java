@@ -12,10 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,4 +79,23 @@ public class PhoneDetailsController {
         // Redirecting to the phone details page
         return "phoneDetails";
     }
+
+    @PostMapping("/phoneDetails/phone")
+    public String removeFromFavorites(Model model, HttpSession session, @RequestParam("phoneId") String phoneId) {
+        UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
+        if (currentUser == null || phoneId == null) {
+            model.addAttribute("message", "Error in removing the phone to the list of favorite phones!");
+            return "phoneDetails";
+        }
+        UserDTO userDTO = userService.deleteFavoritePhone(currentUser.getEmail(), phoneId);
+        if(userDTO == null) {
+            model.addAttribute("message", "Error in removing the phone from the list of favorites phones!");
+        } else {
+            model.addAttribute("message", "Phone removed from the favorites!");
+            session.setAttribute("isPhoneInFavorites", false);
+            session.setAttribute("currentUser", userDTO);
+        }
+        return "phoneDetails";
+    }
+
 }

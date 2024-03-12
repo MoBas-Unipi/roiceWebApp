@@ -75,10 +75,20 @@
             </div>
         </div>
         <div class="favorites-container">
-            <script>
-                showPhoneDetails(${isPhoneInFavorites}, "${message}");
-            </script>
+            <c:if test="${isPhoneInFavorites}">
+                <p id="message-field" style="color: green;">${message}</p>
+                <form method="post" action="/phoneDetails/phone?phoneId=${phone.id}" id="removeFromFavoritesForm">
+                    <button type="submit" class="add-to-favorites">Remove from Favorites</button>
+                </form>
+            </c:if>
+            <c:if test="${!isPhoneInFavorites}">
+                <p id="message-field" style="color: green;">${message}</p>
+                <form method="post" action="/phoneDetails" id="addToFavoritesForm">
+                    <button type="submit" class="add-to-favorites">Add to Favorites</button>
+                </form>
+            </c:if>
         </div>
+
     </div>
 
     <footer class="footer">
