@@ -34,7 +34,7 @@
             <!-- Bottom points-->
             <div class="sidebar-footer">
                 <!-- item-->
-                <a href="logout" class="link" data-toggle="tooltip" title="Logout" style="display: flex; align-items: center;">
+                <a href="/logout" class="link" data-toggle="tooltip" title="Logout" style="display: flex; align-items: center;">
                     <i class="mdi mdi-power" style="margin-right: 5px;"></i> Logout
                 </a>
             </div>
