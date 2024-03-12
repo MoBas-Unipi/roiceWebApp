@@ -22,6 +22,15 @@ public class HomeController {
     private PhoneService phoneService;
 
 
+    /**
+     * Handles requests for the home page.
+     *
+     * @param model     The model to add attributes for the view.
+     * @param session   The session object to retrieve user information.
+     * @param page      The page number.
+     * @param size      The size of each page.
+     * @return          The name of the view template to render.
+     */
     @GetMapping("/homePage")
     public String homePage(Model model, HttpSession session, @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "50") int size) {
@@ -43,7 +52,7 @@ public class HomeController {
 
 
         // Get a page of PhoneDTO objects from the service layer
-        Page<PhoneDTO> phonesPage = homeservice.getPhones(page, size);
+        Page<PhoneDTO> phonesPage = phoneService.getPhones(page, size);
 
         // Add the list of phones, current page number, total number of pages, and the user full name to the model
         model.addAttribute("phones", phonesPage.getContent());
@@ -56,6 +65,16 @@ public class HomeController {
     }
 
 
+    /**
+     * Handles the search for phones by name.
+     *
+     * @param name      The name to search for.
+     * @param page      The page number.
+     * @param size      The size of each page.
+     * @param model     The model to add attributes for the view.
+     * @param session   The session object to retrieve user information.
+     * @return          The name of the view template to render.
+     */
     @GetMapping(value = "/searchPhone")
     public String searchPhones(@RequestParam("name") String name,
                                @RequestParam(defaultValue = "0") int page,
@@ -77,16 +96,6 @@ public class HomeController {
         // Extract user class (admin or normal user)
         String userClass = (String) session.getAttribute("userClass");
 
-        // Set fullName attribute (TODO add firsName and lastName to admin and change)
-        if (userClass.equals("user")) { //user class is "user"
-            // Extract firstName and lastName from the currentUser object and combine them to get fullName
-            String fullName = ((UserDTO) currentUser).getFirstName() + " " + ((UserDTO) currentUser).getLastName();
-            model.addAttribute("fullName", fullName); //there is no firstName and lastName in admin
-        }
-        else { //user class is "admin"
-
-        }
-
 
         // Execute the query to find phones by name
         Page<PhoneDTO> phonesPage = phoneService.searchPhonesByName(name, page, size);
@@ -98,7 +107,7 @@ public class HomeController {
         model.addAttribute("paramName", name);
         model.addAttribute("userClass", userClass);
 
-        // Return the name of the searchResults view template
+        // Return the name of the searchPhone view template
         return "searchPhone";
     }
 
