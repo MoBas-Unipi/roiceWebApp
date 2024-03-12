@@ -30,6 +30,16 @@
     <!-- ============================================================== -->
     <jsp:include page="templates/leftSidebar.jsp"/>
 
+    <div class="row page-titles" style="margin-left: 250px">
+        <div class="col-md-5 col-8 align-self-center">
+            <h3 class="text-themecolor m-b-0 m-t-0">Phone Details</h3>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/userHome">Home</a></li>
+                <li class="breadcrumb-item active">Phone Details</li>
+            </ol>
+        </div>
+    </div>
+
     <div class="all-container">
         <h1>Phone Details</h1>
         <div class="container">

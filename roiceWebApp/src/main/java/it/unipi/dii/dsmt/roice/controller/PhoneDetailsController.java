@@ -75,10 +75,7 @@ public class PhoneDetailsController {
             session.setAttribute("isPhoneInFavorites", true);
             model.addAttribute("message", "Phone added to favorites!");
         } else {
-            Optional<GenericUser> genericUser = userService.findByEmail(currentUser.getEmail());
-            User user = (User) genericUser.get();
-            UserDTO userDTO = UserMapper.toUserDTO(user);
-            session.setAttribute("currentUser", userDTO);
+            session.setAttribute("currentUser", currentUser);
             session.setAttribute("isPhoneInFavorites", true);
             model.addAttribute("message", "Phone added to favorites!");
         }

@@ -67,6 +67,7 @@ public class UserService {
                 favoritePhones.add(phonePreview);
                 user.setFavoritePhones(favoritePhones);
                 userRepository.save(user);
+                currentUser.setFavoritePhones(favoritePhones);
                 return 0;
             }
         } catch (Exception e) {

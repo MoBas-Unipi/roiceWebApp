@@ -6,7 +6,7 @@ body {
 
 .all-container {
     width: 80%; /* Adjusted width */
-    margin: 20px auto;
+    margin-left: 250px;
     display: flex;
     align-items: flex-start;
     flex-direction: column;
@@ -24,11 +24,6 @@ body {
     max-width: 100%; /* Adjusted max-width */
     height: auto;
     margin-right: 20px;
-}
-
-h1 {
-    margin-bottom: 20px;
-    padding-left: 200px; /* Apply left padding only to the h1 */
 }
 
 .phone-details-container {
