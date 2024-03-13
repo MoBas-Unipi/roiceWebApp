@@ -76,6 +76,8 @@ public class PhoneDetailsController {
         return "phoneDetails";
     }
 
+
+    // Remove from favorites
     @PostMapping("/phoneDetails/phone")
     public String removeFromFavorites(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
