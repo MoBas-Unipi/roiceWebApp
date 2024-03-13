@@ -52,12 +52,14 @@ h1 {
     margin-bottom: 10px;
 }
 
+.create-auction-container,
 .favorites-container {
     padding-left: 220px;
 }
 
-.add-to-favorites,
-.confirm-bid {
+.create-auction-button,
+.favorites-button,
+.confirm-bid-button {
     background-color: #26c6da;
     border: none;
     color: white;
