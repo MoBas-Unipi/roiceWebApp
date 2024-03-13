@@ -45,10 +45,10 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">Search</h3>
+                <h3 class="text-themecolor m-b-0 m-t-0">Live Auctions</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/homePage">Home</a></li>
-                    <li class="breadcrumb-item active">Search</li>
+                    <li class="breadcrumb-item active">Live Auctions</li>
                 </ol>
             </div>
         </div>
@@ -57,7 +57,7 @@
         <!-- Start page content -->
         <!-- Row -->
         <div id="phones-container" class="row">
-            <!-- Column -->
+            <!-- Iterate over each phone in the "phones" model -->
             <c:forEach var="phone" items="${phones}">
                 <div class="col-lg-4 col-xlg-3 col-md-5">
                     <div class="card">
@@ -81,24 +81,24 @@
     </div>
 
 
-        <!-- End page content -->
-        <div class="row page-titles">
-            <div class="col-md-5 col-8 align-self-center">
-            </div>
+    <!-- End page content -->
+    <div class="row page-titles">
+        <div class="col-md-5 col-8 align-self-center">
         </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="text-center">
             <!-- Previous page button -->
             <c:if test="${currentPage > 0}">
-                <a href="/searchPhone?name=${paramName}&page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+                <a href="/searchLiveAuctions?page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
                     <i class="mdi mdi-chevron-left"></i> Previous
                 </a>
             </c:if>
             <!-- Next page button -->
             <c:if test="${currentPage < totalPages - 1}">
-                <a href="/searchPhone?name=${paramName}&page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+                <a href="/searchLiveAuctions?page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
                     Next <i class="mdi mdi-chevron-right"></i>
                 </a>
             </c:if>
@@ -114,10 +114,10 @@
     </footer>
 
 
-        <!-- Scroll to top button -->
-        <a href="#" class="scroll-to-top-btn"><i class="mdi mdi-arrow-up"></i></a>
+    <!-- Scroll to top button -->
+    <a href="#" class="scroll-to-top-btn"><i class="mdi mdi-arrow-up"></i></a>
 
-<!-- End Wrapper -->
+    <!-- End Wrapper -->
 </div>
 
 </body>

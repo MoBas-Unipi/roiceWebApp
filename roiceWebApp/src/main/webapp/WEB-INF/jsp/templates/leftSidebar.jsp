@@ -21,10 +21,9 @@
                             </c:when>
                             <c:when test="${userClass eq 'admin'}">
                                 <li><a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-plus-circle"></i><span class="hide-menu">Add Phone</span></a></li>
-                                <li><a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-timer"></i><span class="hide-menu">Add Auction</span></a></li>
                             </c:when>
                         </c:choose>
-                        <li><a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-alert-circle"></i><span class="hide-menu">Live Auctions</span></a>
+                        <li><a class="waves-effect waves-dark" href="searchLiveAuctions" aria-expanded="false"><i class="mdi mdi-alert-circle"></i><span class="hide-menu">Live Auctions</span></a>
                         </li>
                     </ul>
                 </nav>

@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class PhoneService {
 
@@ -52,6 +54,31 @@ public class PhoneService {
 
         // Execute a query to search phones by name using the findByNameContainingIgnoreCase method
         Page<Phone> phonePage = phoneRepository.findByNameContainingIgnoreCase(name, pageable);
+
+        // Map each Phone entity to a PhoneDTO using the toPhoneDTO method in the PhoneDTO class
+        Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneDTO.toPhoneDTO(phone));
+
+        // Return the page of PhoneDTO objects
+        return phoneDTOPage;
+    }
+
+
+    /**
+     * Retrieves a page of PhoneDTO objects using a custom query to find phones with live auctions.
+     *
+     * @param page  The page number.
+     * @param size  The size of each page.
+     * @return      A Page containing PhoneDTO objects with live auctions.
+     */
+    public Page<PhoneDTO> getPhonesWithLiveAuctions(int page, int size) {
+        // Create a Pageable object for pagination
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Get the current date
+        Date currentDate = new Date();
+
+        // Execute a query to find phones with active auctions
+        Page<Phone> phonePage = phoneRepository.findPhonesWithActiveAuctions(currentDate, pageable);
 
         // Map each Phone entity to a PhoneDTO using the toPhoneDTO method in the PhoneDTO class
         Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneDTO.toPhoneDTO(phone));
