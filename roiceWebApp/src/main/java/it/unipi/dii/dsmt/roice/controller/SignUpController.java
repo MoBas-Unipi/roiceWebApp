@@ -2,7 +2,7 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.model.GenericUser;
-import it.unipi.dii.dsmt.roice.repository.GenericUserRepository;
+import it.unipi.dii.dsmt.roice.repository.IGenericUserRepository;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class SignUpController {
     private UserService userService;
 
     @Autowired
-    private GenericUserRepository genericUserMongo;
+    private IGenericUserRepository genericUserRepository;
 
     @GetMapping({
             "/signUp"
@@ -45,7 +45,7 @@ public class SignUpController {
             return "signUp"; // Return to the signup page
         }
 
-        Optional<GenericUser> genericUser = genericUserMongo.findByEmail(userDTO.getEmail());
+        Optional<GenericUser> genericUser = genericUserRepository.findByEmail(userDTO.getEmail());
         if (genericUser.isPresent()) {
             model.addAttribute("error", "E-mail already in use");
             return "signUp";

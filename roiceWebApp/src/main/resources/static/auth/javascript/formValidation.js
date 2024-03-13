@@ -12,8 +12,10 @@ function validateForm(fields) {
 
     // If any field is empty, display the error message within the page
     if (isEmpty) {
-        document.getElementById("error-field").textContent = "Please fill out all fields";
-        document.getElementById("error-field").style.display = "block"; // Show error message
+        const errorMessage = document.getElementById("error-field");
+        errorMessage.textContent = "Please fill out all fields";
+        errorMessage.style.color = "red"; // Set error message color to red
+        errorMessage.style.display = "block"; // Show error message
         return false; // Prevent form submission
     }
 

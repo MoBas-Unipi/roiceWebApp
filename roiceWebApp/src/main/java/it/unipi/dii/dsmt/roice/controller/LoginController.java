@@ -6,7 +6,7 @@ import it.unipi.dii.dsmt.roice.dto.mapper.UserMapper;
 import it.unipi.dii.dsmt.roice.model.Admin;
 import it.unipi.dii.dsmt.roice.model.GenericUser;
 import it.unipi.dii.dsmt.roice.model.User;
-import it.unipi.dii.dsmt.roice.repository.GenericUserRepository;
+import it.unipi.dii.dsmt.roice.repository.IGenericUserRepository;
 import it.unipi.dii.dsmt.roice.utils.Security;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class LoginController {
 
 	@Autowired
-	private GenericUserRepository genericUserMongo;
+	private IGenericUserRepository genericUserMongo;
 	private final static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
 	@GetMapping({

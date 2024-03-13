@@ -11,17 +11,12 @@
     <jsp:include page="templates/header.jsp"/>
 </head>
 
-<style>
-    .form-group label {
-        width: 30px; /* Adjust the width as needed */
-        display: inline-block;
-        text-align: center;
-    }
-</style>
-
+<!-- Include JS to check input fields -->
 <script src="/auth/javascript/formValidation.js"></script>
 <!-- Include Font Awesome CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- Include CSS style -->
+<link rel="stylesheet" href="/dashboard/html/css/addPhone.css">
 
 <body class="fix-header fix-sidebar card-no-border">
 <div class="preloader">
@@ -180,21 +175,37 @@
                             <div class="form-group">
                                 <label for="releaseYear"><i class="fas fa-calendar-alt"></i></label>
                                 <input type="text" name="releaseYear" id="releaseYear" placeholder="Release Year" value="${phoneDTO.releaseYear}"/>
+
                                 <c:if test="${not empty errorMap['releaseYear']}">
-                                    <div style="color: red;">${errorMap['releaseYear']}</div>
+                                    <c:choose>
+                                        <c:when test="${errorMap['releaseYear'].contains('Failed to convert property value')}">
+                                            <div style="color: red;">Release year must be a number</div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div style="color: red;">${errorMap['releaseYear']}</div>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </c:if>
+
                             </div>
                         </div>
 
                         <div class="col-md-1">
-                            <button id="showUserInfoBtn" class="btn btn-primary btn-sm" style="background-color: #26c6da; border-color: #00aced; padding: 5px 10px; font-size: 15px;">Add phone</button>
+                            <button id="addPhoneBtn" class="btn btn-primary btn-sm" style="background-color: #26c6da; border-color: #00aced; padding: 5px 10px; font-size: 15px;">Add phone</button>
                         </div>
 
-                        <div class="col-md-2">
-                            <div id="error-field" class="error-message" style="color: red; display: ${not empty error ? 'block' : 'none'}; margin-top: 4px">
-                                ${error}
+                        <div class="col-md-3">
+                            <div id="error-field" class="error-message" style="color: ${empty errorMap && empty error ? 'green' : 'red'}; display: ${empty error && not empty errorMap ? 'none' : 'block'}; margin-top: 4px">
+                                ${empty errorMap && empty error ? 'Phone added successfully' : error}
                             </div>
                         </div>
+
+                        <div class="col-md-3">
+                            <div id="success-message" class="success-message" style="color: green; display: ${success ? 'block' : 'none'}; margin-top: 4px">
+                                Phone added successfully
+                            </div>
+                        </div>
+
                     </div>
                 </form>
             </div>

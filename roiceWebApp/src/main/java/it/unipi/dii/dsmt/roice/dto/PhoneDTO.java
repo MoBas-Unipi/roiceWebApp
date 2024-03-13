@@ -1,7 +1,6 @@
 package it.unipi.dii.dsmt.roice.dto;
 
 import it.unipi.dii.dsmt.roice.model.Auction;
-import it.unipi.dii.dsmt.roice.model.Phone;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -82,31 +81,5 @@ public class PhoneDTO implements Serializable {
         this.storage = storage;
         this.videoPixels = videoPixels;
         this.auction = auction;
-    }
-
-
-    public static PhoneDTO toPhoneDTO(Phone phone) {
-        if (phone == null)
-            return null;
-        PhoneDTO phoneDTO = new PhoneDTO();
-
-        phoneDTO.setName(phone.getName());
-        phoneDTO.setPicture(phone.getPicture());
-        phoneDTO.setBatterySize(phone.getBatterySize());
-        phoneDTO.setBatteryType(phone.getBatteryType());
-        phoneDTO.setBody(phone.getBody());
-        phoneDTO.setBrand(phone.getBrand());
-        phoneDTO.setCameraPixels(phone.getCameraPixels());
-        phoneDTO.setChipset(phone.getChipset());
-        phoneDTO.setDisplayResolution(phone.getDisplayResolution());
-        phoneDTO.setDisplaySize(phone.getDisplaySize());
-        phoneDTO.setOs(phone.getOs());
-        phoneDTO.setRam(phone.getRam());
-        phoneDTO.setReleaseYear(phone.getReleaseYear());
-        phoneDTO.setStorage(phone.getStorage());
-        phoneDTO.setVideoPixels(phone.getVideoPixels());
-        phoneDTO.setAuction(phone.getAuction());
-
-        return phoneDTO;
     }
 }
