@@ -28,7 +28,7 @@ public class PhoneDetailsController {
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
 
         if (phone == null || currentUser == null) {
-            return "redirect:/userHome";
+            return "redirect:/homePage";
         }
 
         List<PhonePreview> favoritePhones = currentUser.getFavoritePhones(); // Assuming you have a method to get favorite phones for the current user
