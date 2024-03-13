@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.all-container {
+    width: 80%; /* Adjusted width */
+    margin-left: 250px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.container {
+    width: 100%; /* Adjusted width */
+    margin: 10px 0;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+}
+
+.phone-image {
+    max-width: 100%; /* Adjusted max-width */
+    height: auto;
+    margin-right: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    padding-left: 200px; /* Apply left padding only to the h1 */
+}
+
+.phone-details-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+.phone-details {
+    flex-direction: row;
+}
+
+.auction-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-left: 20px;
+    color: black;
+}
+
+.bid-input {
+    margin-bottom: 10px;
+}
+
+.favorites-container {
+    padding-left: 220px;
+}
+
+.add-to-favorites,
+.confirm-bid {
+    background-color: #26c6da;
+    border: none;
+    color: white;
+    padding: 5px 11px; /* Smaller padding */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px; /* Smaller font size */
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px; /* Smaller border radius */
+}

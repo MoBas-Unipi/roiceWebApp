@@ -13,5 +13,7 @@ public interface IPhoneRepository extends MongoRepository<Phone, String> {
 
     // Method to search phones by name containing a specific string, ignoring case
     Page<Phone> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    Phone findByName(String phoneName);
 }
 
