@@ -74,21 +74,23 @@
                 <button class="confirm-bid" onclick="confirmBid()">Confirm Bid</button>
             </div>
         </div>
-        <div class="favorites-container">
-            <c:if test="${isPhoneInFavorites}">
-                <p id="message-field" style="color: green;">${message}</p>
-                <form method="post" action="/phoneDetails/phone?phoneName=${phone.name}" id="removeFromFavoritesForm">
-                    <button type="submit" class="add-to-favorites">Remove from Favorites</button>
-                </form>
-            </c:if>
-            <c:if test="${!isPhoneInFavorites}">
-                <p id="message-field" style="color: green;">${message}</p>
-                <form method="post" action="/phoneDetails" id="addToFavoritesForm">
-                    <button type="submit" class="add-to-favorites">Add to Favorites</button>
-                </form>
-            </c:if>
-        </div>
-
+        <c:if test="${not empty isPhoneInFavorites}">
+            <!-- Handle the case when isPhoneInFavorites is set -->
+            <div class="favorites-container">
+                <c:if test="${isPhoneInFavorites}">
+                    <p id="message-field" style="color: green;">${message}</p>
+                    <form method="post" action="/phoneDetails/phone?phoneName=${phone.name}" id="removeFromFavoritesForm">
+                        <button type="submit" class="add-to-favorites">Remove from Favorites</button>
+                    </form>
+                </c:if>
+                <c:if test="${!isPhoneInFavorites}">
+                    <p id="message-field" style="color: green;">${message}</p>
+                    <form method="post" action="/phoneDetails" id="addToFavoritesForm">
+                        <button type="submit" class="add-to-favorites">Add to Favorites</button>
+                    </form>
+                </c:if>
+            </div>
+        </c:if>
     </div>
 
     <footer class="footer">

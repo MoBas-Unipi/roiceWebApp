@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class PhoneDetailsController {
@@ -25,30 +26,32 @@ public class PhoneDetailsController {
     @GetMapping("/phoneDetails")
     public String showPhoneDetails(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
         Phone phone = phoneRepository.findByName(phoneName);
-        UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-
-        if (phone == null || currentUser == null) {
+        if (phone == null) {
             return "redirect:/homePage";
         }
 
-        List<PhonePreview> favoritePhones = currentUser.getFavoritePhones(); // Assuming you have a method to get favorite phones for the current user
-
-        model.addAttribute("message", "");
-        boolean isPhoneInFavorites = false;
-        // Check if the phone is already in the user's favorites
-        for (PhonePreview phonePreview :favoritePhones) {
-            if (phonePreview.getName().equals(phoneName)) {
-                isPhoneInFavorites = true;
-                model.addAttribute("message", "Phone added to the favorites!");
-                break;
+        if(session.getAttribute("userClass").equals("user")) {
+            UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
+            if (currentUser == null) {
+                return "redirect:/login";
             }
+
+            List<PhonePreview> favoritePhones = currentUser.getFavoritePhones(); // Assuming you have a method to get favorite phones for the current user
+
+            model.addAttribute("message", "");
+            boolean isPhoneInFavorites = false;
+            // Check if the phone is already in the user's favorites
+            for (PhonePreview phonePreview : favoritePhones) {
+                if (phonePreview.getName().equals(phoneName)) {
+                    isPhoneInFavorites = true;
+                    model.addAttribute("message", "Phone added to the favorites!");
+                    break;
+                }
+            }
+
+            session.setAttribute("isPhoneInFavorites", isPhoneInFavorites);
         }
-
-        // Add attributes to session
         session.setAttribute("phone", phone);
-        session.setAttribute("isPhoneInFavorites", isPhoneInFavorites);
-
-        // Return the phone details view
         return "phoneDetails";
     }
 
