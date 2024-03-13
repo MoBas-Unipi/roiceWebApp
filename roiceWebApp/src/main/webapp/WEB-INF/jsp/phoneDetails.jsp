@@ -77,7 +77,7 @@
         <div class="favorites-container">
             <c:if test="${isPhoneInFavorites}">
                 <p id="message-field" style="color: green;">${message}</p>
-                <form method="post" action="/phoneDetails/phone?phoneId=${phone.id}" id="removeFromFavoritesForm">
+                <form method="post" action="/phoneDetails/phone?phoneName=${phone.name}" id="removeFromFavoritesForm">
                     <button type="submit" class="add-to-favorites">Remove from Favorites</button>
                 </form>
             </c:if>

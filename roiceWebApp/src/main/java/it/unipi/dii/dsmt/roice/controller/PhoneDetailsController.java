@@ -1,11 +1,8 @@
 package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
-import it.unipi.dii.dsmt.roice.dto.mapper.UserMapper;
-import it.unipi.dii.dsmt.roice.model.GenericUser;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
-import it.unipi.dii.dsmt.roice.model.User;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -15,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class PhoneDetailsController {
@@ -81,13 +77,13 @@ public class PhoneDetailsController {
     }
 
     @PostMapping("/phoneDetails/phone")
-    public String removeFromFavorites(Model model, HttpSession session, @RequestParam("phoneId") String phoneId) {
+    public String removeFromFavorites(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-        if (currentUser == null || phoneId == null) {
+        if (currentUser == null || phoneName == null) {
             model.addAttribute("message", "Error in removing the phone to the list of favorite phones!");
             return "phoneDetails";
         }
-        UserDTO userDTO = userService.deleteFavoritePhone(currentUser.getEmail(), phoneId);
+        UserDTO userDTO = userService.deleteFavoritePhone(currentUser.getEmail(), phoneName);
         if(userDTO == null) {
             model.addAttribute("message", "Error in removing the phone from the list of favorites phones!");
         } else {

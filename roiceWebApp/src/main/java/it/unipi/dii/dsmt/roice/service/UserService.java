@@ -54,16 +54,16 @@ public class UserService {
     }
     public int addPhonePreview(UserDTO currentUser, Phone phone) {
         try {
-            Optional<GenericUser> genericUser = userRepository.findByEmail(currentUser.getEmail());
+            Optional<GenericUser> genericUser = this.findByEmail(currentUser.getEmail());
             if (genericUser.isPresent()) {
                 User user = (User) genericUser.get();
                 List<PhonePreview> favoritePhones = user.getFavoritePhones();
                 for (PhonePreview phonePW : favoritePhones) {
-                    if (Objects.equals(phonePW.getId(), phone.getId())) {
+                    if (Objects.equals(phonePW.getName(), phone.getName())) {
                         return -1;
                     }
                 }
-                PhonePreview phonePreview = new PhonePreview(phone.getId(), phone.getName(), phone.getPicture());
+                PhonePreview phonePreview = new PhonePreview(phone.getName(), phone.getPicture());
                 favoritePhones.add(phonePreview);
                 user.setFavoritePhones(favoritePhones);
                 userRepository.save(user);
@@ -76,15 +76,17 @@ public class UserService {
         return -2;
     }
 
-    public UserDTO deleteFavoritePhone(String userEmail, String phoneId) {
-        Optional<GenericUser> optionalUser = userRepository.findByEmail(userEmail);
-        if (optionalUser.isPresent()) {
-            User user = (User) optionalUser.get();
-            user.getFavoritePhones().removeIf(phone -> phone.getId().equals(phoneId));
-            userRepository.save(user);
-            return UserMapper.toUserDTO(user);
-        } else {
-            // Handle case when user with specified email is not found
+    public UserDTO deleteFavoritePhone(String userEmail, String phoneName) {
+        try {
+            Optional<GenericUser> optionalUser = userRepository.findByEmail(userEmail);
+            if (optionalUser.isPresent()) {
+                User user = (User) optionalUser.get();
+                user.getFavoritePhones().removeIf(phone -> phone.getName().equals(phoneName));
+                userRepository.save(user);
+                return UserMapper.toUserDTO(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
