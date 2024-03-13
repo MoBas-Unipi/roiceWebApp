@@ -13,7 +13,7 @@
             <!-- Logo -->
             <!-- ============================================================== -->
             <div class="navbar-header">
-                <a class="navbar-brand" href="/userHome">
+                <a class="navbar-brand" href="/homePage">
                     <!-- Logo icon -->
                     <b>
                         <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
@@ -41,9 +41,13 @@
                     <!-- ============================================================== -->
                     <!-- Search -->
                     <!-- ============================================================== -->
-                    <li class="nav-item hidden-sm-down search-box"> <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
-                        <form class="app-search" action="/searchPhones" method="GET">
-                            <input type="text" name="name" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a>
+                    <li class="nav-item hidden-sm-down search-box">
+                        <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)">
+                            <i class="ti-search"></i>
+                        </a>
+                        <form class="app-search" action="/searchPhone" method="GET">
+                            <input type="text" name="name" class="form-control" placeholder="Search & enter">
+                            <a class="srh-btn"><i class="ti-close"></i></a>
                         </form>
                     </li>
                 </ul>
@@ -56,7 +60,15 @@
                     <!-- ============================================================== -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Welcome ${fullName}
+                            Welcome
+                            <c:choose>
+                                <c:when test='${userClass eq "user"}'>
+                                    ${currentUser.firstName} ${currentUser.lastName}
+                                </c:when>
+                                <c:otherwise>
+                                    Admin
+                                </c:otherwise>
+                            </c:choose>
                         </a>
                     </li>
                 </ul>

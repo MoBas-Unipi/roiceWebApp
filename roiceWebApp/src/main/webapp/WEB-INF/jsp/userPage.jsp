@@ -38,7 +38,7 @@
             <div class="col-md-5 col-8 align-self-center">
                 <h3 class="text-themecolor m-b-0 m-t-0">Profile</h3>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/userHome">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/homePage">Home</a></li>
                     <li class="breadcrumb-item active">Profile</li>
                 </ol>
             </div>

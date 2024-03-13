@@ -48,7 +48,7 @@
             <div class="col-md-5 col-8 align-self-center">
                 <h3 class="text-themecolor m-b-0 m-t-0">Home</h3>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/userHome">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/homePage">Home</a></li>
                 </ol>
             </div>
         </div>
@@ -100,7 +100,7 @@
     <!-- ============================================================== -->
     <!-- Footer - the style is in style.css   -->
     <!-- ============================================================== -->
-    <jsp:include page="templates/footerUserHome.jsp">
+    <jsp:include page="templates/footerHome.jsp">
         <jsp:param name="currentPage" value="${currentPage}"/>
         <jsp:param name="totalPages" value="${totalPages}"/>
         <jsp:param name="size" value="${size}"/>

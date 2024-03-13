@@ -47,7 +47,7 @@
             <div class="col-md-5 col-8 align-self-center">
                 <h3 class="text-themecolor m-b-0 m-t-0">Search</h3>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/userHome">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/homePage">Home</a></li>
                     <li class="breadcrumb-item active">Search</li>
                 </ol>
             </div>
@@ -81,31 +81,32 @@
             </div>
         </div>
 
-        <!-- ============================================================== -->
-        <!-- Footer - the style is in style.css   -->
-        <!-- ============================================================== -->
-        <!-- parameter used for the phone name to search-->
-        <c:set var="paramName" value="${paramName}" />
-        <footer class="footer">
-            <div class="text-center">
-                <c:if test="${currentPage > 0}">
-                    <a href="/searchPhones?name=${paramName}&page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
-                        <i class="mdi mdi-chevron-left"></i> Previous
-                    </a>
-                </c:if>
-                <c:if test="${currentPage < totalPages - 1}">
-                    <a href="/searchPhones?name=${paramName}&page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
-                        Next <i class="mdi mdi-chevron-right"></i>
-                    </a>
-                </c:if>
-                <div>
-                    <p class="small-text">Page ${currentPage + 1} of ${totalPages}</p>
-                    <div class="text-left copyright-text">
-                        <c:out value="© 2024 ROICE Web Application" />
-                    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="text-center">
+            <!-- Previous page button -->
+            <c:if test="${currentPage > 0}">
+                <a href="/searchPhone?name=${paramName}&page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+                    <i class="mdi mdi-chevron-left"></i> Previous
+                </a>
+            </c:if>
+            <!-- Next page button -->
+            <c:if test="${currentPage < totalPages - 1}">
+                <a href="/searchPhone?name=${paramName}&page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+                    Next <i class="mdi mdi-chevron-right"></i>
+                </a>
+            </c:if>
+            <!-- Page information -->
+            <div>
+                <p class="small-text">Page ${currentPage + 1} of ${totalPages}</p>
+                <!-- Copyright information -->
+                <div class="text-left copyright-text">
+                    <c:out value="© 2024 ROICE Web Application" />
                 </div>
             </div>
-        </footer>
+        </div>
+    </footer>
+
 
 
         <!-- Scroll to top button -->

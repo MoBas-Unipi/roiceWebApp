@@ -1,9 +1,13 @@
 package it.unipi.dii.dsmt.roice.dto;
 
+import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.model.Phone;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
-
+@Getter
+@Setter
 public class PhoneDTO implements Serializable {
     private String id;
     private String name;
@@ -22,12 +26,14 @@ public class PhoneDTO implements Serializable {
     private int releaseYear;
     private String storage;
     private String videoPixels;
+    private Auction auction;
 
 
     public PhoneDTO() {
     }
 
-    public PhoneDTO(String id, String name, String picture, String batterySize, String batteryType, String body, String brand, String cameraPixels, String chipset, String displayResolution, String displaySize, String os, String ram, int releaseYear, String storage, String videoPixels) {
+    public PhoneDTO(String id, String name, String picture, String batterySize, String batteryType, String body, String brand, String cameraPixels, String chipset, String displayResolution, String displaySize, String os, String ram, int releaseYear, String storage, String videoPixels, Auction
+                    auction) {
         this.id = id;
         this.name = name;
         this.picture = picture;
@@ -44,6 +50,7 @@ public class PhoneDTO implements Serializable {
         this.releaseYear = releaseYear;
         this.storage = storage;
         this.videoPixels = videoPixels;
+        this.auction = auction;
     }
 
     public String getId() {
@@ -195,6 +202,7 @@ public class PhoneDTO implements Serializable {
         phoneDTO.setReleaseYear(phone.getReleaseYear());
         phoneDTO.setStorage(phone.getStorage());
         phoneDTO.setVideoPixels(phone.getVideoPixels());
+        phoneDTO.setAuction(phone.getAuction());
 
         return phoneDTO;
     }

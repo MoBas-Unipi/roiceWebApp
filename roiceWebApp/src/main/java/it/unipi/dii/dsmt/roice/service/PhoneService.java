@@ -1,6 +1,5 @@
 package it.unipi.dii.dsmt.roice.service;
 
-
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
@@ -12,12 +11,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserHomeService {
+public class PhoneService {
 
     @Autowired
     IPhoneRepository phoneRepository;
 
-
+    /**
+     * Retrieves a page of PhoneDTO objects using "findAll" query
+     *
+     * @param page  The page number.
+     * @param size  The size of each page.
+     * @return      A Page containing PhoneDTO objects.
+     */
     public Page<PhoneDTO> getPhones(int page, int size) {
         // Creating a pageable object to specify pagination and sorting options
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "releaseYear"));
@@ -33,6 +38,14 @@ public class UserHomeService {
     }
 
 
+    /**
+     * Searches for phones by name and returns a page of PhoneDTO objects using "findByNameContainingIgnoreCase" query
+     *
+     * @param name  The name to search for.
+     * @param page  The page number.
+     * @param size  The size of each page.
+     * @return      A Page containing PhoneDTO objects matching the search criteria.
+     */
     public Page<PhoneDTO> searchPhonesByName(String name, int page, int size) {
         // Create a Pageable object for pagination
         Pageable pageable = PageRequest.of(page, size);
@@ -46,6 +59,5 @@ public class UserHomeService {
         // Return the page of PhoneDTO objects
         return phoneDTOPage;
     }
-
 
 }
