@@ -5,6 +5,7 @@ import it.unipi.dii.dsmt.roice.dto.mapper.PhoneMapper;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
 import it.unipi.dii.dsmt.roice.service.PhoneService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +36,10 @@ public class AdminAddPhoneController {
     }
 
     @PostMapping("/addPhone")
-    public String signUp(@Valid PhoneDTO phoneDTO, BindingResult bindingResult, Model model) {
+    public String addPhone(@Valid PhoneDTO phoneDTO, BindingResult bindingResult, HttpSession session, Model model) {
+        // Clear the success message if it exists
+        session.removeAttribute("success");
+
         if (bindingResult.hasErrors()) {
             // Collect errors for each field and add them to the error map
             Map<String, String> errorMap = new HashMap<>();
@@ -55,8 +59,8 @@ public class AdminAddPhoneController {
         Phone newPhone = PhoneMapper.toPhone(phoneDTO);
 
         if (phoneService.addPhone(newPhone)) {
-            model.addAttribute("success", true);
-            return "redirect:/addPhone";
+            session.setAttribute("success", "Phone added successfully");
+            return "redirect:/addPhone"; // Redirect to clear form after successful addition
         } else {
             model.addAttribute("error", "Failed to add phone");
             return "adminAddPhone"; // Return to the signup page

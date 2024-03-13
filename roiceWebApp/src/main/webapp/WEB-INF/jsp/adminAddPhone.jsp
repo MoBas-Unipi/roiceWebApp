@@ -13,6 +13,7 @@
 
 <!-- Include JS to check input fields -->
 <script src="/auth/javascript/formValidation.js"></script>
+<%--<script src="/dashboard/html/js/addPhone.js"></script>--%>
 <!-- Include Font Awesome CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <!-- Include CSS style -->
@@ -195,14 +196,27 @@
                         </div>
 
                         <div class="col-md-3">
-                            <div id="error-field" class="error-message" style="color: ${empty errorMap && empty error ? 'green' : 'red'}; display: ${empty error && not empty errorMap ? 'none' : 'block'}; margin-top: 4px">
-                                ${empty errorMap && empty error ? 'Phone added successfully' : error}
-                            </div>
-                        </div>
+                            <div id="message-container" style="color: ${not empty error or not empty errorMap ? 'red' : 'green'};">
+                                <!-- Define error and success messages with display: none -->
+                                <div class="error-message" id="error-message" style="display: none; margin-top: 4px"></div>
+                                <div class="success-message" id="success-message" style="display: none; margin-top: 4px"></div>
 
-                        <div class="col-md-3">
-                            <div id="success-message" class="success-message" style="color: green; display: ${success ? 'block' : 'none'}; margin-top: 4px">
-                                Phone added successfully
+                                <!-- Use choose statement to populate and display messages -->
+                                <c:choose>
+                                    <c:when test="${not empty error}">
+                                        <script>
+                                            displayMessage("error-message", "${error}");
+                                        </script>
+                                    </c:when>
+                                    <c:when test="${not empty sessionScope.success}">
+                                        <script>
+                                            displayMessage("success-message", "${sessionScope.success}");
+                                        </script>
+                                    </c:when>
+                                </c:choose>
+
+                                <!-- Placeholder div for error-field message (if needed) -->
+                                <div id="error-field" class="error-message" style="color: red; display: none; margin-top: 4px"></div>
                             </div>
                         </div>
 

@@ -4,6 +4,7 @@ import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
 import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.model.Phone;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class PhoneMapper {
@@ -54,6 +55,13 @@ public class PhoneMapper {
         phone.setBatteryType(phoneDTO.getBatteryType());
         phone.setReleaseYear(phoneDTO.getReleaseYear());
         phone.setAuction(phoneDTO.getAuction());
+
+        // Creating an Auction object with specified day, month, and year
+//        Calendar auctionDate = Calendar.getInstance();
+//        auctionDate.set(2024, Calendar.MARCH, 11);
+//
+//        Calendar auctionDateEnd = Calendar.getInstance();
+//        auctionDateEnd.set(2024, Calendar.MAY, 14);
 
         return phone;
     }
