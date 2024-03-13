@@ -14,10 +14,10 @@
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-                        <li><a class="waves-effect waves-dark" href="homePage" aria-expanded="false"><i class="mdi mdi-cellphone"></i><span class="hide-menu">Home</span></a></li>
+                        <li><a class="waves-effect waves-dark" href="/homePage" aria-expanded="false"><i class="mdi mdi-cellphone"></i><span class="hide-menu">Home</span></a></li>
                         <c:choose>
                             <c:when test="${userClass eq 'user'}">
-                                <li> <a class="waves-effect waves-dark" href="userPage" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a></li>
+                                <li> <a class="waves-effect waves-dark" href="/userPage" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a></li>
                             </c:when>
                             <c:when test="${userClass eq 'admin'}">
                                 <li><a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-plus-circle"></i><span class="hide-menu">Add Phone</span></a></li>

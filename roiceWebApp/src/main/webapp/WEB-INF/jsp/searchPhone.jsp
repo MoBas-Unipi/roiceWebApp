@@ -35,38 +35,38 @@
     <!-- ============================================================== -->
     <jsp:include page="templates/leftSidebar.jsp"/>
 
-
+    <div class="row page-titles" style="margin-left: 250px">
+        <div class="col-md-5 col-8 align-self-center">
+            <h3 class="text-themecolor m-b-0 m-t-0">Phone Details</h3>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/homePage">Home</a></li>
+                <li class="breadcrumb-item active">Search</li>
+            </ol>
+        </div>
+    </div>
     <!-- ============================================================== -->
     <!-- Dynamic Container - -->
     <!-- ============================================================== -->
     <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
-        <div class="row page-titles">
-            <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">Search</h3>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/homePage">Home</a></li>
-                    <li class="breadcrumb-item active">Search</li>
-                </ol>
-            </div>
-        </div>
-        <!-- End Bread crumb and right sidebar toggle -->
 
         <!-- Start page content -->
-        <div class="row">
-            <!-- Iterate over each phone in the "phones" model -->
+        <div id="phones-container" class="row">
+            <!-- Column -->
             <c:forEach var="phone" items="${phones}">
                 <div class="col-lg-4 col-xlg-3 col-md-5">
                     <div class="card">
                         <div class="card-block">
-                            <!-- Display phone image and information -->
-                            <center class="m-t-30">
-                                <img src="${phone.picture}" class="img-rounded" width="150"/>
-                                <h4 class="card-title m-t-10"><c:out value="${phone.name}" /></h4>
-                                <h4 class="card-subtitle">Brand: <c:out value="${phone.brand}" /></h4>
-                            </center>
+                            <div class="m-t-30" style="text-align: center;">
+                                <!-- Redirect to phoneDetails.jsp page on click -->
+                                <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
+                                    <img src="${phone.picture}" class="img-rounded" width="150"/>
+                                </a>
+                                <h4 class="card-title m-t-10">
+                                    <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
+                                        <c:out value="${phone.name}" />
+                                    </a>
+                                </h4>
+                            </div>
                         </div>
                     </div>
                 </div>

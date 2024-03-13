@@ -31,7 +31,7 @@
 
     <div class="row page-titles" style="margin-left: 250px">
         <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor m-b-0 m-t-0">Phone Details</h3>
+            <h3 class="text-themecolor m-b-0 m-t-0">Create Auction</h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/homePage">Home</a></li>
                 <li class="breadcrumb-item"><a href="/phoneDetails?phoneName=${phone.name}">Phone Details</a></li>
