@@ -11,8 +11,6 @@
     <jsp:include page="templates/header.jsp"/>
 </head>
 
-<script src="/dashboard/html/js/showPhoneDetails.js"></script>
-
 <body class="fix-header fix-sidebar card-no-border">
 <div class="preloader">
     <svg class="circular" viewBox="25 25 50 50">
@@ -104,7 +102,7 @@
         <c:if test="${empty isPhoneInFavorites}">
             <div class="create-auction-container">
                 <p id="message-create-auction" style="color: green;">${message}</p>
-                <form method="post" action="/phoneDetails/auction" id="createAuction">
+                <form method="get" action="/phoneDetails/createAuction" id="createAuction">
                     <button type="submit" class="create-auction-button">Create Auction</button>
                 </form>
             </div>
