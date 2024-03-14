@@ -21,9 +21,6 @@ import java.util.Date;
 public class CreateAuctionController {
 
     @Autowired
-    private IPhoneRepository phoneRepository;
-
-    @Autowired
     private PhoneService phoneService;
 
     @GetMapping("/phoneDetails/createAuction")
