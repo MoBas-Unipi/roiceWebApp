@@ -64,7 +64,7 @@ function setupFlatpickr() {
 
     flatpickr("#startingDate", {
         enableTime: true,
-        dateFormat: "Y-m-d\\  H:i", // Include time format (24-hour)
+        dateFormat: "Y-m-d\\  H:i",
         time_24hr: true,
         minDate: "today",
         minTime: "now"
@@ -72,7 +72,7 @@ function setupFlatpickr() {
 
     flatpickr("#endDate", {
         enableTime: true,
-        dateFormat: "Y-m-d\\  H:i", // Include time format (24-hour)
+        dateFormat: "Y-m-d\\  H:i",
         time_24hr: true,
         minDate: "today",
         minTime: "now"
