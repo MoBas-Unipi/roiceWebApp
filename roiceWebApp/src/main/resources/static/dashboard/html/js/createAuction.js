@@ -1,5 +1,3 @@
-// createAuction.js
-
 function setCurrentDatetime() {
     var now = new Date();
     var year = now.getFullYear();
