@@ -16,7 +16,6 @@ function validateForm() {
     var minimumPrice = document.getElementById("minimumPrice").value;
 
     var now = new Date();
-    var currentDatetime = now.toISOString().slice(0, 16); // Get current date and time in "YYYY-MM-DDTHH:mm" format
 
     var error = false;
     if (startingDate === "") {

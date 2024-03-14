@@ -67,11 +67,11 @@
                         <input type="number" id="minimumPrice" name="minimumPrice" step="0.01" min="1" style="margin-left: 20px">
                         <span id="minimumPriceError" style="color: red;"></span>
                     </div>
-                    <input type="hidden" name="phoneName" value="${phone.name}">
                     <button type="submit" class="create-auction-button">Create Auction</button>
-                    <span id="dateError" style="color: red;"></span>
                 </form>
+                <span id="dateError" style="color: red;"></span>
             </div>
+            <p id="auctionMessage" style="color: #3F51B5; margin-left: 418px;">${auctionMessage}</p>
         </div>
     </div>
     <footer class="footer">

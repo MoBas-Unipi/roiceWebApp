@@ -9,14 +9,12 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class PhoneDTO implements Serializable {
-    private String id;
+    private String brand;
     private String name;
     private String picture;
-    //private double price;
     private String batterySize;
     private String batteryType;
     private String body;
-    private String brand;
     private String cameraPixels;
     private String chipset;
     private String displayResolution;
@@ -28,19 +26,13 @@ public class PhoneDTO implements Serializable {
     private String videoPixels;
     private Auction auction;
 
-
-    public PhoneDTO() {
-    }
-
-    public PhoneDTO(String id, String name, String picture, String batterySize, String batteryType, String body, String brand, String cameraPixels, String chipset, String displayResolution, String displaySize, String os, String ram, int releaseYear, String storage, String videoPixels, Auction
-                    auction) {
-        this.id = id;
+    public PhoneDTO(String brand, String name, String picture, String batterySize, String batteryType, String body, String cameraPixels, String chipset, String displayResolution, String displaySize, String os, String ram, int releaseYear, String storage, String videoPixels, Auction auction) {
+        this.brand = brand;
         this.name = name;
         this.picture = picture;
         this.batterySize = batterySize;
         this.batteryType = batteryType;
         this.body = body;
-        this.brand = brand;
         this.cameraPixels = cameraPixels;
         this.chipset = chipset;
         this.displayResolution = displayResolution;
@@ -51,14 +43,6 @@ public class PhoneDTO implements Serializable {
         this.storage = storage;
         this.videoPixels = videoPixels;
         this.auction = auction;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -179,31 +163,5 @@ public class PhoneDTO implements Serializable {
 
     public void setVideoPixels(String videoPixels) {
         this.videoPixels = videoPixels;
-    }
-
-
-    public static PhoneDTO toPhoneDTO(Phone phone) {
-        if (phone == null)
-            return null;
-        PhoneDTO phoneDTO = new PhoneDTO();
-        phoneDTO.setId(phone.getId());
-        phoneDTO.setName(phone.getName());
-        phoneDTO.setPicture(phone.getPicture());
-        phoneDTO.setBatterySize(phone.getBatterySize());
-        phoneDTO.setBatteryType(phone.getBatteryType());
-        phoneDTO.setBody(phone.getBody());
-        phoneDTO.setBrand(phone.getBrand());
-        phoneDTO.setCameraPixels(phone.getCameraPixels());
-        phoneDTO.setChipset(phone.getChipset());
-        phoneDTO.setDisplayResolution(phone.getDisplayResolution());
-        phoneDTO.setDisplaySize(phone.getDisplaySize());
-        phoneDTO.setOs(phone.getOs());
-        phoneDTO.setRam(phone.getRam());
-        phoneDTO.setReleaseYear(phone.getReleaseYear());
-        phoneDTO.setStorage(phone.getStorage());
-        phoneDTO.setVideoPixels(phone.getVideoPixels());
-        phoneDTO.setAuction(phone.getAuction());
-
-        return phoneDTO;
     }
 }
