@@ -35,7 +35,7 @@
                         <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)">
                             <i class="ti-search"></i>
                         </a>
-                        <form class="app-search" action="/searchPhone" method="GET">
+                        <form class="app-search" action="/searchPhones" method="GET">
                             <input type="text" name="name" class="form-control" placeholder="Search & enter">
                             <a class="srh-btn"><i class="ti-close"></i></a>
                         </form>

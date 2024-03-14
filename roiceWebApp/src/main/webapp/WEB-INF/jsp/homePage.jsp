@@ -55,41 +55,17 @@
         <!-- ============================================================== -->
         <!-- End Bread crumb and right sidebar toggle -->
         <!-- ============================================================== -->
+
+
         <!-- ============================================================== -->
         <!-- Start Page Content -->
         <!-- ============================================================== -->
-        <!-- Row -->
-        <div id="phones-container" class="row">
-            <!-- Column -->
-            <c:forEach var="phone" items="${phones}">
-                <div class="col-lg-4 col-xlg-3 col-md-5">
-                    <div class="card">
-                        <div class="card-block">
-                            <div class="m-t-30" style="text-align: center;">
-                                <!-- Redirect to phoneDetails.jsp page on click -->
-                                <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
-                                    <img src="${phone.picture}" class="img-rounded" width="150"/>
-                                </a>
-                                <h4 class="card-title m-t-10">
-                                    <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
-                                        <c:out value="${phone.name}" />
-                                    </a>
-                                </h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </c:forEach>
-        </div>
-        <!-- Row -->
+        <jsp:include page="templates/phonesContainer.jsp"/>
         <!-- ============================================================== -->
         <!-- End Page Content -->
         <!-- ============================================================== -->
     </div>
 
-    <!-- Phone details container -->
-    <!-- This container will be replaced with phone details -->
-    <div id="phone-details-container" class="container"></div>
 
     <div class="row page-titles">
         <div class="col-md-5 col-8 align-self-center">
@@ -100,10 +76,11 @@
     <!-- ============================================================== -->
     <!-- Footer - the style is in style.css   -->
     <!-- ============================================================== -->
-    <jsp:include page="templates/footerHome.jsp">
-        <jsp:param name="currentPage" value="${currentPage}"/>
-        <jsp:param name="totalPages" value="${totalPages}"/>
-        <jsp:param name="size" value="${size}"/>
+    <jsp:include page="templates/footerSearch.jsp">
+        <jsp:param name="currentPage" value="${currentPage}" />
+        <jsp:param name="totalPages" value="${totalPages}" />
+        <jsp:param name="paramName" value="" />
+        <jsp:param name="baseUrl" value="/homePage" />
     </jsp:include>
 
 

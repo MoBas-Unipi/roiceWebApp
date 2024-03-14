@@ -74,7 +74,7 @@ public class HomeController {
      * @param session   The session object to retrieve user information.
      * @return          The name of the view template to render.
      */
-    @GetMapping(value = "/searchPhone")
+    @GetMapping(value = "/searchPhones")
     public String searchPhones(@RequestParam("name") String name,
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "50") int size,
@@ -106,8 +106,8 @@ public class HomeController {
         model.addAttribute("paramName", name);
         model.addAttribute("userClass", userClass);
 
-        // Return the name of the searchPhone view template
-        return "searchPhone";
+        // Return the name of the searchPhones view template
+        return "searchPhones";
     }
 
 

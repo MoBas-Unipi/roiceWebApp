@@ -10,20 +10,20 @@
     <div class="text-center">
         <!-- Previous page button -->
         <c:if test="${currentPage > 0}">
-            <a href="/homePage?page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+            <a href="${baseUrl}?name=${paramName}&page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
                 <i class="mdi mdi-chevron-left"></i> Previous
             </a>
         </c:if>
-
         <!-- Next page button -->
         <c:if test="${currentPage < totalPages - 1}">
-            <a href="/homePage?page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+            <a href="${baseUrl}?name=${paramName}&page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
                 Next <i class="mdi mdi-chevron-right"></i>
             </a>
         </c:if>
-
+        <!-- Page information -->
         <div>
             <p class="small-text">Page ${currentPage + 1} of ${totalPages}</p>
+            <!-- Copyright information -->
             <div class="text-left copyright-text">
                 <c:out value="© 2024 ROICE Web Application" />
             </div>
@@ -31,5 +31,5 @@
     </div>
 </footer>
 
-
 </html>
+
