@@ -2,8 +2,6 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
 import it.unipi.dii.dsmt.roice.model.Auction;
-import it.unipi.dii.dsmt.roice.model.Phone;
-import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
 import it.unipi.dii.dsmt.roice.service.PhoneService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Controller
 public class CreateAuctionController {
@@ -33,8 +29,8 @@ public class CreateAuctionController {
                                 @RequestParam("startingDate") String startingDateString, @RequestParam("endDate") String endDateString,
                                 @RequestParam("minimumPrice") String minimumPriceString) {
 
-        Date startingDate = parseDateString(startingDateString);
-        Date endDate = parseDateString(endDateString);
+        LocalDateTime startingDate = parseDateString(startingDateString);
+        LocalDateTime endDate = parseDateString(endDateString);
         Double minimumPrice = parseDouble(minimumPriceString);
 
         if (startingDate == null || endDate == null || minimumPrice == null) {
@@ -53,11 +49,11 @@ public class CreateAuctionController {
         return "createAuction";
     }
 
-    private Date parseDateString(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private LocalDateTime parseDateString(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm");
         try {
-            return dateFormat.parse(dateString);
-        } catch (ParseException e) {
+            return LocalDateTime.parse(dateString, formatter);
+        } catch (Exception e) {
             // Handle parse exception
             e.printStackTrace();
             return null;

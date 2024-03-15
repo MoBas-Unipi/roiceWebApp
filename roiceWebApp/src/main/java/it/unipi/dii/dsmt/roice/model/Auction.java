@@ -3,17 +3,17 @@ package it.unipi.dii.dsmt.roice.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class Auction {
 
-	private Date startingDate;
-	private Date endDate;
+	private LocalDateTime startingDate;
+	private LocalDateTime endDate;
 	private Double minimumPrice;
 
-	public Auction(Date startingDate, Date endDate, Double minimumPrice) {
+	public Auction(LocalDateTime startingDate, LocalDateTime endDate, Double minimumPrice) {
 		this.startingDate = startingDate;
 		this.endDate = endDate;
 		this.minimumPrice = minimumPrice;
