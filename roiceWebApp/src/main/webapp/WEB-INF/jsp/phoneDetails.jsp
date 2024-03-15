@@ -99,11 +99,19 @@
                 </c:if>
             </div>
         </c:if>
-        <c:if test="${empty isPhoneInFavorites}">
+        <c:if test="${empty isPhoneInFavorites && !isAuctionPresent}">
             <div class="create-auction-container">
                 <p id="message-create-auction" style="color: green;">${message}</p>
                 <form method="get" action="/phoneDetails/createAuction" id="createAuction">
                     <button type="submit" class="create-auction-button">Create Auction</button>
+                </form>
+            </div>
+        </c:if>
+        <c:if test="${empty isPhoneInFavorites && isAuctionPresent}">
+            <div class="create-auction-container">
+                <p id="message-remove-auction" style="color: green;">${message}</p>
+                <form method="get" action="/phoneDetails/removeAuction" id="removeAuction">
+                    <button type="submit" class="create-auction-button">Remove Auction</button>
                 </form>
             </div>
         </c:if>
