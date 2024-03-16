@@ -73,7 +73,7 @@ public class Phone {
 				", chipset='" + chipset + '\'' +
 				", batterySize='" + batterySize + '\'' +
 				", batteryType='" + batteryType + '\'' +
-				", currentAuction='" + auction + '\'' +
+				", auction='" + auction + '\'' +
 				'}';
 	}
 }

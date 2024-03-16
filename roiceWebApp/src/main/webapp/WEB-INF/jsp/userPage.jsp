@@ -145,7 +145,6 @@
         </div>
     </footer>
 
-
 </div>
 
 <!-- Manage buttons JS -->
