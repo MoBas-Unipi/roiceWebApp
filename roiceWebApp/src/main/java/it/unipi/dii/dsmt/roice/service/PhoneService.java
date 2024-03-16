@@ -81,7 +81,7 @@ public class PhoneService {
         Page<Phone> phonePage = phoneRepository.findPhonesWithActiveAuctions(currentDate, pageable);
 
         // Map each Phone entity to a PhoneDTO using the toPhoneDTO method in the PhoneDTO class
-        Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneDTO.toPhoneDTO(phone));
+        Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneMapper.toPhoneDTO(phone));
 
         // Return the page of PhoneDTO objects
         return phoneDTOPage;
