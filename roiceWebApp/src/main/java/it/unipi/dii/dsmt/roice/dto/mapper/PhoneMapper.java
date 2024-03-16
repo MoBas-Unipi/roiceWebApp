@@ -6,32 +6,31 @@ import it.unipi.dii.dsmt.roice.model.Phone;
 
 import java.util.Calendar;
 import java.util.Date;
+import it.unipi.dii.dsmt.roice.dto.UserDTO;
+import it.unipi.dii.dsmt.roice.model.Phone;
+import it.unipi.dii.dsmt.roice.model.User;
 
 public class PhoneMapper {
 
     public static PhoneDTO toPhoneDTO(Phone phone) {
-        if (phone == null)
-            return null;
-        PhoneDTO phoneDTO = new PhoneDTO();
-
-        phoneDTO.setName(phone.getName());
-        phoneDTO.setPicture(phone.getPicture());
-        phoneDTO.setBatterySize(phone.getBatterySize());
-        phoneDTO.setBatteryType(phone.getBatteryType());
-        phoneDTO.setBody(phone.getBody());
-        phoneDTO.setBrand(phone.getBrand());
-        phoneDTO.setCameraPixels(phone.getCameraPixels());
-        phoneDTO.setChipset(phone.getChipset());
-        phoneDTO.setDisplayResolution(phone.getDisplayResolution());
-        phoneDTO.setDisplaySize(phone.getDisplaySize());
-        phoneDTO.setOs(phone.getOs());
-        phoneDTO.setRam(phone.getRam());
-        phoneDTO.setReleaseYear(phone.getReleaseYear());
-        phoneDTO.setStorage(phone.getStorage());
-        phoneDTO.setVideoPixels(phone.getVideoPixels());
-        phoneDTO.setAuction(phone.getAuction());
-
-        return phoneDTO;
+        return new PhoneDTO(
+                phone.getBrand(),
+                phone.getName(),
+                phone.getPicture(),
+                phone.getBatterySize(),
+                phone.getBatteryType(),
+                phone.getBody(),
+                phone.getCameraPixels(),
+                phone.getChipset(),
+                phone.getDisplayResolution(),
+                phone.getDisplaySize(),
+                phone.getOs(),
+                phone.getRam(),
+                phone.getReleaseYear(),
+                phone.getStorage(),
+                phone.getVideoPixels(),
+                phone.getAuction()
+        );
     }
 
     public static Phone toPhone(PhoneDTO phoneDTO) {
@@ -65,5 +64,4 @@ public class PhoneMapper {
 
         return phone;
     }
-
 }

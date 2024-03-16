@@ -2,6 +2,7 @@ package it.unipi.dii.dsmt.roice.service;
 
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
 import it.unipi.dii.dsmt.roice.dto.mapper.PhoneMapper;
+import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 public class PhoneService {
@@ -34,11 +33,11 @@ public class PhoneService {
         Page<Phone> phonePage = phoneRepository.findAll(pageable);
 
         // Mapping each Phone entity to a PhoneDTO using the static method toPhoneDTO in PhoneDTO class
-        Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneMapper.toPhoneDTO(phone));
 
         // Returning the page of PhoneDTO objects
-        return phoneDTOPage;
+        return phonePage.map(PhoneMapper::toPhoneDTO);
     }
+
 
     /**
      * Searches for phones by name and returns a page of PhoneDTO objects using "findByNameContainingIgnoreCase" query
@@ -56,11 +55,26 @@ public class PhoneService {
         Page<Phone> phonePage = phoneRepository.findByNameContainingIgnoreCase(name, pageable);
 
         // Map each Phone entity to a PhoneDTO using the toPhoneDTO method in the PhoneDTO class
-        Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneMapper.toPhoneDTO(phone));
 
         // Return the page of PhoneDTO objects
-        return phoneDTOPage;
+        return phonePage.map(PhoneMapper::toPhoneDTO);
     }
+
+    public PhoneDTO addAuction(String phoneName, Auction auction) {
+        try {
+            Phone phone = phoneRepository.findByName(phoneName);
+            if (phone == null) {
+                return null;
+            }
+            phone.setAuction(auction);
+            phoneRepository.save(phone);
+            return PhoneMapper.toPhoneDTO(phone);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
     /**
@@ -86,8 +100,8 @@ public class PhoneService {
         // Return the page of PhoneDTO objects
         return phoneDTOPage;
     }
-      
-      
+
+
     public boolean addPhone(Phone phone) {
         boolean result = true;
         try {

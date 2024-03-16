@@ -11,8 +11,6 @@
     <jsp:include page="templates/header.jsp"/>
 </head>
 
-<script src="/dashboard/html/js/showPhoneDetails.js"></script>
-
 <body class="fix-header fix-sidebar card-no-border">
 <div class="preloader">
     <svg class="circular" viewBox="25 25 50 50">
@@ -65,14 +63,25 @@
                     <p class="phone-detail-item">Release Year: ${phone.releaseYear}</p>
                 </div>
             </div>
-            <!-- Auction container -->
-            <div class="auction-container">
-                <h3>Auction</h3>
-                <p>Time Remaining: <span id="time-remaining">0 d 0 h 0 m 0 s</span></p>
-                <p>Current Bid: $100</p>
-                <input type="text" class="bid-input" placeholder="Enter your bid">
-                <button class="confirm-bid" onclick="confirmBid()">Confirm Bid</button>
-            </div>
+            <c:if test="${not empty phone.auction}">
+                <c:if test="${not empty isPhoneInFavorites}">
+                    <!-- User Auction container -->
+                    <div class="auction-container">
+                        <h3>Auction</h3>
+                        <p>Time Remaining: <span id="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
+                        <p>Current Bid: $100</p>
+                        <input type="text" class="bid-input" placeholder="Enter your bid">
+                        <button class="confirm-bid-button" onclick="confirmBid()">Confirm Bid</button>
+                    </div>
+                </c:if>
+                <c:if test="${empty isPhoneInFavorites}">
+                    <div class="auction-container">
+                        <h3>Auction</h3>
+                        <p>Time Remaining: <span id="time-remaining-admin">0 d 0 h 0 m 0 s</span></p>
+                        <p>Current Bid: $100</p>
+                    </div>
+                </c:if>
+            </c:if>
         </div>
         <c:if test="${not empty isPhoneInFavorites}">
             <!-- Handle the case when isPhoneInFavorites is set -->
@@ -80,15 +89,28 @@
                 <c:if test="${isPhoneInFavorites}">
                     <p id="message-field" style="color: green;">${message}</p>
                     <form method="post" action="/phoneDetails/phone?phoneName=${phone.name}" id="removeFromFavoritesForm">
-                        <button type="submit" class="add-to-favorites">Remove from Favorites</button>
+                        <button type="submit" class="favorites-button">Remove from Favorites</button>
                     </form>
                 </c:if>
                 <c:if test="${!isPhoneInFavorites}">
                     <p id="message-field" style="color: green;">${message}</p>
                     <form method="post" action="/phoneDetails" id="addToFavoritesForm">
-                        <button type="submit" class="add-to-favorites">Add to Favorites</button>
+                        <button type="submit" class="favorites-button">Add to Favorites</button>
                     </form>
                 </c:if>
+            </div>
+        </c:if>
+        <c:if test="${empty isPhoneInFavorites && !isAuctionPresent}">
+            <div class="create-auction-container">
+                <p id="message-create-auction" style="color: green;">${message}</p>
+                <form method="get" action="/phoneDetails/createAuction" id="createAuction">
+                    <button type="submit" class="create-auction-button">Create Auction</button>
+                </form>
+            </div>
+        </c:if>
+        <c:if test="${empty isPhoneInFavorites && isAuctionPresent}">
+            <div class="create-auction-container">
+                <p id="message-remove-auction" style="color: green;">${message}</p>
             </div>
         </c:if>
     </div>
