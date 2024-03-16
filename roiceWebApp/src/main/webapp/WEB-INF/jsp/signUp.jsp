@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/auth/css/style.css">
 </head>
 
-<script src="/auth/javascript/signupValidation.js"></script>
+<script src="/auth/javascript/formValidation.js"></script>
 
 <body>
 <div class="main">
@@ -25,9 +25,9 @@
             <div class="signup-content">
                 <div class="signup-form">
                     <h2 class="form-title">Sign up</h2>
-                    <form action="${pageContext.request.contextPath}/signUp" method="POST" class="register-form" id="register-form" onsubmit="return validateForm()">
-
-                        <div class="form-group">
+                    <form action="${pageContext.request.contextPath}/signUp" method="POST" class="register-form" id="register-form" onsubmit="return validateForm(
+                            ['firstName', 'lastName', 'email', 'password', 'country', 'city', 'streetName', 'streetNumber'])">
+                    <div class="form-group">
                             <label for="firstName"><i class="zmdi zmdi-account material-icons-name"></i></label>
                             <input type="text" name="firstName" id="firstName" placeholder="First Name" value="${userDTO.firstName}"/>
                             <c:if test="${not empty errorMap['firstName']}">
@@ -98,7 +98,6 @@
                                 </c:choose>
                             </c:if>
                         </div>
-
 
                         <div class="form-group form-button">
                             <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>

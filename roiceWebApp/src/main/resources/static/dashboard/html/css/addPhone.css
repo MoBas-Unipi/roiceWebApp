@@ -1,0 +1,5 @@
+.form-group label {
+    width: 30px; /* Adjust the width as needed */
+    display: inline-block;
+    text-align: center;
+}

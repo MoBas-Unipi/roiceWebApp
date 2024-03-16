@@ -77,7 +77,7 @@ public class UserDTO {
         this.notifications.add(0, notification);
     }
 
-    public void addfavoritePhone(PhonePreview phonePreview) {
+    public void addFavoritePhone(PhonePreview phonePreview) {
         this.favoritePhones.add(0, phonePreview);
     }
 }

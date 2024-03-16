@@ -24,7 +24,7 @@ public class SignUpController {
     private UserService userService;
 
     @Autowired
-    private IGenericUserRepository genericUserMongo;
+    private IGenericUserRepository genericUserRepository;
 
     @GetMapping({
             "/signUp"
@@ -42,10 +42,10 @@ public class SignUpController {
                 errorMap.put(error.getField(), error.getDefaultMessage());
             }
             model.addAttribute("errorMap", errorMap);
-            return "signup"; // Return to the signup page
+            return "signUp"; // Return to the signup page
         }
 
-        Optional<GenericUser> genericUser = genericUserMongo.findByEmail(userDTO.getEmail());
+        Optional<GenericUser> genericUser = genericUserRepository.findByEmail(userDTO.getEmail());
         if (genericUser.isPresent()) {
             model.addAttribute("error", "E-mail already in use");
             return "signUp";
