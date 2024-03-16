@@ -1,6 +1,8 @@
 package it.unipi.dii.dsmt.roice.controller;
 
+import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
+import it.unipi.dii.dsmt.roice.model.Admin;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
@@ -29,6 +31,11 @@ public class PhoneDetailsController {
         if (phone == null) {
             return "redirect:/homePage";
         }
+        if (phone.getAuction() != null) {
+            session.setAttribute("isAuctionPresent", true);
+        } else {
+            session.setAttribute("isAuctionPresent", false);
+        }
 
         if(session.getAttribute("userClass").equals("user")) {
             UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
@@ -36,7 +43,7 @@ public class PhoneDetailsController {
                 return "redirect:/login";
             }
 
-            List<PhonePreview> favoritePhones = currentUser.getFavoritePhones(); // Assuming you have a method to get favorite phones for the current user
+            List<PhonePreview> favoritePhones = currentUser.getFavoritePhones();
 
             model.addAttribute("message", "");
             boolean isPhoneInFavorites = false;
@@ -48,8 +55,15 @@ public class PhoneDetailsController {
                     break;
                 }
             }
-
             session.setAttribute("isPhoneInFavorites", isPhoneInFavorites);
+        } else {
+            AdminDTO currentAdmin = (AdminDTO) session.getAttribute("currentUser");
+            if (currentAdmin == null) {
+                return "redirect:/login";
+            }
+            if (phone.getAuction() != null) {
+                model.addAttribute("message", "Auction added for this phone!");
+            }
         }
         session.setAttribute("phone", phone);
         return "phoneDetails";
@@ -60,7 +74,10 @@ public class PhoneDetailsController {
     public String addFavoritePhone(Model model, HttpSession session) {
         Phone phone = (Phone) session.getAttribute("phone");
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-        if (currentUser == null || phone == null) {
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        if (phone == null) {
             model.addAttribute("error", "Error in adding the phone to the list of favorite phones!");
             return "phoneDetails";
         }
@@ -84,7 +101,10 @@ public class PhoneDetailsController {
     @PostMapping("/phoneDetails/phone")
     public String removeFromFavorites(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-        if (currentUser == null || phoneName == null) {
+        if(currentUser == null) {
+            return "redirect:/login";
+        }
+        if (phoneName == null) {
             model.addAttribute("message", "Error in removing the phone to the list of favorite phones!");
             return "phoneDetails";
         }

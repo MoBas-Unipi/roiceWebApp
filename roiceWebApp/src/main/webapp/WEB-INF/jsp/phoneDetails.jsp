@@ -74,12 +74,13 @@
                         <button class="confirm-bid-button" onclick="confirmBid()">Confirm Bid</button>
                     </div>
                 </c:if>
-                <!-- Admin Auction container -->
-                <div class="auction-container">
-                    <h3>Auction</h3>
-                    <p>Time Remaining: <span id="time-remaining-admin">0 d 0 h 0 m 0 s</span></p>
-                    <p>Current Bid: $100</p>
-                </div>
+                <c:if test="${empty isPhoneInFavorites}">
+                    <div class="auction-container">
+                        <h3>Auction</h3>
+                        <p>Time Remaining: <span id="time-remaining-admin">0 d 0 h 0 m 0 s</span></p>
+                        <p>Current Bid: $100</p>
+                    </div>
+                </c:if>
             </c:if>
         </div>
         <c:if test="${not empty isPhoneInFavorites}">
@@ -110,9 +111,6 @@
         <c:if test="${empty isPhoneInFavorites && isAuctionPresent}">
             <div class="create-auction-container">
                 <p id="message-remove-auction" style="color: green;">${message}</p>
-                <form method="get" action="/phoneDetails/removeAuction" id="removeAuction">
-                    <button type="submit" class="create-auction-button">Remove Auction</button>
-                </form>
             </div>
         </c:if>
     </div>

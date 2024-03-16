@@ -21,6 +21,7 @@ public class CreateAuctionController {
 
     @GetMapping("/phoneDetails/createAuction")
     public String showCreateAuction () {
+
         return "createAuction";
     }
 
@@ -42,11 +43,13 @@ public class CreateAuctionController {
 
         if (phoneDTO == null) {
             model.addAttribute("auctionMessage", "Error in adding the auction!");
+            return "createAuction";
         } else {
-            model.addAttribute("auctionMessage", "Auction added!");
+            model.addAttribute("message", "Auction added for this phone!");
         }
+        session.setAttribute("isAuctionPresent", true);
         session.setAttribute("phone", phoneDTO);
-        return "createAuction";
+        return "phoneDetails";
     }
 
     private LocalDateTime parseDateString(String dateString) {
