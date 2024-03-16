@@ -1,6 +1,8 @@
 package it.unipi.dii.dsmt.roice.controller;
 
+import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
+import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.service.PhoneService;
 import jakarta.servlet.http.HttpSession;
@@ -20,7 +22,12 @@ public class CreateAuctionController {
     private PhoneService phoneService;
 
     @GetMapping("/phoneDetails/createAuction")
-    public String showCreateAuction () {
+    public String showCreateAuction (HttpSession session) {
+
+        AdminDTO currenAdmin = (AdminDTO) session.getAttribute("currentUser");
+        if (currenAdmin == null) {
+            return "redirect:/login";
+        }
 
         return "createAuction";
     }
