@@ -12,8 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Controller
 public class CreateAuctionController {
@@ -37,8 +40,8 @@ public class CreateAuctionController {
                                 @RequestParam("startingDate") String startingDateString, @RequestParam("endDate") String endDateString,
                                 @RequestParam("minimumPrice") String minimumPriceString) {
 
-        LocalDateTime startingDate = parseDateString(startingDateString);
-        LocalDateTime endDate = parseDateString(endDateString);
+        Date startingDate = parseDateString(startingDateString);
+        Date endDate = parseDateString(endDateString);
         Double minimumPrice = parseDouble(minimumPriceString);
 
         if (startingDate == null || endDate == null || minimumPrice == null) {
@@ -59,10 +62,10 @@ public class CreateAuctionController {
         return "phoneDetails";
     }
 
-    private LocalDateTime parseDateString(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm");
+    private Date parseDateString(String dateString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {
-            return LocalDateTime.parse(dateString, formatter);
+            return dateFormat.parse(dateString);
         } catch (Exception e) {
             // Handle parse exception
             e.printStackTrace();

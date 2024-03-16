@@ -4,16 +4,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
 public class Auction {
 
-	private LocalDateTime startingDate;
-	private LocalDateTime endDate;
+	private Date startingDate;
+	private Date endDate;
 	private Double minimumPrice;
 
-	public Auction(LocalDateTime startingDate, LocalDateTime endDate, Double minimumPrice) {
+	public Auction(Date startingDate, Date endDate, Double minimumPrice) {
 		this.startingDate = startingDate;
 		this.endDate = endDate;
 		this.minimumPrice = minimumPrice;

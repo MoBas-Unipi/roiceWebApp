@@ -12,6 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Service
 public class PhoneService {
 
@@ -95,7 +98,7 @@ public class PhoneService {
         Page<Phone> phonePage = phoneRepository.findPhonesWithActiveAuctions(currentDate, pageable);
 
         // Map each Phone entity to a PhoneDTO using the toPhoneDTO method in the PhoneDTO class
-        Page<PhoneDTO> phoneDTOPage = phonePage.map(phone -> PhoneMapper.toPhoneDTO(phone));
+        Page<PhoneDTO> phoneDTOPage = phonePage.map(PhoneMapper::toPhoneDTO);
 
         // Return the page of PhoneDTO objects
         return phoneDTOPage;

@@ -14,12 +14,12 @@ public class PhoneMapper {
 
     public static PhoneDTO toPhoneDTO(Phone phone) {
         return new PhoneDTO(
-                phone.getBrand(),
                 phone.getName(),
                 phone.getPicture(),
                 phone.getBatterySize(),
                 phone.getBatteryType(),
                 phone.getBody(),
+                phone.getBrand(),
                 phone.getCameraPixels(),
                 phone.getChipset(),
                 phone.getDisplayResolution(),
