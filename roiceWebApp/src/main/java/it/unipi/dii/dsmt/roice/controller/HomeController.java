@@ -1,7 +1,6 @@
 package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
-import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.service.PhoneService;
 import it.unipi.dii.dsmt.roice.service.HomeService;
 import jakarta.servlet.http.HttpSession;
@@ -27,8 +26,8 @@ public class HomeController {
      *
      * @param model     The model to add attributes for the view.
      * @param session   The session object to retrieve user information.
-     * @param page      The page number.
-     * @param size      The size of each page.
+     * @param page      The page number for paginating.
+     * @param size      The size of each page for pagination.
      * @return          The name of the view template to render.
      */
     @GetMapping("/homePage")
@@ -69,13 +68,13 @@ public class HomeController {
      * Handles the search for phones by name.
      *
      * @param name      The name to search for.
-     * @param page      The page number.
-     * @param size      The size of each page.
+     * @param page      The page number for paginating.
+     * @param size      The size of each page for pagination.
      * @param model     The model to add attributes for the view.
      * @param session   The session object to retrieve user information.
      * @return          The name of the view template to render.
      */
-    @GetMapping(value = "/searchPhone")
+    @GetMapping(value = "/searchPhones")
     public String searchPhones(@RequestParam("name") String name,
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "50") int size,
@@ -107,8 +106,51 @@ public class HomeController {
         model.addAttribute("paramName", name);
         model.addAttribute("userClass", userClass);
 
-        // Return the name of the searchPhone view template
-        return "searchPhone";
+        // Return the name of the searchPhones view template
+        return "searchPhones";
+    }
+
+
+    /**
+     * Handles the search for phone live auctions.
+     *
+     * @param model    The model to add attributes for the view.
+     * @param session  The session object to retrieve user information.
+     * @param page     The page number for pagination.
+     * @param size     The size of each page for pagination.
+     * @return         The name of the view template to render.
+     */
+    @GetMapping("/searchLiveAuctions")
+    public String searchLiveAuctions(Model model, HttpSession session,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "50") int size) {
+
+        // Ensure page is not negative
+        if (page < 0) {
+            page = 0;
+        }
+
+        // Get the current user from the session
+        Object currentUser = session.getAttribute("currentUser");
+        if (currentUser == null) {
+            // User not logged in, redirect to login page
+            return "redirect:/login";
+        }
+
+        // Extract user class (admin or normal user)
+        String userClass = (String) session.getAttribute("userClass");
+
+        // Execute the query to find phones with live auctions
+        Page<PhoneDTO> liveAuctionPhonesPage = phoneService.getPhonesWithLiveAuctions(page, size);
+
+        // Add results to view
+        model.addAttribute("phones", liveAuctionPhonesPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", liveAuctionPhonesPage.getTotalPages());
+        model.addAttribute("userClass", userClass);
+
+        // Return the name of the searchLiveAuctions view template
+        return "searchLiveAuctions";
     }
 
 

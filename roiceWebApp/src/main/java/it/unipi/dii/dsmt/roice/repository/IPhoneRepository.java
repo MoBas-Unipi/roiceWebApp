@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
+import org.springframework.data.mongodb.repository.Query;
+
+
 
 @Repository
 public interface IPhoneRepository extends MongoRepository<Phone, String> {
@@ -15,5 +19,9 @@ public interface IPhoneRepository extends MongoRepository<Phone, String> {
     Page<Phone> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
     Phone findByName(String phoneName);
+
+    @Query("{'auction.startingDate': {$lte : ?0}, 'auction.endDate': {$gte : ?0}}")
+    Page<Phone> findPhonesWithActiveAuctions(Date currentDate, Pageable pageable);
+
 }
 
