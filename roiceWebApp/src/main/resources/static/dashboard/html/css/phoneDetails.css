@@ -41,13 +41,6 @@ h1 {
     flex-direction: row;
 }
 
-.auction-container {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-left: 20px;
-    color: black;
-}
-
 .bid-input {
     margin-bottom: 10px;
 }
@@ -70,5 +63,5 @@ h1 {
     font-size: 16px; /* Smaller font size */
     margin: 4px 2px;
     cursor: pointer;
-    border-radius: 8px; /* Smaller border radius */
+    border-radius: 8px;
 }

@@ -27,6 +27,11 @@ public class PhoneDetailsController {
 
     @GetMapping("/phoneDetails")
     public String showPhoneDetails(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
+
+        if(session.getAttribute("userClass") == null) {
+            return "redirect:/login";
+        }
+
         Phone phone = phoneRepository.findByName(phoneName);
         if (phone == null) {
             return "redirect:/homePage";
