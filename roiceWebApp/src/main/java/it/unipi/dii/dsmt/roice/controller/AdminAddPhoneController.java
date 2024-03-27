@@ -32,11 +32,15 @@ public class AdminAddPhoneController {
             "/addPhone"
     })
     public String addPhone(HttpSession session) {
-        AdminDTO currentUser = (AdminDTO) session.getAttribute("currentUser");
-        if(currentUser == null) {
-            return "redirect:/login";
+        try {
+            AdminDTO currentUser = (AdminDTO) session.getAttribute("currentUser");
+            if(currentUser == null) {
+                return "redirect:/login";
+            }
+            return "adminAddPhone";
+        } catch (ClassCastException e) {
+            return "redirect:/error";
         }
-        return "adminAddPhone";
     }
 
     @PostMapping("/addPhone")
