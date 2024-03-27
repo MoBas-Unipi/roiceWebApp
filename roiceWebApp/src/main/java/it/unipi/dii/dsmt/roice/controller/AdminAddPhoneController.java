@@ -1,6 +1,8 @@
 package it.unipi.dii.dsmt.roice.controller;
 
+import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
+import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.dto.mapper.PhoneMapper;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 public class AdminAddPhoneController {
@@ -31,7 +32,11 @@ public class AdminAddPhoneController {
     @GetMapping({
             "/addPhone"
     })
-    public String addPhone() {
+    public String addPhone(HttpSession session) {
+        AdminDTO currentUser = (AdminDTO) session.getAttribute("currentUser");
+        if(currentUser == null) {
+            return "redirect:/login";
+        }
         return "adminAddPhone";
     }
 
