@@ -35,7 +35,7 @@ public class AdminAddPhoneController {
         try {
             AdminDTO currentUser = (AdminDTO) session.getAttribute("currentUser");
             if(currentUser == null) {
-                return "redirect:/login";
+                return "redirect:/error";
             }
             return "adminAddPhone";
         } catch (ClassCastException e) {
