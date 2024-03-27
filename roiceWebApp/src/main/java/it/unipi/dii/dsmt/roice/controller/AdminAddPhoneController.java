@@ -2,7 +2,6 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
-import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.dto.mapper.PhoneMapper;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
