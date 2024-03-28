@@ -90,8 +90,16 @@
                                     <div class="card-block">
                                         <div class="m-t-30" style="text-align: center;">
                                             <!-- Display phone image and name -->
-                                            <img src="${auction.phonePicture}" class="img-rounded" width="150"/>
-                                            <h4 class="card-title m-t-10">${auction.phoneName}</h4>
+                                            <a href="/phoneDetails?phoneName=<c:out value="${auction.phoneName}" />">
+                                                <img src="${auction.phonePicture}" class="img-rounded" width="150"/>
+                                            </a>
+                                            <h4 class="card-title m-t-10">
+                                                <a href="/phoneDetails?phoneName=<c:out value="${auction.phoneName}" />">
+                                                    <c:out value="${auction.phoneName}" />
+                                                </a>
+                                            </h4>
+
+
                                             <!-- Additional information -->
                                             <p><strong>Auction Won On:</strong>
                                                 <fmt:formatDate value="${auction.endDate}" pattern="dd/MM/yyyy HH:mm" />
@@ -127,8 +135,15 @@
                                 <div class="card-block">
                                     <div class="m-t-30" style="text-align: center;">
                                         <!-- Display phone image and name -->
-                                        <img src="${phone.picture}" class="img-rounded" width="150"/>
-                                        <h4 class="card-title m-t-10">${phone.name}</h4>
+                                        <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
+                                            <img src="${phone.picture}" class="img-rounded" width="150"/>
+                                        </a>
+                                        <h4 class="card-title m-t-10">
+                                            <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
+                                                <c:out value="${phone.name}" />
+                                            </a>
+                                        </h4>
+
                                     </div>
                                 </div>
                             </div>
