@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <link rel="stylesheet" type="text/css" href="/dashboard/html/css/phoneDetails.css">
+<script src="/websocket/connection.js"></script>
+
 <head>
     <!-- ============================================================== -->
     <!--  Header -->
@@ -62,12 +64,16 @@
                 <p class="phone-detail-item">Release Year: ${phone.releaseYear}</p>
             </div>
             <c:if test="${not empty phone.auction}">
+                <script type="text/javascript">
+                    // If there is an auction init websocket connection
+                    connect();
+                </script>
                 <c:if test="${not empty isPhoneInFavorites}">
                     <!-- User Auction container -->
                     <div class="content-block" style="margin-left: 100px">
                         <h3>Auction</h3>
                         <p>Time Remaining: <span id="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
-                        <p>Current Bid: $100</p>
+                        <p>Current Bid: $<span id="current-bid">100</span></p> <!-- Placeholder for current bid -->
                         <input type="text" class="bid-input" placeholder="Enter your bid">
                         <button class="confirm-bid-button" onclick="confirmBid()">Confirm Bid</button>
                     </div>
