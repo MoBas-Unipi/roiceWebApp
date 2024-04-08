@@ -5,7 +5,7 @@
 %%%   both HTTP and WebSocket.
 %%% @end
 %%%-------------------------------------------------------------------
--module(erws_handler).
+-module(erws_auction_agent).
 
 -behaviour(cowboy_http_handler).
 -behaviour(cowboy_websocket_handler).

@@ -40,7 +40,6 @@
 <script src="/dashboard/html/js/custom.min.js"></script>
 <!-- chartist chart -->
 <script src="/dashboard/assets/plugins/chartist-js/dist/chartist.min.js"></script>
-<script src="/dashboard/assets/plugins/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min.js"></script>
 <!--c3 JavaScript -->
 <script src="/dashboard/assets/plugins/d3/d3.min.js"></script>
 <script src="/dashboard/assets/plugins/c3-master/c3.min.js"></script>
@@ -48,6 +47,5 @@
 <script src="/dashboard/html/js/dashboard1.js"></script>
 <!-- Scroll to Top Button JS -->
 <script src="/dashboard/html/js/scrollToTop.js"></script>
-<script src="/auth/javascript/showPhoneDetails.js"></script>
 
 </html>

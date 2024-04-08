@@ -18,7 +18,7 @@ start(_StartType, _StartArgs) ->
     % Compile Cowboy dispatch rules
     Dispatch = cowboy_router:compile([
         {'_', [
-            {Url, erws_handler, []}
+            {Url, erws_auction_agent, []}
         ]}
     ]),
 
