@@ -4,7 +4,6 @@ const server_url = "ws://localhost:8300/";
 
 // Function to establish WebSocket connection
 function connect() {
-
     if (!("WebSocket" in window)) {
         alert("This browser does not support WebSockets");
         return;
@@ -26,12 +25,20 @@ function connect() {
         document.getElementById('current-bid').innerText = received_msg;
     };
 
-    ws.onclose = function()
-    {
+    // Event handler for WebSocket connection close
+    ws.onclose = function() {
         console.log('Connection closed');
     };
-
 }
 
-
-
+// Function to send join auction message
+function sendJoinAuctionRequest() {
+    // Retrieve email of the current user from JSP
+    var email = "${currentUser.email}";
+    // Inform the server that a bidder is joining the auction
+    const message = {
+        action: "join_auction",
+        email: email
+    };
+    ws.send(JSON.stringify(message));
+}

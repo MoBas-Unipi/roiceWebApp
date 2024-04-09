@@ -64,10 +64,10 @@
                 <p class="phone-detail-item">Battery Type: ${phone.batteryType}</p>
                 <p class="phone-detail-item">Release Year: ${phone.releaseYear}</p>
             </div>
-            <c:if test="${not empty phone.auction}">
+            <c:if test="${not empty phone.auction && userClass == 'user'}">
                 <script type="text/javascript">
                     // If there is an auction init websocket connection
-                    connect();
+                    sendJoinAuctionRequest();
                 </script>
                 <c:if test="${not empty isPhoneInFavorites}">
                     <!-- User Auction container -->

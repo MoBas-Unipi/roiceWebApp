@@ -135,11 +135,14 @@ handle_websocket_frame(Map, State) ->
 
   case Action of
     <<"new_auction">> -> % Handle new auction action
-      handle_new_auction(Map, State);
+      {ok, AuctionPid} = handle_new_auction(Map, State);
+    <<"join_auction">> -> % Handle join auction action
+      handle_join_auction(Map, State);
     _ ->
       logger:info("[erws_handler] handle_websocket_frame => Unknown action: ~p~n", [Action]),
       {ok, State}
   end.
+
 
 handle_new_auction(Map, State) ->
   logger:info("[erws_handler] handle_new_auction => Map is ~p~n", [Map]),
@@ -151,18 +154,29 @@ handle_new_auction(Map, State) ->
       CurrentDate = erlang:system_time(second),
       Delay = StartDate - CurrentDate,
       AuctionTime = EndDate - StartDate,
-      if
-        Delay > 0 ->
+      case Delay > 0 of
+        true ->
           timer:sleep(Delay * 1000),
           AuctionPid = spawn(fun() -> auction_handle(State, ?initVal, AuctionTime) end),
-          logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]);
-        true ->
-          logger:info("Start date has already passed, cannot spawn auction process.~n")
+          logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
+          {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
+        false ->
+          logger:info("Start date has already passed, cannot spawn auction process.~n"),
+          undefined % Return undefined or any other value to indicate failure
       end;
     false ->
-      logger:info("[erws_handler] handle_new_auction => Invalid start date~n")
-  end,
-  {ok, State}.
+      logger:info("[erws_handler] handle_new_auction => Invalid start date~n"),
+      undefined % Return undefined or any other value to indicate failure
+  end.
+
+
+
+handle_join_auction(Map, AuctionPid) ->
+  Email = maps:get(<<"email">>, Map),
+  erws_bidder_handler:start(AuctionPid, Email),
+  logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n",
+    [AuctionPid]),
+  {ok, AuctionPid}.
 
 
 % Handle WebSocket timeout messages
