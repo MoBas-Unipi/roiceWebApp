@@ -33,33 +33,5 @@ function connect() {
 
 }
 
-// Function to send a json message
-function send(message) {
-    if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(message));
-        console.log("Message sent :", message);
-    } else {
-        console.error("WebSocket connection is not open.");
-    }
-}
-
-
-// Function to send a message containing the bid
-function confirmBid() {
-    // Get the input value from "bid-input" field
-    let bidInput = document.querySelector('.bid-input').value;
-
-    // Convert the bid input to an integer
-    let bidAmount = parseFloat(bidInput);
-
-    // Check if the bid input is not empty and is a valid integer
-    if (!isNaN(bidAmount)) {
-        // Send the bid to the web socket
-        send(bidAmount);
-    } else {
-        console.error("Invalid bid input.");
-    }
-}
-
 
 

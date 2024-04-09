@@ -5,7 +5,7 @@
   {mod, {erws_app, []}},
   {applications,
    [kernel,stdlib,crypto,cowboy,
-    compiler,syntax_tools
+    compiler,syntax_tools, jsone
    ]},
   {env,
    [

@@ -31,7 +31,6 @@ public class CreateAuctionController {
         if (currenAdmin == null) {
             return "redirect:/login";
         }
-
         return "createAuction";
     }
 

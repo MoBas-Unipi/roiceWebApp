@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <link rel="stylesheet" type="text/css" href="/dashboard/html/css/phoneDetails.css">
 <script src="/websocket/connection.js"></script>
+<script src="/dashboard/html/js/handleAuction.js"></script>
 
 <head>
     <!-- ============================================================== -->
