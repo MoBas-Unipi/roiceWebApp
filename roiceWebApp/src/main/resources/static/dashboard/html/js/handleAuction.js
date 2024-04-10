@@ -104,7 +104,7 @@ function confirmBid() {
     }
 }
 
-function createErlangAuction() {
+function createErlangAuction(phoneName) {
     // Get form inputs
     var startingDate = document.getElementById("startingDate").value;
     var endDate = document.getElementById("endDate").value;
@@ -118,6 +118,7 @@ function createErlangAuction() {
         action: "new_auction", // Set action to "new_auction"
         startSeconds: startSeconds, // Include StartDate field in seconds
         endSeconds: endSeconds, // Include EndDate field in seconds
+        phoneName: phoneName // Include phoneName
     };
 
     // Convert JSON to string
@@ -154,12 +155,12 @@ function createErlangAuction() {
     };
 }
 
-function validateAndCreateAuction() {
+function validateAndCreateAuction(phoneName) {
     // Call the validateForm() function
     var isValid = validateForm();
     // If the form is valid, proceed to create auction
     if (isValid) {
-        createErlangAuction();
+        createErlangAuction(phoneName);
     }
 }
 
