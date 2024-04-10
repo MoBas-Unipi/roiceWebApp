@@ -32,13 +32,17 @@ function connect() {
 }
 
 // Function to send join auction message
-function sendJoinAuctionRequest() {
-    // Retrieve email of the current user from JSP
-    var email = "${currentUser.email}";
-    // Inform the server that a bidder is joining the auction
-    const message = {
-        action: "join_auction",
-        email: email
-    };
-    ws.send(JSON.stringify(message));
+function sendJoinAuctionRequest(email) {
+    // Delay startTimer() execution by 3 seconds
+    setTimeout(function() {
+        // Retrieve email of the current user from JSP
+        console.log("User email",email);
+        // Inform the server that a bidder is joining the auction
+        const message = {
+            action: "join_auction",
+            email: email
+        };
+        ws.send(JSON.stringify(message));
+    }, 500); // Delay of 0.5 seconds
 }
+

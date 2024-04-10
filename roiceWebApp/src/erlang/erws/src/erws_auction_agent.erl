@@ -17,6 +17,7 @@ init(Req, State) ->
   {cowboy_websocket, Req, State}.
 
 
+
 % Handle HTTP requestsagent
 handle(Req, State) ->
   logger:debug("[erws_auction_agent] - handle => Request not expected: ~p", [Req]),
@@ -159,6 +160,9 @@ handle_new_auction(Map, State) ->
           timer:sleep(Delay * 1000),
           AuctionPid = spawn(fun() -> auction_handle(State, ?initVal, AuctionTime) end),
           logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
+          erws_mnesia:save_auction_pid(AuctionPid), % Save the PID in Mnesia
+          % Stampare il contenuto del database Mnesia
+          erws_mnesia:print_mnesia_content(),
           {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
         false ->
           logger:info("Start date has already passed, cannot spawn auction process.~n"),

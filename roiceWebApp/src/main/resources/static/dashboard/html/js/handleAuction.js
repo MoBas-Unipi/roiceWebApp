@@ -98,7 +98,11 @@ function confirmBid() {
     // Check if the bid input is not empty and is a valid integer
     if (!isNaN(bidAmount)) {
         // Send the bid to the web socket
-        send(bidAmount);
+        let message = {
+            action : "send",
+            value: bidAmount
+        };
+        send(message);
     } else {
         console.error("Invalid bid input.");
     }
