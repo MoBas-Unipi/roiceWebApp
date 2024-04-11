@@ -139,6 +139,9 @@ handle_websocket_frame(Map, State) ->
       {ok, AuctionPid} = handle_new_auction(Map, State);
     <<"join_auction">> -> % Handle join auction action
       handle_join_auction(Map, State);
+    <<"send">> ->
+        handle_send_bid(Map,State);
+
     _ ->
       logger:info("[erws_handler] handle_websocket_frame => Unknown action: ~p~n", [Action]),
       {ok, State}
@@ -181,6 +184,23 @@ handle_join_auction(Map, AuctionPid) ->
   logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n",
     [AuctionPid]),
   {ok, AuctionPid}.
+
+
+handle_send_bid(Map, State) ->
+  %lookup auction pid in the DB
+  PhoneName = maps:get(<<"phone_name">>, Map),
+  CurrentWinner = maps:get(<<"email">>, Map),
+  BidDate = maps:get(<<"date">>, Map),
+  BidValue = maps:get(<<"value">>, Map),
+  logger:info("Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n",[PhoneName,CurrentWinner,BidDate,BidValue]),
+
+  % Save bid to the bid table
+  erws_mnesia:save_bid(PhoneName, CurrentWinner, BidDate, BidValue),
+
+  % Display saved bids in the DB
+  erws_mnesia:print_bids(),
+  {ok, State}.
+
 
 
 % Handle WebSocket timeout messages

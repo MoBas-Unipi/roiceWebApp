@@ -68,7 +68,7 @@
                 <script type="text/javascript">
                     // If there is an auction init websocket connection
                     var email = "${currentUser.email}";
-                    sendJoinAuctionRequest(email);
+                    //sendJoinAuctionRequest(email);
                 </script>
                 <c:if test="${not empty isPhoneInFavorites}">
                     <!-- User Auction container -->
@@ -77,7 +77,10 @@
                         <p>Time Remaining: <span id="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
                         <p>Current Bid: $<span id="current-bid">100</span></p> <!-- Placeholder for current bid -->
                         <input type="text" class="bid-input" placeholder="Enter your bid">
-                        <button class="confirm-bid-button" onclick="confirmBid()">Confirm Bid</button>
+                        <script>
+                            var phone_name = "${phone.name}";
+                        </script>
+                        <button class="confirm-bid-button" onclick="confirmBid(email,phone_name)">Confirm Bid</button>
                     </div>
                 </c:if>
                 <c:if test="${empty isPhoneInFavorites}">

@@ -88,7 +88,7 @@ function send(message) {
 
 
 // Function to send a message containing the bid
-function confirmBid() {
+function confirmBid(email,phone_name) {
     // Get the input value from "bid-input" field
     let bidInput = document.querySelector('.bid-input').value;
 
@@ -97,9 +97,16 @@ function confirmBid() {
 
     // Check if the bid input is not empty and is a valid integer
     if (!isNaN(bidAmount)) {
+        // Get current date and time as a string in ISO format
+        let currentDate = new Date().toISOString();
+        console.log("Bid date: ",currentDate);
+
         // Send the bid to the web socket
         let message = {
             action : "send",
+            phone_name : phone_name,
+            email : email,
+            date: currentDate,
             value: bidAmount
         };
         send(message);
