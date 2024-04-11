@@ -31,7 +31,10 @@
     <!-- ============================================================== -->
     <jsp:include page="templates/leftSidebar.jsp"/>
 
-
+    <script type="text/javascript">
+        // If there is an auction init websocket connection
+        connect();
+    </script>
     <div class="container-fluid" style="overflow-y: auto;max-height: 85vh">
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
@@ -65,7 +68,7 @@
                 <p class="phone-detail-item">Release Year: ${phone.releaseYear}</p>
             </div>
             <c:if test="${not empty phone.auction && userClass == 'user'}">
-                <script type="text/javascript">
+                <script>
                     // If there is an auction init websocket connection
                     var email = "${currentUser.email}";
                     sendJoinAuctionRequest(email);
