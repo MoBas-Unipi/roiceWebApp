@@ -122,7 +122,7 @@ print_bid(#bid{phone_name = PhoneName, current_winner_user_email = WinnerEmail, 
     logger:info("Bid found in the table: Phone Name: ~p, Winner Email: ~p, Bid Date: ~p, Bid Value: ~p~n", [PhoneName, WinnerEmail, BidDate, BidValue]).
 
 
-% Get bit from mnesia db
+% Get bid record information by phone name from BID table of MNESIA DB
 get_bid(PhoneName) ->
     %% Avvio di una transazione per leggere dalla tabella bid
     {atomic, Result} = mnesia:transaction(fun() ->
