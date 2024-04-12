@@ -9,7 +9,7 @@
 -module(erws_bidder_handler).
 
 %% Exported Functions
--export([start/2,init_bidder/2,process_requests/0]).
+-export([start/2,init_bidder/2,process_requests/0,process_bid/4]).
 
 %% API Functions
 %% Create a bidder process
@@ -51,4 +51,11 @@ process_commands(AgentPid, BidderName, BidderPid) ->
       AgentPid ! {send, BidderName, Text, BidderPid},
       process_commands(AgentPid, BidderName, BidderPid)
   end.
+
+
+% Function to process the bid received from an user
+process_bid(AuctionPid, BidderEmail, BidderPid, BidValue) ->
+    AuctionPid ! {send, BidderEmail, BidValue, BidderPid}.
+
+
 

@@ -187,15 +187,30 @@ handle_join_auction(Map, AuctionPid) ->
 
 
 handle_send_bid(Map, State) ->
-  %lookup auction pid in the DB
+  % Get attributes from map
   PhoneName = maps:get(<<"phone_name">>, Map),
-  CurrentWinner = maps:get(<<"email">>, Map),
+  BidderEmail = maps:get(<<"email">>, Map),
   BidDate = maps:get(<<"date">>, Map),
   BidValue = maps:get(<<"value">>, Map),
-  logger:info("Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n",[PhoneName,CurrentWinner,BidDate,BidValue]),
+  logger:info("Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n",[PhoneName,BidderEmail,BidDate,BidValue]),
 
-  % Save bid to the bid table
-  erws_mnesia:save_bid(PhoneName, CurrentWinner, BidDate, BidValue),
+  % TODO Get the AuctionPid from auction table in the DB
+  %AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+  %logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
+
+  % TODO Get the BidderPid from bidder table in the DB
+
+  % TODO call the erws_bidder_handler function to send the bid
+  %erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue),
+
+  % Save bid to the bid table (TODO: IF THE NEW BID IS HIGHER)
+  erws_mnesia:save_bid(PhoneName, BidderEmail, BidDate, BidValue),
+
+
+  % Get the newly inserted bid record from the bid table
+  NewBidRecord = erws_mnesia:get_bid(PhoneName),
+  logger:info("Bid record saved in BID table of MNESIA DB: ~p~n", [NewBidRecord]),
+
 
   % Display saved bids in the DB
   erws_mnesia:print_bids(),
