@@ -10,13 +10,9 @@
   websocket_terminate/3
 ]).
 
--define(initVal, 200).
-
 % Initialize WebSocket connection
 init(Req, State) ->
   {cowboy_websocket, Req, State}.
-
-
 
 % Handle HTTP requestsagent
 handle(Req, State) ->
@@ -34,32 +30,6 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
       broadcast(NewBidders, {join, Name, Bid}),
       auction_handle(NewBidders, Bid, EndDate - erlang:system_time(second), EndDate);
 
-  %% Receive LEAVE request from a Bidder
-    {bidder_leave, Name, From} ->
-      logger:info("Bidder ~w LEAVES.~n", [Name]),
-      % Delete Bidder from the list and broadcast the new list to rest of bidders
-      NewBidders = lists:keydelete(From, 1, Bidders),
-      if
-      %% If new list is empty, send a message to the node leaving
-        NewBidders == [] ->
-          Bid2 = ?initVal,
-          broadcast(Bidders, {leave, Name, Bid2});
-        true ->
-          %% If new list not empty, change its structure in order to find the max bid in the list
-          ModBidders = changeStrc(NewBidders, []),
-          %% Bid2 has the max bid of the list of peers
-          {Bid2, [User, _]} = lists:max(ModBidders),
-          if
-          %% If Bid2 is less than initial value, it broadcasts the initial value
-            Bid2 < ?initVal ->
-              broadcast(Bidders, {leave, Name, ?initVal});
-            true ->
-              %% Else, it broadcasts the Bid2 and the bidder doing this bid
-              broadcast(Bidders, {leave, Name, Bid2, User})
-          end
-      end,
-      auction_handle(NewBidders, Bid2, EndDate - erlang:system_time(second), EndDate);
-
   %% Receive BID message from a Bidder
     {send, Name, NewBid, From} ->
       % If received bid is higher than existing one, delete old bid of this Bidder
@@ -75,7 +45,7 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
           %% Else IGNORE it!
           auction_handle(Bidders, Bid, EndDate - erlang:system_time(second), EndDate)
       end
-    after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
+  after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
     logger:info("Auction timeout reached after ~p seconds~n", [AuctionTime]),
     %% Your timeout logic here
     case Bidders of
@@ -141,7 +111,7 @@ handle_websocket_frame(Map, State) ->
 
       {ok, AuctionPid} = handle_join_auction(Map, State);
     <<"send">> ->
-        handle_send_bid(Map,State);
+      handle_send_bid(Map,State);
 
     _ ->
       logger:info("[erws_handler] handle_websocket_frame => Unknown action: ~p~n", [Action]),
@@ -162,7 +132,8 @@ handle_new_auction(Map, State) ->
       case Delay > 0 of
         true ->
           timer:sleep(Delay * 1000),
-          AuctionPid = spawn(fun() -> auction_handle(State, ?initVal, AuctionTime, EndDate) end),
+          MinimumPrice = maps:get(<<"minimumPrice">>, Map),
+          AuctionPid = spawn(fun() -> auction_handle(State, MinimumPrice, AuctionTime, EndDate) end),
           logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
           PhoneName = maps:get(<<"phoneName">>, Map),
           erws_mnesia:save_auction(PhoneName, AuctionPid),
@@ -191,15 +162,30 @@ handle_join_auction(Map, State) ->
 
 
 handle_send_bid(Map, State) ->
-  %lookup auction pid in the DB
+  % Get attributes from map
   PhoneName = maps:get(<<"phone_name">>, Map),
-  CurrentWinner = maps:get(<<"email">>, Map),
+  BidderEmail = maps:get(<<"email">>, Map),
   BidDate = maps:get(<<"date">>, Map),
   BidValue = maps:get(<<"value">>, Map),
-  logger:info("Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n",[PhoneName,CurrentWinner,BidDate,BidValue]),
+  logger:info("Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n",[PhoneName,BidderEmail,BidDate,BidValue]),
 
-  % Save bid to the bid table
-  erws_mnesia:save_bid(PhoneName, CurrentWinner, BidDate, BidValue),
+  % TODO Get the AuctionPid from auction table in the DB
+  %AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+  %logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
+
+  % TODO Get the BidderPid from bidder table in the DB
+
+  % TODO call the erws_bidder_handler function to send the bid
+  %erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue),
+
+  % Save bid to the bid table (TODO: IF THE NEW BID IS HIGHER)
+  erws_mnesia:save_bid(PhoneName, BidderEmail, BidDate, BidValue),
+
+
+  % Get the newly inserted bid record from the bid table
+  NewBidRecord = erws_mnesia:get_bid(PhoneName),
+  logger:info("Bid record saved in BID table of MNESIA DB: ~p~n", [NewBidRecord]),
+
 
   % Display saved bids in the DB
   erws_mnesia:print_bids(),

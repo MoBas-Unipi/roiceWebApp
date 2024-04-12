@@ -124,11 +124,13 @@ function createErlangAuction(phoneName) {
     var startSeconds = Date.parse(startingDate) / 1000;
     var endSeconds = Date.parse(endDate) / 1000;
 
+    var minimumPrice = parseInt(document.getElementById("minimumPrice").value);
     // Construct JSON object
     var auctionData = {
         action: "new_auction", // Set action to "new_auction"
         startSeconds: startSeconds, // Include StartDate field in seconds
         endSeconds: endSeconds, // Include EndDate field in seconds
+        minimumPrice: minimumPrice,
         phoneName: phoneName // Include phoneName
     };
 
@@ -182,7 +184,7 @@ function sendJoinAuctionRequest(email, phoneName) {
         const message = {
             action: "join_auction",
             email: email,
-            phoneName:  phoneName
+            phoneName: phoneName
         };
         ws.send(JSON.stringify(message));
     }, 1000);
