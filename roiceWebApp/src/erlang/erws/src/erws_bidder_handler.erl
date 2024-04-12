@@ -28,34 +28,13 @@ process_requests() ->
     {join, Name, Bid} ->
       logger:info("[JOIN] ~s joins the auction. Current Bid: ~p ~n", [Name,Bid]),
       process_requests();
-    {leave, Name, Bid} ->
-      %io:format("[LEAVE] ~s leaves the auction. Current Bid: ~p ~n", [Name,Bid]),
-      logger:info("[LEAVE] ~w leaves the auction. Current Bid: ~w ~n", [Name,Bid]),
-      logger:info("no one left with the bid so again initial amount ~p ~n", [Bid]),
-      process_requests();
-    {leave, Name, Bid, NewUser} ->
-      logger:info("[LEAVE] ~s leaves the auction. New highest Bidder: ~p. Bid: ~p ~n", [Name,NewUser,Bid]),
-      process_requests();
     {message, Name, Text} ->
-      logger:info("[BID] ~s wants to update bid to ~w ~n", [Name, Text]),
+      logger:info("[BID] New Bid of ~p from ~p~n", [Text, Name]),
       process_requests()
   end.
 
-process_commands(AgentPid, BidderName, BidderPid) ->
-  %% Read from standard input the bid from user and send it to server
-  {ok, Text} = io:fread("Bid to win! Your Bid: ", "~d"),
-  if
-    Text == -1 ->	%% If bid is -1, then the bidder leaves the auction.
-      AgentPid ! {bidder_leave, BidderName, BidderPid};
-    true ->
-      AgentPid ! {send, BidderName, Text, BidderPid},
-      process_commands(AgentPid, BidderName, BidderPid)
-  end.
-
-
 % Function to process the bid received from an user
 process_bid(AuctionPid, BidderEmail, BidderPid, BidValue) ->
-    logger:info("New Bid made by ~p~n of ~p~n",[BidderEmail,BidValue]),
     AuctionPid ! {send, BidderEmail, BidValue, BidderPid}.
 
 
