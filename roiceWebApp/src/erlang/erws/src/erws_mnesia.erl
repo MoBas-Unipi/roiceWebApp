@@ -4,6 +4,7 @@
 -record(auction,{phone_name, auction_pid}).
 -record(bid, {phone_name, current_winner_user_email, bid_date, bid_value}).
 
+
 setup_tables() ->
     mnesia:create_schema([node()]),
     mnesia:start(),
