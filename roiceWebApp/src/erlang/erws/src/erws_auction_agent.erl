@@ -36,7 +36,7 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
       % and broadcast new bid of Bidder
       logger:info("name: ~w, NewBid: ~w, Bid: ~w, From: ~w ~n", [Name, NewBid, Bid, From]),
       if
-        Bid > NewBid ->
+        Bid < NewBid ->
           NewBidders = lists:keydelete(Name, 2, Bidders),
           logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", From]),
           broadcast([{From, Name, NewBid} | NewBidders], {message, Name, NewBid}),
@@ -106,10 +106,9 @@ handle_websocket_frame(Map, State) ->
 
   case Action of
     <<"new_auction">> -> % Handle new auction action
-      {ok, AuctionPid} = handle_new_auction(Map, State);
+      handle_new_auction(Map, State);
     <<"join_auction">> -> % Handle join auction action
-
-      {ok, AuctionPid} = handle_join_auction(Map, State);
+      handle_join_auction(Map, State);
     <<"send">> ->
       handle_send_bid(Map,State);
 
