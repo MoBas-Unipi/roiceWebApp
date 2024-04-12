@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <link rel="stylesheet" type="text/css" href="/dashboard/html/css/phoneDetails.css">
 <script src="/websocket/connection.js"></script>
-<script src="/dashboard/html/js/handleAuction.js"></script>
+<script src="/websocket/handleAuction.js"></script>
 
 <head>
     <!-- ============================================================== -->
@@ -68,7 +68,8 @@
                 <script>
                     // If there is an auction init websocket connection
                     var email = "${currentUser.email}";
-                    //sendJoinAuctionRequest(email);
+                    var phoneName = "${phone.name}";
+                    sendJoinAuctionRequest(email, phoneName);
                 </script>
                 <c:if test="${not empty isPhoneInFavorites}">
                     <!-- User Auction container -->

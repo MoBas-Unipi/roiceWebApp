@@ -13,9 +13,9 @@
 
 %% API Functions
 %% Create a bidder process
-start(AgentPid, BidderName) ->
-  BidderPid = spawn(erws_bidder_handler, init_bidder, [AgentPid, BidderName]),
-  process_commands(AgentPid, BidderName, BidderPid).
+start(AuctionPid, BidderName) ->
+  BidderPid = spawn(erws_bidder_handler, init_bidder, [AuctionPid, BidderName]).
+%%  process_commands(AuctionPid, BidderName, BidderPid).
 
 %% Initialize bidder process - send to agent bidder's information
 init_bidder(AgentPid, BidderName) ->

@@ -4,7 +4,7 @@
   init/2,
   handle/2,
   terminate/3,
-  auction_handle/3,
+  auction_handle/4,
   websocket_handle/2,
   websocket_info/3,
   websocket_terminate/3
@@ -25,14 +25,14 @@ handle(Req, State) ->
   {ok, Req2, State}.
 
 % Handle auction messages
-auction_handle(Bidders, Bid, AuctionTime) ->
+auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
   receive
   %% Receive JOIN request from a Bidder
     {bidder_join, Name, From} ->
       % Add Bidder into the list and broadcast the new list
       NewBidders = [{From, Name, 0} | Bidders],
       broadcast(NewBidders, {join, Name, Bid}),
-      auction_handle(NewBidders, Bid, []);
+      auction_handle(NewBidders, Bid, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive LEAVE request from a Bidder
     {bidder_leave, Name, From} ->
@@ -58,7 +58,7 @@ auction_handle(Bidders, Bid, AuctionTime) ->
               broadcast(Bidders, {leave, Name, Bid2, User})
           end
       end,
-      auction_handle(NewBidders, Bid2, []);
+      auction_handle(NewBidders, Bid2, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive BID message from a Bidder
     {send, Name, NewBid, From} ->
@@ -70,10 +70,10 @@ auction_handle(Bidders, Bid, AuctionTime) ->
           NewBidders = lists:keydelete(Name, 2, Bidders),
           logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", From]),
           broadcast([{From, Name, NewBid} | NewBidders], {message, Name, NewBid}),
-          auction_handle([{From, Name, NewBid} | NewBidders], NewBid, []);
+          auction_handle([{From, Name, NewBid} | NewBidders], NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
           %% Else IGNORE it!
-          auction_handle(Bidders, Bid, [])
+          auction_handle(Bidders, Bid, EndDate - erlang:system_time(second), EndDate)
       end
     after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
     logger:info("Auction timeout reached after ~p seconds~n", [AuctionTime]),
@@ -138,7 +138,8 @@ handle_websocket_frame(Map, State) ->
     <<"new_auction">> -> % Handle new auction action
       {ok, AuctionPid} = handle_new_auction(Map, State);
     <<"join_auction">> -> % Handle join auction action
-      handle_join_auction(Map, State);
+
+      {ok, AuctionPid} = handle_join_auction(Map, State);
     <<"send">> ->
         handle_send_bid(Map,State);
 
@@ -161,11 +162,11 @@ handle_new_auction(Map, State) ->
       case Delay > 0 of
         true ->
           timer:sleep(Delay * 1000),
-          AuctionPid = spawn(fun() -> auction_handle(State, ?initVal, AuctionTime) end),
+          AuctionPid = spawn(fun() -> auction_handle(State, ?initVal, AuctionTime, EndDate) end),
           logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
           PhoneName = maps:get(<<"phoneName">>, Map),
-          erws_mnesia:save_auction(AuctionPid, PhoneName),
-          erws_mnesia:print_mnesia_content(),
+          erws_mnesia:save_auction(PhoneName, AuctionPid),
+          erws_mnesia:print_auctions(),
           {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
         false ->
           logger:info("Start date has already passed, cannot spawn auction process.~n"),
@@ -178,12 +179,15 @@ handle_new_auction(Map, State) ->
 
 
 
-handle_join_auction(Map, AuctionPid) ->
+handle_join_auction(Map, State) ->
   Email = maps:get(<<"email">>, Map),
+  PhoneName = maps:get(<<"phoneName">>, Map),
+  AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+  logger:info("[erws_handler] handle_join_auction => The phone ~p has the following PID: ~p~n", [PhoneName, AuctionPid]),
   erws_bidder_handler:start(AuctionPid, Email),
   logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n",
     [AuctionPid]),
-  {ok, AuctionPid}.
+  {ok, State}.
 
 
 handle_send_bid(Map, State) ->
