@@ -1,7 +1,7 @@
 -module(erws_mnesia).
--export([setup_tables/0,create_auction_table/0,save_auction/2,print_mnesia_content/0,save_bid/4, print_bids/0, get_bid/1]).
+-export([setup_tables/0,create_auction_table/0,save_auction/2,print_auctions/0,get_auction_pid/1,save_bid/4,print_bids/0,get_bid/1]).
 
--record(auction,{auction_pid, phone_name}).
+-record(auction,{phone_name, auction_pid}).
 -record(bid, {phone_name, current_winner_user_email, bid_date, bid_value}).
 
 setup_tables() ->
@@ -24,13 +24,13 @@ create_auction_table() ->
             logger:error("Error creating auction table: ~p~n", [Reason])
     end.
 
-save_auction(AuctionPid, PhoneName) ->
+save_auction(PhoneName, AuctionPid) ->
     F = fun() ->
-        mnesia:write(#auction{auction_pid = AuctionPid, phone_name = PhoneName})
+        mnesia:write(#auction{phone_name = PhoneName, auction_pid = AuctionPid})
         end,
     mnesia:activity(transaction, F).
 
-print_mnesia_content() ->
+print_auctions() ->
     F = fun() ->
         case mnesia:dirty_all_keys(auction) of
             [] ->
@@ -45,19 +45,30 @@ process_auction_list([]) ->
 process_auction_list([Key | Rest]) ->
     case mnesia:dirty_read({auction, Key}) of
         [] ->
-            logger:error("Auction with key ~p not found in the table~n", [Key]),
+            logger:error("Auction for the Phone ~p not found in the table~n", [Key]),
             process_auction_list(Rest);
         [Auction] ->
             print_auction(Auction),
             process_auction_list(Rest)
     end.
 
-print_auction(#auction{ auction_pid = AuctionPid, phone_name = PhoneName}) ->
-    logger:info("Auction found in the table: Auction Pid: ~p, Phone Name: ~p~n", [AuctionPid, PhoneName]).
+print_auction(#auction{phone_name = PhoneName, auction_pid = AuctionPid}) ->
+    logger:info("Auction found in the table: Phone Name: ~p, Auction Pid: ~p~n", [PhoneName, AuctionPid]).
+
+get_auction_pid(PhoneName) ->
+    {atomic, Result} = mnesia:transaction(fun() ->
+        case mnesia:read(auction, PhoneName) of
+            [AuctionRecord] ->
+                AuctionRecord#auction.auction_pid;
+            [] ->
+                not_found
+        end
+                                          end),
+    Result.
+
 
 %-------------------------BID Table Functions------------------------%
 
-% Creates or checks existence of Mnesia bid table.
 create_bid_table() ->
     case mnesia:create_table(bid, [{attributes, record_info(fields, bid)}]) of
         {atomic, ok} ->

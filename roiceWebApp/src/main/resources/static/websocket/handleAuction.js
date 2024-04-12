@@ -175,3 +175,18 @@ function validateAndCreateAuction(phoneName) {
     }
 }
 
+// Function to send join auction message
+function sendJoinAuctionRequest(email, phoneName) {
+    setTimeout(function () {
+        // Inform the server that a bidder is joining the auction
+        const message = {
+            action: "join_auction",
+            email: email,
+            phoneName:  phoneName
+        };
+        ws.send(JSON.stringify(message));
+    }, 1000);
+
+    console.log("sendJoinAuctionRequest sent");
+}
+

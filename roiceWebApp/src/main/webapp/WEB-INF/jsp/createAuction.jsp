@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="/dashboard/html/css/phoneDetails.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="/websocket/connection.js"></script>
-<script src="/dashboard/html/js/handleAuction.js"></script>
+<script src="/websocket/handleAuction.js"></script>
 <head>
     <!-- ============================================================== -->
     <!--  Header -->

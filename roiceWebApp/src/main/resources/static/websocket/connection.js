@@ -31,14 +31,5 @@ function connect() {
     };
 }
 
-// Function to send join auction message
-function sendJoinAuctionRequest(email) {
-    setTimeout(function () {
-        // Inform the server that a bidder is joining the auction
-        const message = {
-            action: "join_auction",
-            email: email
-        };
-        ws.send(JSON.stringify(message));
-    }, 1000);
-}
+
+
