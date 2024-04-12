@@ -55,7 +55,10 @@
             <div class="phone-image">
                 <img src="${phone.picture}" class="phone-image" alt="Phone Image">
             </div>
-            <form method="post" action="/phoneDetails/createAuction?phoneName=${phone.name}" id="createAuctionForm" onsubmit="return validateAndCreateAuction('${phone.name}')">
+            <script>
+                var phone_name = "${phone.name}";
+            </script>
+            <form method="post" action="/phoneDetails/createAuction?phoneName=${phone.name}" id="createAuctionForm" onsubmit="return validateAndCreateAuction(phone_name)">
                 <div class="form-group">
                     <label for="startingDate">Starting Date:</label>
                     <input type="datetime-local" id="startingDate" name="startingDate" style="margin-left: 33px">
