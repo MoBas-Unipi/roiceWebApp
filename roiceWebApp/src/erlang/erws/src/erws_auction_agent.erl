@@ -180,13 +180,20 @@ handle_new_auction(Map, State) ->
 
 
 handle_join_auction(Map, State) ->
-  Email = maps:get(<<"email">>, Map),
+  BidderEmail = maps:get(<<"email">>, Map),
   PhoneName = maps:get(<<"phoneName">>, Map),
   AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
   logger:info("[erws_handler] handle_join_auction => The phone ~p has the following PID: ~p~n", [PhoneName, AuctionPid]),
-  erws_bidder_handler:start(AuctionPid, Email),
-  logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n",
-    [AuctionPid]),
+  logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n", [AuctionPid]),
+
+  % Return BidderPid
+  BidderPid = erws_bidder_handler:start(AuctionPid, BidderEmail),
+  % Save BidderEmail and BidderPid in bidder table of MNESIA DB
+  erws_mnesia:save_bidder(BidderEmail,BidderPid),
+  % Get the newly inserted bidder from the BIDDER table
+  NewBidderPid = erws_mnesia:get_bidder_pid(BidderEmail),
+  logger:info("Bidder record saved in BIDDER table of MNESIA DB: ~p~n", [NewBidderPid]),
+
   {ok, State}.
 
 
@@ -199,8 +206,8 @@ handle_send_bid(Map, State) ->
   logger:info("Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n",[PhoneName,BidderEmail,BidDate,BidValue]),
 
   % TODO Get the AuctionPid from auction table in the DB
-  %AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
-  %logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
+  AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+  logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
 
   % TODO Get the BidderPid from bidder table in the DB
 

@@ -1,15 +1,27 @@
 -module(erws_mnesia).
--export([setup_tables/0,create_auction_table/0,save_auction/2,print_auctions/0,get_auction_pid/1,save_bid/4,print_bids/0,get_bid/1]).
+-export([setup_tables/0,
+create_auction_table/0,
+save_auction/2,
+print_auctions/0,
+get_auction_pid/1,
+save_bid/4,
+print_bids/0,
+get_bid/1,
+create_bidder_table/0,
+save_bidder/2,
+get_bidder_pid/1
+]).
 
 -record(auction,{phone_name, auction_pid}).
 -record(bid, {phone_name, current_winner_user_email, bid_date, bid_value}).
-
+-record(bidder, {bidder_email, bidder_pid}).
 
 setup_tables() ->
     mnesia:create_schema([node()]),
     mnesia:start(),
     create_auction_table(),
-    create_bid_table().
+    create_bid_table(),
+    create_bidder_table().
 
 %-------------------------AUCTION Table Functions------------------------%
 
@@ -142,6 +154,40 @@ get_bid(PhoneName) ->
         case mnesia:read(bid, PhoneName) of
             [BidRecord] ->
                 BidRecord;
+            [] ->
+                not_found
+        end
+    end),
+    Result.
+
+
+%-------------------------BIDDER Table Functions------------------------%
+
+create_bidder_table() ->
+    case mnesia:create_table(bidder, [{attributes, record_info(fields, bidder)}]) of
+        {atomic, ok} ->
+            logger:info("Bidder table created!~n"),
+            ok;
+        {atomic, {already_exists, _Table}} ->
+            logger:info("Bidder table already exists: ~p~n", [_Table]),
+            ok;
+        {aborted, Reason} ->
+            logger:error("Error creating bidder table: ~p~n", [Reason])
+    end.
+
+
+save_bidder(BidderEmail, BidderPid) ->
+    F = fun() ->
+        mnesia:write(#bidder{bidder_email = BidderEmail, bidder_pid = BidderPid})
+    end,
+    mnesia:activity(transaction, F).
+
+
+get_bidder_pid(BidderEmail) ->
+    {atomic, Result} = mnesia:transaction(fun() ->
+        case mnesia:read(bidder, BidderEmail) of
+            [BidderRecord] ->
+                BidderRecord#bidder.bidder_pid;
             [] ->
                 not_found
         end
