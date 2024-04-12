@@ -31,10 +31,7 @@
     <!-- ============================================================== -->
     <jsp:include page="templates/leftSidebar.jsp"/>
 
-    <script type="text/javascript">
-        // If there is an auction init websocket connection
-        connect();
-    </script>
+
     <div class="container-fluid" style="overflow-y: auto;max-height: 85vh">
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
