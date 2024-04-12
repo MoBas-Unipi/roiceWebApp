@@ -10,6 +10,8 @@ setup_tables() ->
     create_auction_table(),
     create_bid_table().
 
+%-------------------------AUCTION Table Functions------------------------%
+
 create_auction_table() ->
     case mnesia:create_table(auction, [{attributes, record_info(fields, auction)}]) of
         {atomic, ok} ->
