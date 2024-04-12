@@ -66,7 +66,7 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
       % and broadcast new bid of Bidder
       logger:info("name: ~w, NewBid: ~w, Bid: ~w, From: ~w ~n", [Name, NewBid, Bid, From]),
       if
-        Bid > NewBid ->
+        Bid < NewBid ->
           NewBidders = lists:keydelete(Name, 2, Bidders),
           logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", From]),
           broadcast([{From, Name, NewBid} | NewBidders], {message, Name, NewBid}),
@@ -193,7 +193,6 @@ handle_join_auction(Map, State) ->
   % Get the newly inserted bidder from the BIDDER table
   NewBidderPid = erws_mnesia:get_bidder_pid(BidderEmail),
   logger:info("Bidder record saved in BIDDER table of MNESIA DB: ~p~n", [NewBidderPid]),
-
   {ok, State}.
 
 
@@ -210,21 +209,22 @@ handle_send_bid(Map, State) ->
   logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
 
   % TODO Get the BidderPid from bidder table in the DB
+  BidderPid = erws_mnesia:get_bidder_pid(BidderEmail),
+  logger:info("Retrieved BidderPid saved in BIDDER table of MNESIA DB: ~p~n", [BidderPid]),
 
   % TODO call the erws_bidder_handler function to send the bid
-  %erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue),
+  erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue),
 
   % Save bid to the bid table (TODO: IF THE NEW BID IS HIGHER)
-  erws_mnesia:save_bid(PhoneName, BidderEmail, BidDate, BidValue),
-
+  %erws_mnesia:save_bid(PhoneName, BidderEmail, BidDate, BidValue),
 
   % Get the newly inserted bid record from the bid table
-  NewBidRecord = erws_mnesia:get_bid(PhoneName),
-  logger:info("Bid record saved in BID table of MNESIA DB: ~p~n", [NewBidRecord]),
+  %NewBidRecord = erws_mnesia:get_bid(PhoneName),
+  %logger:info("Bid record saved in BID table of MNESIA DB: ~p~n", [NewBidRecord]),
 
 
   % Display saved bids in the DB
-  erws_mnesia:print_bids(),
+  %erws_mnesia:print_bids(),
   {ok, State}.
 
 

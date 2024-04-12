@@ -55,6 +55,7 @@ process_commands(AgentPid, BidderName, BidderPid) ->
 
 % Function to process the bid received from an user
 process_bid(AuctionPid, BidderEmail, BidderPid, BidValue) ->
+    logger:info("New Bid made by ~p~n of ~p~n",[BidderEmail,BidValue]),
     AuctionPid ! {send, BidderEmail, BidValue, BidderPid}.
 
 
