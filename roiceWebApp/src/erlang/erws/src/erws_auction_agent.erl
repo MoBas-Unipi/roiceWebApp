@@ -31,7 +31,7 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
       auction_handle(NewBidders, Bid, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive BID message from a Bidder
-    {send, Name, NewBid, From} ->
+    {send, Name, NewBid, From, HandlerPid} ->
       % If received bid is higher than existing one, delete old bid of this Bidder
       % and broadcast new bid of Bidder
       logger:info("name: ~w, NewBid: ~w, Bid: ~w, From: ~w ~n", [Name, NewBid, Bid, From]),
@@ -40,9 +40,10 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
           NewBidders = lists:keydelete(Name, 2, Bidders),
           logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", From]),
           broadcast([{From, Name, NewBid} | NewBidders], {message, Name, NewBid}),
+          HandlerPid ! {new_bid, NewBid},
           auction_handle([{From, Name, NewBid} | NewBidders], NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
-          %% Else IGNORE it!
+          HandlerPid ! {no_bid},
           auction_handle(Bidders, Bid, EndDate - erlang:system_time(second), EndDate)
       end
     after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
@@ -182,30 +183,27 @@ handle_send_bid(Map, State) ->
   logger:info("Retrieved BidderPid saved in BIDDER table of MNESIA DB: ~p~n", [BidderPid]),
 
   % TODO call the erws_bidder_handler function to send the bid
-  erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue),
-
-  % Save bid to the bid table (TODO: IF THE NEW BID IS HIGHER)
-  %erws_mnesia:save_bid(PhoneName, BidderEmail, BidDate, BidValue),
-
-  % Get the newly inserted bid record from the bid table
-  %NewBidRecord = erws_mnesia:get_bid(PhoneName),
-  %logger:info("Bid record saved in BID table of MNESIA DB: ~p~n", [NewBidRecord]),
-
-
-  % Display saved bids in the DB
-  %erws_mnesia:print_bids(),
-  {ok, State}.
+  erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue, self()),
+  receive
+    {new_bid, NewBid} ->
+      logger:info("[handle_send_bid] => Received New Bid"),
+      Response = io_lib:format("~p", [NewBid]),
+      {reply, {text, Response}, State, hibernate};
+    {no_bid} ->
+      logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
+      {ok, State}
+  end.
 
 
 
 % Handle WebSocket timeout messages
-websocket_info({timeout, _Ref, Msg}, Req, State) ->
-  {reply, {text, Msg}, Req, State};
+websocket_info({text, NewBid}, Req, State) ->
+  {reply, {text, NewBid}, Req, State}.
 
 % Handle other WebSocket info messages
-websocket_info(_Info, Req, State) ->
-  logger:debug("[erws_handler] websocket_info => websocket info"),
-  {ok, Req, State, hibernate}.
+%%websocket_info(_Info, Req, State) ->
+%%  logger:debug("[erws_handler] websocket_info => websocket info"),
+%%  {ok, Req, State, hibernate}.
 
 % Terminate WebSocket connection
 websocket_terminate(_Reason, _Req, _State) ->
