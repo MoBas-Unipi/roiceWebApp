@@ -31,18 +31,18 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
       auction_handle(NewBidders, Bid, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive BID message from a Bidder
-    {send, Name, NewBid, From, HandlerPid, State} ->
+    {send, BidderEmail, NewBid, BidderPid, HandlerPid, State} ->
       % If received bid is higher than existing one, delete old bid of this Bidder
       % and broadcast new bid of Bidder
-      logger:info("name: ~w, NewBid: ~w, Bid: ~w, From: ~w ~n", [Name, NewBid, Bid, From]),
+      logger:info("name: ~w, NewBid: ~w, Bid: ~w, From: ~w ~n", [BidderEmail, NewBid, Bid, BidderPid]),
       if
         Bid < NewBid ->
-          NewBidders = lists:keydelete(Name, 2, Bidders),
-          logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", From]),
+          NewBidders = lists:keydelete(BidderEmail, 2, Bidders),
+          logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", BidderPid]),
 %%          broadcast([{From, Name, NewBid} | NewBidders], {message, Name, NewBid}),
 %%          broadcast_to_clients({new_bid, NewBid},State#clients_list.clients),
 %%          HandlerPid ! {new_bid, NewBid},
-          auction_handle([{From, Name, NewBid} | NewBidders], NewBid, EndDate - erlang:system_time(second), EndDate);
+          auction_handle([{BidderPid, BidderEmail, NewBid} | NewBidders], NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
           HandlerPid ! {no_bid},
           auction_handle(Bidders, Bid, EndDate - erlang:system_time(second), EndDate)
