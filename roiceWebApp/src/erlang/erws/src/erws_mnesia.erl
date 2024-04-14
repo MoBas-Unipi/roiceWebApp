@@ -1,18 +1,21 @@
 -module(erws_mnesia).
--export([setup_tables/0,
-create_auction_table/0,
-save_auction/2,
-print_auctions/0,
-get_auction_pid/1,
-save_bid/4,
-print_bids/0,
-get_bid/1,
-create_bidder_table/0,
-save_bidder/2,
-get_bidder_pid/1
+-export([
+    setup_tables/0,
+    create_auction_table/0,
+    save_auction/2,
+    print_auctions/0,
+    add_bidder_to_auction/2,
+    get_auction_pid/1,
+    get_auction_bidders/1,
+    save_bid/4,
+    print_bids/0,
+    get_bid/1,
+    create_bidder_table/0,
+    save_bidder/2,
+    get_bidder_pid/1
 ]).
 
--record(auction,{phone_name, auction_pid}).
+-record(auction,{phone_name, auction_pid, auction_bidders}).
 -record(bid, {phone_name, current_winner_user_email, bid_date, bid_value}).
 -record(bidder, {bidder_email, bidder_pid}).
 
@@ -39,7 +42,7 @@ create_auction_table() ->
 
 save_auction(PhoneName, AuctionPid) ->
     F = fun() ->
-        mnesia:write(#auction{phone_name = PhoneName, auction_pid = AuctionPid})
+        mnesia:write(#auction{phone_name = PhoneName, auction_pid = AuctionPid, auction_bidders = []})
         end,
     mnesia:activity(transaction, F).
 
@@ -50,7 +53,8 @@ print_auctions() ->
                 logger:info("No auctions found in the table~n");
             Auctions ->
                 process_auction_list(Auctions)
-        end end,
+        end
+        end,
     mnesia:activity(transaction, F).
 
 process_auction_list([]) ->
@@ -65,8 +69,21 @@ process_auction_list([Key | Rest]) ->
             process_auction_list(Rest)
     end.
 
-print_auction(#auction{phone_name = PhoneName, auction_pid = AuctionPid}) ->
-    logger:info("Auction found in the table: Phone Name: ~p, Auction Pid: ~p~n", [PhoneName, AuctionPid]).
+print_auction(#auction{phone_name = PhoneName, auction_pid = AuctionPid, auction_bidders =  BidderPids}) ->
+    logger:info("Auction found in the table: Phone Name: ~p, Auction Pid: ~p, Bidder PIDs: ~p~n", [PhoneName, AuctionPid, BidderPids]).
+
+add_bidder_to_auction(PhoneName, BidderPid) ->
+    F = fun() ->
+        case mnesia:read(auction, PhoneName) of
+            [AuctionRecord] ->
+                UpdatedAuctionRecord = AuctionRecord#auction{auction_bidders = [BidderPid | AuctionRecord#auction.auction_bidders]},
+                mnesia:write(UpdatedAuctionRecord);
+            [] ->
+                ok
+        end
+        end,
+    mnesia:activity(transaction, F).
+
 
 get_auction_pid(PhoneName) ->
     {atomic, Result} = mnesia:transaction(fun() ->
@@ -80,6 +97,19 @@ get_auction_pid(PhoneName) ->
     Result.
 
 
+get_auction_bidders(PhoneName) ->
+    {atomic,Result} = mnesia:transaction(fun() ->
+        % Retrieve the auction record based on the provided AuctionPid
+        case mnesia:read(auction, PhoneName) of
+            [AuctionRecord] ->
+                % Extract the list of bidder PIDs from the auction record
+                AuctionRecord#auction.auction_bidders;
+            [] ->
+                % If the auction record is not found, return an empty list
+                not_found
+        end
+                       end),
+    Result.
 %-------------------------BID Table Functions------------------------%
 
 create_bid_table() ->

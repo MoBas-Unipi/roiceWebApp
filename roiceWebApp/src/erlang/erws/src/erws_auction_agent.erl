@@ -24,14 +24,14 @@ handle(Req, State) ->
 auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
   receive
   %% Receive JOIN request from a Bidder
-    {bidder_join, Name, From} ->
+    {bidder_join, Name, From, HandlerPid} ->
       % Add Bidder into the list and broadcast the new list
       NewBidders = [{From, Name, 0} | Bidders],
-      broadcast(NewBidders, {join, Name, Bid}),
+      HandlerPid ! {joined, Bid},
       auction_handle(NewBidders, Bid, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive BID message from a Bidder
-    {send, Name, NewBid, From, HandlerPid} ->
+    {send, Name, NewBid, From, HandlerPid, State} ->
       % If received bid is higher than existing one, delete old bid of this Bidder
       % and broadcast new bid of Bidder
       logger:info("name: ~w, NewBid: ~w, Bid: ~w, From: ~w ~n", [Name, NewBid, Bid, From]),
@@ -39,15 +39,16 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
         Bid < NewBid ->
           NewBidders = lists:keydelete(Name, 2, Bidders),
           logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", From]),
-          broadcast([{From, Name, NewBid} | NewBidders], {message, Name, NewBid}),
-          HandlerPid ! {new_bid, NewBid},
+%%          broadcast([{From, Name, NewBid} | NewBidders], {message, Name, NewBid}),
+%%          broadcast_to_clients({new_bid, NewBid},State#clients_list.clients),
+%%          HandlerPid ! {new_bid, NewBid},
           auction_handle([{From, Name, NewBid} | NewBidders], NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
           HandlerPid ! {no_bid},
           auction_handle(Bidders, Bid, EndDate - erlang:system_time(second), EndDate)
       end
-    after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
-      logger:info("Auction timeout reached after ~p seconds~n", [AuctionTime]),
+  after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
+    logger:info("Auction timeout reached after ~p seconds~n", [AuctionTime]),
     %% Your timeout logic here
     case Bidders of
       [] ->
@@ -67,9 +68,15 @@ auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
 
 % Local Functions
 % broadcast - send message to list of peers
-broadcast(PeerList, Message) ->
-  Fun = fun({Peer, _, _}) -> Peer ! Message end,
-  lists:map(Fun, PeerList).
+%%broadcast(PeerList, Message) ->
+%%  Fun = fun({Peer, _, _}) -> Peer ! Message end,
+%%  lists:map(Fun, PeerList).
+
+broadcast_to_clients(_, []) ->
+  ok;
+broadcast_to_clients(Msg, [Client|Rest]) ->
+  Client ! {new_bid, Msg},
+  broadcast_to_clients(Msg,Rest).
 
 % changeStrc - change structure of list with bidders
 changeStrc([{Peer, Name, Value} | T], Tail) ->
@@ -101,14 +108,15 @@ websocket_handle(_Any, State) ->
 
 % Handle a frame after JSON decoding
 handle_websocket_frame(Map, State) ->
-  logger:info("[erws_handler] handle_websocket_frame => Map is ~p~n", [Map]),
+  logger:debug("[erws_handler] handle_websocket_frame => Map is ~p~n", [Map]),
   Action = maps:get(<<"action">>, Map),
-  logger:info("[erws_handler] handle_websocket_frame => Action: ~p~n", [Action]),
+  logger:debug("[erws_handler] handle_websocket_frame => Action: ~p~n", [Action]),
 
   case Action of
     <<"new_auction">> -> % Handle new auction action
       handle_new_auction(Map, State);
-    <<"join_auction">> -> % Handle join auction action
+    <<"join_auction">> ->
+      % Handle join auction action
       handle_join_auction(Map, State);
     <<"send">> ->
       handle_send_bid(Map,State);
@@ -119,7 +127,7 @@ handle_websocket_frame(Map, State) ->
 
 
 handle_new_auction(Map, State) ->
-  logger:info("[erws_handler] handle_new_auction => Map is ~p~n", [Map]),
+  logger:debug("[erws_handler] handle_new_auction => Map is ~p~n", [Map]),
   StartDate = maps:get(<<"startSeconds">>, Map),
   EndDate = maps:get(<<"endSeconds">>, Map),
   case is_integer(StartDate) andalso is_integer(EndDate) of
@@ -157,13 +165,24 @@ handle_join_auction(Map, State) ->
   logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n", [AuctionPid]),
 
   % Return BidderPid
-  BidderPid = erws_bidder_handler:start(AuctionPid, BidderEmail),
+  BidderPid = erws_bidder_handler:start(AuctionPid, BidderEmail, self()),
   % Save BidderEmail and BidderPid in bidder table of MNESIA DB
   erws_mnesia:save_bidder(BidderEmail,BidderPid),
   % Get the newly inserted bidder from the BIDDER table
-  NewBidderPid = erws_mnesia:get_bidder_pid(BidderEmail),
-  logger:info("Bidder record saved in BIDDER table of MNESIA DB: ~p~n", [NewBidderPid]),
-  {ok, State}.
+%%  NewBidderPid = erws_mnesia:get_bidder_pid(BidderEmail),
+%%  logger:info("Bidder record saved in BIDDER table of MNESIA DB: ~p~n", [NewBidderPid]),
+  erws_mnesia:add_bidder_to_auction(PhoneName,BidderPid),
+  Bidders = erws_mnesia:get_auction_bidders(PhoneName),
+  logger:info("Bidders joined for the Auction with PID ~p: ~p~n", [AuctionPid,Bidders]),
+  receive
+    {joined, Bid} ->
+      logger:info("[handle_join_auction] => Bidder ~p correctly joined! Current Bid: ~p~n", [BidderEmail, Bid]),
+      Response = io_lib:format("~p", [Bid]),
+      {reply, {text, Response}, State, hibernate};
+    {not_joined} ->
+      logger:info("[handle_join_auction] => Bidder not joined!"),
+      {ok, State}
+  end.
 
 
 handle_send_bid(Map, State) ->
@@ -183,7 +202,7 @@ handle_send_bid(Map, State) ->
   logger:info("Retrieved BidderPid saved in BIDDER table of MNESIA DB: ~p~n", [BidderPid]),
 
   % TODO call the erws_bidder_handler function to send the bid
-  erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue, self()),
+  erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidderPid, BidValue, self(), State),
   receive
     {new_bid, NewBid} ->
       logger:info("[handle_send_bid] => Received New Bid"),

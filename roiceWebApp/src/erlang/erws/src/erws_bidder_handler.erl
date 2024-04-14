@@ -9,17 +9,17 @@
 -module(erws_bidder_handler).
 
 %% Exported Functions
--export([start/2,init_bidder/2,process_requests/0,process_bid/6]).
+-export([start/3,init_bidder/3,process_requests/0,process_bid/6]).
 
 %% API Functions
 %% Create a bidder process
-start(AuctionPid, BidderName) ->
-  BidderPid = spawn(erws_bidder_handler, init_bidder, [AuctionPid, BidderName]).
+start(AuctionPid, BidderName, HandlerPid) ->
+  BidderPid = spawn(erws_bidder_handler, init_bidder, [AuctionPid, BidderName, HandlerPid]).
 %%  process_commands(AuctionPid, BidderName, BidderPid).
 
 %% Initialize bidder process - send to agent bidder's information
-init_bidder(AgentPid, BidderName) ->
-  AgentPid ! {bidder_join, BidderName, self()},
+init_bidder(AgentPid, BidderName, HandlerPid) ->
+  AgentPid ! {bidder_join, BidderName, self(), HandlerPid},
   process_requests().
 
 %% Local Functions
