@@ -9,17 +9,17 @@
 -module(erws_bidder_handler).
 
 %% Exported Functions
--export([start/3,init_bidder/3,process_requests/0,process_bid/6]).
+-export([start/4,init_bidder/4,process_requests/0,process_bid/5]).
 
 %% API Functions
 %% Create a bidder process
-start(AuctionPid, BidderName, HandlerPid) ->
-  BidderPid = spawn(erws_bidder_handler, init_bidder, [AuctionPid, BidderName, HandlerPid]).
+start(AuctionPid, BidderEmail, HandlerPid, PhoneName) ->
+  ProcessPid = spawn(erws_bidder_handler, init_bidder, [AuctionPid, BidderEmail, HandlerPid, PhoneName]).
 %%  process_commands(AuctionPid, BidderName, BidderPid).
 
 %% Initialize bidder process - send to agent bidder's information
-init_bidder(AgentPid, BidderName, HandlerPid) ->
-  AgentPid ! {bidder_join, BidderName, self(), HandlerPid},
+init_bidder(AgentPid, BidderEmail, HandlerPid, PhoneName) ->
+  AgentPid ! {bidder_join, BidderEmail, HandlerPid, PhoneName},
   process_requests().
 
 %% Local Functions
@@ -34,8 +34,8 @@ process_requests() ->
   end.
 
 % Function to process the bid received from an user
-process_bid(AuctionPid, BidderEmail, BidderPid, BidValue, HandlerPid, State) ->
-    AuctionPid ! {send, BidderEmail, BidValue, BidderPid, HandlerPid, State}.
+process_bid(AuctionPid, BidderEmail, BidValue, HandlerPid, PhoneName) ->
+    AuctionPid ! {send, BidderEmail, BidValue, HandlerPid, PhoneName}.
 
 
 

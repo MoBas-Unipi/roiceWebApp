@@ -7,6 +7,8 @@
     add_bidder_to_auction/2,
     get_auction_pid/1,
     get_auction_bidders/1,
+    is_bidder_present/2,
+    delete_bidder/2,
     save_bid/4,
     print_bids/0,
     get_bid/1,
@@ -72,17 +74,25 @@ process_auction_list([Key | Rest]) ->
 print_auction(#auction{phone_name = PhoneName, auction_pid = AuctionPid, auction_bidders =  BidderPids}) ->
     logger:info("Auction found in the table: Phone Name: ~p, Auction Pid: ~p, Bidder PIDs: ~p~n", [PhoneName, AuctionPid, BidderPids]).
 
-add_bidder_to_auction(PhoneName, BidderPid) ->
+add_bidder_to_auction(PhoneName, Bidder) ->
     F = fun() ->
         case mnesia:read(auction, PhoneName) of
             [AuctionRecord] ->
-                UpdatedAuctionRecord = AuctionRecord#auction{auction_bidders = [BidderPid | AuctionRecord#auction.auction_bidders]},
-                mnesia:write(UpdatedAuctionRecord);
+                UpdatedBidders = [Bidder | AuctionRecord#auction.auction_bidders],
+                UpdatedAuctionRecord = AuctionRecord#auction{auction_bidders = UpdatedBidders},
+                mnesia:write(UpdatedAuctionRecord),
+                UpdatedBidders; % Return the updated list of bidders
             [] ->
-                ok
+                % Create a new auction record with the bidder added
+                UpdatedBidders = [Bidder | []],
+                UpdatedAuctionRecord = #auction{auction_bidders = UpdatedBidders},
+                mnesia:write(UpdatedAuctionRecord),
+                UpdatedBidders % Return the new list of bidders
         end
         end,
     mnesia:activity(transaction, F).
+
+
 
 
 get_auction_pid(PhoneName) ->
@@ -106,10 +116,46 @@ get_auction_bidders(PhoneName) ->
                 AuctionRecord#auction.auction_bidders;
             [] ->
                 % If the auction record is not found, return an empty list
-                not_found
+                []
         end
                        end),
     Result.
+
+% Function to check if a bidder is present in the list of bidders for an auction
+% Function to check if a bidder is present in the list of bidders for an auction
+is_bidder_present(PhoneName, Email) ->
+    F = fun() ->
+        case mnesia:read(auction, PhoneName) of
+            [BidderRecord] ->
+                Bidders = BidderRecord#auction.auction_bidders,
+                logger:info("List of BIDDERS: ~p~n", [Bidders]),
+                is_bidder_present_in_auction(Bidders, Email);
+            [] ->
+                logger:info("List of BIDDERS empty ~n"),
+                false % Bidder not found
+        end
+        end,
+    mnesia:activity(transaction, F).
+
+is_bidder_present_in_auction(Bidders, Email) ->
+    lists:any(fun({_, BidderEmail, _}) -> string:equal(BidderEmail,Email) end, Bidders).
+
+
+
+delete_bidder(BidderPid, PhoneName) ->
+    F = fun() ->
+        case mnesia:read({auction, PhoneName}) of
+            [AuctionRecord] ->
+                UpdatedBidders = lists:keydelete(BidderPid, 1, AuctionRecord#auction.auction_bidders),
+                UpdatedAuctionRecord = AuctionRecord#auction{auction_bidders = UpdatedBidders},
+                mnesia:write(UpdatedAuctionRecord),
+                UpdatedBidders; % Return the updated list of bidders
+            [] ->
+                not_found % Auction record not found
+        end
+        end,
+    mnesia:activity(transaction, F).
+
 %-------------------------BID Table Functions------------------------%
 
 create_bid_table() ->
