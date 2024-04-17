@@ -51,11 +51,14 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
   after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
     case erws_mnesia:get_winner_bidder(Phone) of
       not_found ->
-        logger:info("No bidders");
+        logger:info("No bidders for the auction of the phone: ~p~n", [Phone]),
+        Response = "No bidders for the phone",
+        gproc:send({p,l,{?MODULE,Phone}}, {no_bidders, Response});
       {WinnerEmail, WinningBid} ->
-            logger:info("Winner: ~p, Winning Bid: ~p", [WinnerEmail, WinningBid]);
+        logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
+        gproc:send({p,l,{?MODULE, Phone}}, {winner_bidder, Phone, WinnerEmail, WinningBid});
       _ ->
-        logger:error("Unexpected result from get_winner_bidder/1")
+        logger:error("Unexpected result from get_winner_bidder")
     end
   end.
 
@@ -129,11 +132,7 @@ handle_websocket_frame(Map, State) ->
 
     <<"join_auction">> ->
       BidderEmail = maps:get(<<"email">>, Map),
-      PhoneName = maps:get(<<"phoneName">>, Map),
-      AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
       logger:debug("EMAIL of the new join user: ~p~n", [BidderEmail]),
-      Bool = erws_mnesia:is_bidder_present(AuctionPid,BidderEmail),
-      logger:debug("Bool is present: ~p~n", [Bool]),
       handle_join_auction(Map, State);
 
     <<"send">> ->
@@ -162,7 +161,6 @@ handle_new_auction(Map) ->
           AuctionPid = spawn(fun() -> auction_handle(PhoneName, MinimumPrice, AuctionTime, EndDate) end),
           logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
           erws_mnesia:save_auction(PhoneName, AuctionPid),
-          erws_mnesia:print_auctions(),
           {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
         false ->
           logger:info("Start date has already passed, cannot spawn auction process.~n"),
@@ -207,6 +205,10 @@ handle_send_bid(Map, State) ->
     {no_bid, Bid} ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
       Response = io_lib:format("~p", [Bid]),
+      {reply, {text, Response}, State, hibernate};
+    {winner_bidder, Phone, WinnerEmail, WinningBid} ->
+      logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
+      Response = io_lib:format("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
       {reply, {text, Response}, State, hibernate}
   end.
 
@@ -223,8 +225,16 @@ receive_joined(State) ->
       Response = io_lib:format("~p", [NewBid]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
-      logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
+      logger:info("[receive_joined] => Received Bid < Current Max Bid"),
       Response = io_lib:format("~p", [Bid]),
+      {reply, {text, Response}, State, hibernate};
+    {no_bidders, Text} ->
+      logger:info("[receive_joined] => Auction terminated, no bidders"),
+      Response = io_lib:format("~p", [Text]),
+      {reply, {text, Response}, State, hibernate};
+    {winner_bidder, Phone, WinnerEmail, WinningBid} ->
+      logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
+      Response = io_lib:format("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
       {reply, {text, Response}, State, hibernate}
   end.
 
@@ -269,5 +279,13 @@ websocket_info(Info, State) ->
     {no_bid, Bid} ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
       Response = io_lib:format("~p", [Bid]),
+      {reply, {text, Response}, State, hibernate};
+    {no_bidders, Text} ->
+      logger:info("[receive_joined] => Auction terminated, no bidders"),
+      Response = io_lib:format("~p", [Text]),
+      {reply, {text, Response}, State, hibernate};
+    {winner_bidder, Phone, WinnerEmail, WinningBid} ->
+      logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
+      Response = io_lib:format("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
       {reply, {text, Response}, State, hibernate}
   end.
