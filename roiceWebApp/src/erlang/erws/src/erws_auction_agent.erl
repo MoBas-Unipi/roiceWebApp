@@ -200,11 +200,11 @@ handle_send_bid(Map, State) ->
   receive
     {new_bid, NewBid} ->
       logger:info("[handle_send_bid] => Received New Bid"),
-      Response = io_lib:format("~p", [NewBid]),
+      Response = io_lib:format("Bid:~p", [NewBid]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
-      Response = io_lib:format("~p", [Bid]),
+      Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {winner_bidder, Phone, WinnerEmail, WinningBid} ->
       logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
@@ -215,18 +215,18 @@ handle_send_bid(Map, State) ->
 receive_joined(State) ->
   receive
     {joined, Bid} ->
-      Response = io_lib:format("~p", [Bid]),
+      Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {not_joined} ->
       logger:info("[receive_joined] => Bidder not joined!"),
       {ok, State};
     {new_bid, NewBid} ->
       logger:info("[receive_joined] => Received New Bid"),
-      Response = io_lib:format("~p", [NewBid]),
+      Response = io_lib:format("Bid:~p", [NewBid]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
       logger:info("[receive_joined] => Received Bid < Current Max Bid"),
-      Response = io_lib:format("~p", [Bid]),
+      Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {no_bidders, Text} ->
       logger:info("[receive_joined] => Auction terminated, no bidders"),
@@ -267,18 +267,18 @@ websocket_info(Msg, Req, State) ->
 websocket_info(Info, State) ->
   case Info of
     {joined, Bid} ->
-      Response = io_lib:format("~p", [Bid]),
+      Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {not_joined} ->
       logger:info("[receive_joined] => Bidder not joined!"),
       {ok, State};
     {new_bid, NewBid} ->
       logger:info("[receive_joined] => Received New Bid"),
-      Response = io_lib:format("~p", [NewBid]),
+      Response = io_lib:format("Bid:~p", [NewBid]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
-      Response = io_lib:format("~p", [Bid]),
+      Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {no_bidders, Text} ->
       logger:info("[receive_joined] => Auction terminated, no bidders"),
