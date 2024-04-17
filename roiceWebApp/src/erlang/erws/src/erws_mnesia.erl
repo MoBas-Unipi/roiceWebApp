@@ -4,21 +4,21 @@
     create_auction_table/0,
     save_auction/2,
     print_auctions/0,
+    get_winner_bidder/1,
     add_bidder_to_auction/2,
     get_auction_pid/1,
     get_auction_bidders/1,
     is_bidder_present/2,
     delete_bidder/2,
-    save_bid/4,
+    save_bid/3,
     print_bids/0,
-    get_bid/1,
     create_bidder_table/0,
     save_bidder/2,
     get_bidder_pid/1
 ]).
 
 -record(auction,{phone_name, auction_pid, auction_bidders}).
--record(bid, {phone_name, current_winner_user_email, bid_date, bid_value}).
+-record(bid, {phone_name, current_winner_user_email, bid_value}).
 -record(bidder, {bidder_email, bidder_pid}).
 
 setup_tables() ->
@@ -172,13 +172,25 @@ create_bid_table() ->
 
 
 % Saves a bid entry into the Mnesia table.
-save_bid(PhoneName, WinnerEmail, BidDate, BidValue) ->
+save_bid(PhoneName, WinnerEmail, BidValue) ->
     F = fun() ->
         % Write the bid entry into the Mnesia bid table
-        mnesia:write(#bid{phone_name=PhoneName, current_winner_user_email=WinnerEmail, bid_date=BidDate, bid_value=BidValue})
+        mnesia:write(#bid{phone_name=PhoneName, current_winner_user_email=WinnerEmail, bid_value=BidValue})
     end,
     % Perform the write operation within a transaction
     mnesia:activity(transaction, F).
+
+get_winner_bidder(PhoneName) ->
+    {atomic, Result} = mnesia:transaction(fun() ->
+        case mnesia:read(bid, PhoneName) of
+            [BidRecord] ->
+                {BidRecord#bid.current_winner_user_email, BidRecord#bid.bid_value};
+            [] ->
+                not_found
+        end
+                                          end),
+    Result.
+
 
 
 % Prints all bids stored in the Mnesia table.
@@ -217,24 +229,24 @@ process_list([Key | Rest]) ->
     end.
 
 % Prints information about a single bid entry.
-print_bid(#bid{phone_name = PhoneName, current_winner_user_email = WinnerEmail, bid_date = BidDate, bid_value = BidValue}) ->
+print_bid(#bid{phone_name = PhoneName, current_winner_user_email = WinnerEmail, bid_value = BidValue}) ->
     % Display a log message with information about the bid
-    logger:info("Bid found in the table: Phone Name: ~p, Winner Email: ~p, Bid Date: ~p, Bid Value: ~p~n", [PhoneName, WinnerEmail, BidDate, BidValue]).
+    logger:info("Bid found in the table: Phone Name: ~p, Winner Email: ~p, Bid Value: ~p~n", [PhoneName, WinnerEmail, BidValue]).
 
 
 % Get bid record information by phone name from BID table of MNESIA DB
-get_bid(PhoneName) ->
-    %% Avvio di una transazione per leggere dalla tabella bid
-    {atomic, Result} = mnesia:transaction(fun() ->
-        %% Utilizzo di mnesia:read per leggere il record dalla tabella bid
-        case mnesia:read(bid, PhoneName) of
-            [BidRecord] ->
-                BidRecord;
-            [] ->
-                not_found
-        end
-    end),
-    Result.
+%%get_bid(PhoneName) ->
+%%    %% Avvio di una transazione per leggere dalla tabella bid
+%%    {atomic, Result} = mnesia:transaction(fun() ->
+%%        %% Utilizzo di mnesia:read per leggere il record dalla tabella bid
+%%        case mnesia:read(bid, PhoneName) of
+%%            [BidRecord] ->
+%%                BidRecord;
+%%            [] ->
+%%                not_found
+%%        end
+%%    end),
+%%    Result.
 
 
 %-------------------------BIDDER Table Functions------------------------%

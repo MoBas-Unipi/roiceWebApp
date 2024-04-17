@@ -27,69 +27,61 @@ handle(Req, State) ->
   {ok, Req2, State}.
 
 % Handle auction messages
-auction_handle(Bidders, Bid, AuctionTime, EndDate) ->
+auction_handle(Phone, Bid, AuctionTime, EndDate) ->
   receive
   %% Receive JOIN request from a Bidder
-    {bidder_join, BidderEmail, HandlerPid, PhoneName} ->
-%%      erws_mnesia:add_bidder_to_auction(PhoneName,HandlerPid),
-      AuctionBidders = erws_mnesia:get_auction_bidders(PhoneName),
-      AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
-      logger:info("Bidders joined for the Auction with PID ~p: ~p~n", [AuctionPid,AuctionBidders]),
-      % Add Bidder into the list and broadcast the new list
-      AuctionBiddersUpdated = erws_mnesia:add_bidder_to_auction(PhoneName, {HandlerPid, BidderEmail, 0}),
-      logger:info("New Bidders for the Auction with PID ~p: ~p~n", [AuctionPid,AuctionBiddersUpdated]),
-      Key = {?MODULE,auction_agent_process},
-      gproc:send({p,l,Key},{joined,Bid}),
-      auction_handle(AuctionBiddersUpdated, Bid, EndDate - erlang:system_time(second), EndDate);
+    {bidder_join, PhoneName} ->
+      gproc:send({p,l,{?MODULE,PhoneName}},{joined,Bid}),
+      auction_handle(Phone, Bid, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive BID message from a Bidder
     {send, BidderEmail, NewBid, HandlerPid, PhoneName} ->
-      % If received bid is higher than existing one, delete old bid of this Bidder
-      % and broadcast new bid of Bidder
-      logger:info("email: ~w, NewBid: ~w, Bid: ~w, From: ~w ~n", [BidderEmail, NewBid, Bid, HandlerPid]),
-      AuctionBidders = erws_mnesia:get_auction_bidders(PhoneName),
-      logger:info("Bidders joined to the Auction: ~p~n", [AuctionBidders]),
+      logger:info("email: ~p, NewBid: ~p, Bid: ~p, From: ~p ~n", [BidderEmail, NewBid, Bid, HandlerPid]),
       if
         Bid < NewBid ->
-          logger:info("[~s] ~p ~n", ["NewBid > Bid. Delete bidder:", HandlerPid]),
-          erws_mnesia:delete_bidder(HandlerPid, PhoneName),
-          UpdateBidders = erws_mnesia:add_bidder_to_auction(PhoneName, {HandlerPid, BidderEmail, NewBid}),
+          logger:info("NewBid: ~p > Current Bid: ~p!~n", [NewBid, Bid]),
           logger:info("Send update bid to bidders"),
-          Key = {?MODULE,auction_agent_process},
-          gproc:send({p,l,Key},{new_bid,NewBid}),
-%%          AuctionBidders = erws_mnesia:get_auction_bidders(PhoneName),
-%%          broadcast_to_clients(NewBid, AuctionBidders),
-%%          HandlerPid ! {new_bid, NewBid},
-          auction_handle(UpdateBidders, NewBid, EndDate - erlang:system_time(second), EndDate);
+          gproc:send({p,l,{?MODULE,PhoneName}},{new_bid,NewBid}),
+          erws_mnesia:save_bid(PhoneName, BidderEmail, NewBid),
+          auction_handle(Phone, NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
-          broadcast(AuctionBidders, {no_bid}),
-          auction_handle(Bidders, Bid, EndDate - erlang:system_time(second), EndDate)
+          gproc:send({p,l,{?MODULE,PhoneName}},{new_bid,NewBid}),
+          auction_handle(Phone, Bid, EndDate - erlang:system_time(second), EndDate)
       end
   after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
-    logger:info("Auction timeout reached after ~p seconds~n", [AuctionTime]),
-    %% Your timeout logic here
-    case Bidders of
-      [] ->
-        %% If there are no bidders
-        logger:info("Timeout! No bidders! Auction terminated!~n");
+    case erws_mnesia:get_winner_bidder(Phone) of
+      not_found ->
+        logger:info("No bidders");
+      {WinnerEmail, WinningBid} ->
+            logger:info("Winner: ~p, Winning Bid: ~p", [WinnerEmail, WinningBid]);
       _ ->
-        %% Else, if there are bidders but no high bids
-        ModBidders = changeStrc(Bidders, []),
-        case lists:max(ModBidders) of
-          {Bid2, [User, _]} when Bid2 > 0 ->
-            logger:info("Sold to ~s! Final price: ~p~n", [User, Bid2]);
-          _ ->
-            logger:info("Timeout! No high bids! Auction terminated~n")
-        end
+        logger:error("Unexpected result from get_winner_bidder/1")
     end
   end.
 
+%%    %% Your timeout logic here
+%%    case Bidders of
+%%      [] ->
+%%        %% If there are no bidders
+%%        logger:info("Timeout! No bidders! Auction terminated!~n");
+%%      _ ->
+%%        %% Else, if there are bidders but no high bids
+%%        ModBidders = changeStrc(Bidders, []),
+%%        case lists:max(ModBidders) of
+%%          {Bid2, [User, _]} when Bid2 > 0 ->
+%%            logger:info("Sold to ~s! Final price: ~p~n", [User, Bid2]);
+%%          _ ->
+%%            logger:info("Timeout! No high bids! Auction terminated~n")
+%%        end
+%%    end
+%%  end.
+
 % Local Functions
-% broadcast - send message to list of peers
-broadcast(PeerList, Message) ->
-  logger:info("PeerList: ~p", [PeerList]),
-  Fun = fun({Peer, _, _}) -> Peer ! Message end,
-  lists:map(Fun, PeerList).
+%%% broadcast - send message to list of peers
+%%broadcast(PeerList, Message) ->
+%%  logger:info("PeerList: ~p", [PeerList]),
+%%  Fun = fun({Peer, _, _}) -> Peer ! Message end,
+%%  lists:map(Fun, PeerList).
 
 %%broadcast_to_clients(_, []) ->
 %%  ok;
@@ -97,11 +89,11 @@ broadcast(PeerList, Message) ->
 %%  Client ! {new_bid, Msg},
 %%  broadcast_to_clients(Msg,Rest).
 
-% changeStrc - change structure of list with bidders
-changeStrc([{Peer, Name, Value} | T], Tail) ->
-  [{Value, [Name, Peer]} | changeStrc(T, Tail)];
-changeStrc([], Tail) ->    % End of recursion
-  Tail.
+%%% changeStrc - change structure of list with bidders
+%%changeStrc([{Peer, Name, Value} | T], Tail) ->
+%%  [{Value, [Name, Peer]} | changeStrc(T, Tail)];
+%%changeStrc([], Tail) ->    % End of recursion
+%%  Tail.
 
 % Handles incoming WebSocket text frames
 websocket_handle(Frame = {text, Message}, State) ->
@@ -133,7 +125,8 @@ handle_websocket_frame(Map, State) ->
 
   case Action of
     <<"new_auction">> -> % Handle new auction action
-      handle_new_auction(Map, State);
+      handle_new_auction(Map);
+
     <<"join_auction">> ->
       BidderEmail = maps:get(<<"email">>, Map),
       PhoneName = maps:get(<<"phoneName">>, Map),
@@ -141,22 +134,18 @@ handle_websocket_frame(Map, State) ->
       logger:debug("EMAIL of the new join user: ~p~n", [BidderEmail]),
       Bool = erws_mnesia:is_bidder_present(AuctionPid,BidderEmail),
       logger:debug("Bool is present: ~p~n", [Bool]),
-%%        true ->
-%%          logger:info("[erws_handler] handle_websocket_frame => Bidder already joined the auction: p~n", [AuctionPid]),
-%%          receive_joined(State);
-%%        false ->
-          handle_join_auction(Map, State);
-%%      end;
+      handle_join_auction(Map, State);
+
     <<"send">> ->
       handle_send_bid(Map,State);
+
     _ ->
       logger:info("[erws_handler] handle_websocket_frame => Unknown action: ~p~n", [Action]),
       {ok, State}
   end.
 
 
-handle_new_auction(Map, State) ->
-%%  logger:debug("[erws_handler] handle_new_auction => Map is ~p~n", [Map]),
+handle_new_auction(Map) ->
   StartDate = maps:get(<<"startSeconds">>, Map),
   EndDate = maps:get(<<"endSeconds">>, Map),
   case is_integer(StartDate) andalso is_integer(EndDate) of
@@ -168,10 +157,10 @@ handle_new_auction(Map, State) ->
       case Delay > 0 of
         true ->
           timer:sleep(Delay * 1000),
-          MinimumPrice = maps:get(<<"minimumPrice">>, Map),
-          AuctionPid = spawn(fun() -> auction_handle(State, MinimumPrice, AuctionTime, EndDate) end),
-          logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
           PhoneName = maps:get(<<"phoneName">>, Map),
+          MinimumPrice = maps:get(<<"minimumPrice">>, Map),
+          AuctionPid = spawn(fun() -> auction_handle(PhoneName, MinimumPrice, AuctionTime, EndDate) end),
+          logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
           erws_mnesia:save_auction(PhoneName, AuctionPid),
           erws_mnesia:print_auctions(),
           {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
@@ -185,22 +174,15 @@ handle_new_auction(Map, State) ->
   end.
 
 handle_join_auction(Map, State) ->
-      BidderEmail = maps:get(<<"email">>, Map),
       PhoneName = maps:get(<<"phoneName">>, Map),
       AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
       logger:info("[erws_handler] handle_join_auction => The phone ~p has the following PID: ~p~n", [PhoneName, AuctionPid]),
       logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n", [AuctionPid]),
 
       % Return BidderPid
-      erws_bidder_handler:start(AuctionPid, BidderEmail, self(), PhoneName),
-      % Save BidderEmail and BidderPid in bidder table of MNESIA DB
-%%      erws_mnesia:save_bidder(BidderEmail,BidderPid),
-      % Get the newly inserted bidder from the BIDDER table
-%%  NewBidderPid = erws_mnesia:get_bidder_pid(BidderEmail),
-%%  logger:info("Bidder record saved in BIDDER table of MNESIA DB: ~p~n", [NewBidderPid]),
-      gproc:reg({p,l,{?MODULE,auction_agent_process}}),
-      Key = {?MODULE,auction_agent_process},
-      Pid = gproc:lookup_pids({p,l,Key}),
+      erws_bidder_handler:start(AuctionPid, PhoneName),
+      gproc:reg({p,l,{?MODULE,PhoneName}}),
+      Pid = gproc:lookup_pids({p,l,{?MODULE,PhoneName}}),
       logger:info("WEBSOCKET_INIT process started here: ~p~n", [Pid]),
       receive_joined(State).
 
@@ -222,9 +204,10 @@ handle_send_bid(Map, State) ->
       logger:info("[handle_send_bid] => Received New Bid"),
       Response = io_lib:format("~p", [NewBid]),
       {reply, {text, Response}, State, hibernate};
-    {no_bid} ->
+    {no_bid, Bid} ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
-      {ok, State}
+      Response = io_lib:format("~p", [Bid]),
+      {reply, {text, Response}, State, hibernate}
   end.
 
 receive_joined(State) ->
@@ -233,11 +216,15 @@ receive_joined(State) ->
       Response = io_lib:format("~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {not_joined} ->
-      logger:info("[handle_join_auction] => Bidder not joined!"),
+      logger:info("[receive_joined] => Bidder not joined!"),
       {ok, State};
     {new_bid, NewBid} ->
       logger:info("[receive_joined] => Received New Bid"),
       Response = io_lib:format("~p", [NewBid]),
+      {reply, {text, Response}, State, hibernate};
+    {no_bid, Bid} ->
+      logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
+      Response = io_lib:format("~p", [Bid]),
       {reply, {text, Response}, State, hibernate}
   end.
 
@@ -273,10 +260,14 @@ websocket_info(Info, State) ->
       Response = io_lib:format("~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {not_joined} ->
-      logger:info("[handle_join_auction] => Bidder not joined!"),
+      logger:info("[receive_joined] => Bidder not joined!"),
       {ok, State};
     {new_bid, NewBid} ->
       logger:info("[receive_joined] => Received New Bid"),
       Response = io_lib:format("~p", [NewBid]),
+      {reply, {text, Response}, State, hibernate};
+    {no_bid, Bid} ->
+      logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
+      Response = io_lib:format("~p", [Bid]),
       {reply, {text, Response}, State, hibernate}
   end.
