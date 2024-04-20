@@ -21,16 +21,16 @@ public class UserPageController {
             return "redirect:/login";
         }
 
-        currentUser.addAuctionWon(new AuctionWon("Nokia 3210",
-                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif",
-                new Date(), 120
-                ));
-
-        currentUser.addNotification(new Notification("Notification",
-                "Body dasdkasmldmkadlmaskdlaskddmdkalmdkasldmkasldmkasldmkaldm"));
-
-        currentUser.addFavoritePhone(new PhonePreview("Nokia 3210",
-                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif"));
+//        currentUser.addAuctionWon(new AuctionWon("Nokia 3210",
+//                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif",
+//                new Date(), 120
+//                ));
+//
+//        currentUser.addNotification(new Notification("Notification",
+//                "Body dasdkasmldmkadlmaskdlaskddmdkalmdkasldmkasldmkasldmkaldm"));
+//
+//        currentUser.addFavoritePhone(new PhonePreview("Nokia 3210",
+//                "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif"));
 
         return "userPage";
     }

@@ -61,6 +61,7 @@
                 <c:if test="${not empty currentUser}">
                     <p><strong>First Name: </strong>${currentUser.firstName}</p>
                     <p><strong>Last Name: </strong>${currentUser.lastName}</p>
+                    <p><strong>Email: </strong>${currentUser.email}</p>
                     <p><strong>Country: </strong>${currentUser.country}</p>
                     <p><strong>City: </strong>${currentUser.city}</p>
                     <p><strong>Street Name: </strong>${currentUser.streetName}</p>
