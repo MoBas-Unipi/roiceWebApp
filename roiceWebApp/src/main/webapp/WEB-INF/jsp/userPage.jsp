@@ -134,12 +134,14 @@
                             <div class="card">
                                 <div class="card-block">
                                     <div class="m-t-30" style="text-align: center;">
-                                        <!-- Display phone image and name -->
-                                        <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
+                                        <c:url var="phoneDetailsUrl" value="/phoneDetails">
+                                            <c:param name="phoneName" value="${phone.name}" />
+                                        </c:url>
+                                        <a href="${phoneDetailsUrl}">
                                             <img src="${phone.picture}" class="img-rounded" width="150"/>
                                         </a>
                                         <h4 class="card-title m-t-10">
-                                            <a href="/phoneDetails?phoneName=<c:out value="${phone.name}" />">
+                                            <a href="${phoneDetailsUrl}">
                                                 <c:out value="${phone.name}" />
                                             </a>
                                         </h4>

@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -17,12 +16,14 @@
                     <div class="card-block">
                         <div class="m-t-30" style="text-align: center;">
                             <!-- Redirect to phoneDetails.jsp page on click -->
-                            <c:set var="encodedPhoneName" value="${fn:replace(phone.name, '+', '%2B')}" />
-                            <a href="/phoneDetails?phoneName=${encodedPhoneName}">
+                            <c:url var="phoneDetailsUrl" value="/phoneDetails">
+                                <c:param name="phoneName" value="${phone.name}" />
+                            </c:url>
+                            <a href="${phoneDetailsUrl}">
                                 <img src="${phone.picture}" class="img-rounded" width="150"/>
                             </a>
                             <h4 class="card-title m-t-10">
-                                <a href="/phoneDetails?phoneName=${encodedPhoneName}">
+                                <a href="${phoneDetailsUrl}">
                                     <c:out value="${phone.name}" />
                                 </a>
                             </h4>
