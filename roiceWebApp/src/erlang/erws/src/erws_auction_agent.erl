@@ -53,7 +53,7 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
           erws_mnesia:save_bid(PhoneName, BidderEmail, NewBid),
           auction_handle(Phone, NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
-          gproc:send({p,l,{?MODULE,PhoneName}},{new_bid,NewBid,RemainingTime}),
+          gproc:send({p,l,{?MODULE,PhoneName}},{no_bid,Bid,RemainingTime}),
           auction_handle(Phone, Bid, EndDate - erlang:system_time(second), EndDate)
       end
   after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
