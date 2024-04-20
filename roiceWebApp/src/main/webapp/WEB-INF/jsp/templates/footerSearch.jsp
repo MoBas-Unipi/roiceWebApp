@@ -10,19 +10,36 @@
     <div class="text-center">
         <!-- Previous page button -->
         <c:if test="${currentPage > 0}">
-            <a href="${baseUrl}?name=${paramName}&page=${currentPage - 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+            <c:url var="prevUrl" value="${baseUrl}">
+                <c:param name="name" value="${paramName}" />
+                <c:param name="page" value="${currentPage - 1}" />
+                <c:param name="size" value="${size}" />
+            </c:url>
+            <a href="${prevUrl}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
                 <i class="mdi mdi-chevron-left"></i> Previous
             </a>
         </c:if>
         <!-- Next page button -->
         <c:if test="${currentPage < totalPages - 1}">
-            <a href="${baseUrl}?name=${paramName}&page=${currentPage + 1}&size=${size}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
+            <c:url var="nextUrl" value="${baseUrl}">
+                <c:param name="name" value="${paramName}" />
+                <c:param name="page" value="${currentPage + 1}" />
+                <c:param name="size" value="${size}" />
+            </c:url>
+            <a href="${nextUrl}" class="btn btn-blue waves-effect waves-dark" aria-expanded="false">
                 Next <i class="mdi mdi-chevron-right"></i>
             </a>
         </c:if>
         <!-- Page information -->
         <div>
-            <p class="small-text">Page ${currentPage + 1} of ${totalPages}</p>
+            <c:choose>
+                <c:when test="${totalPages > 0}">
+                    <p class="small-text">Page ${currentPage + 1} of ${totalPages}</p>
+                </c:when>
+                <c:otherwise>
+                    <p class="small-text">Page 0 of 0</p>
+                </c:otherwise>
+            </c:choose>
             <!-- Copyright information -->
             <div class="text-left copyright-text">
                 <c:out value="© 2024 ROICE Web Application" />
