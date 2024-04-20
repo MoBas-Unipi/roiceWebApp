@@ -70,6 +70,7 @@
                     var email = "${currentUser.email}";
                     var phoneName = "${phone.name}";
                     sendJoinAuctionRequest(email, phoneName);
+                    sendGetTimerRequest(email,phoneName);
                 </script>
                 <c:if test="${not empty isPhoneInFavorites}">
                     <!-- User Auction container -->
@@ -82,6 +83,9 @@
                             var phone_name = "${phone.name}";
                         </script>
                         <button class="confirm-bid-button" onclick="confirmBid(email,phone_name)">Confirm Bid</button>
+                        <span id="bidError" style="color: red; display: block;"></span>
+                        <span id="winner" style="color: #239800"></span>
+                        <span id="winning-bid" style="color: #239800; display: block;"></span>
                     </div>
                 </c:if>
                 <c:if test="${empty isPhoneInFavorites}">
@@ -131,5 +135,12 @@
         </div>
     </footer>
 </div>
+<!-- Stop the timer before leaving the page -->
+<script>
+    // Beforeunload event listener to stop the timer when the user leave the page
+    window.addEventListener('beforeunload', function(event) {
+        stopTimer();
+    });
+</script>
 </body>
 </html>

@@ -89,6 +89,14 @@ function send(message) {
 
 // Function to send a message containing the bid
 function confirmBid(email,phone_name) {
+    // Check if the time remaining is not zero
+    let timeRemaining = document.getElementById("time-remaining-user").innerText;
+    if (timeRemaining === "0 d 0 h 0 m 0 s") {
+        // Time is zero, prevent bid confirmation
+        document.getElementById("bidError").innerText = "Not Possible to make bids. The Auction has not started yet or it's already terminated!";
+        return;
+    }
+
     // Get the input value from "bid-input" field
     let bidInput = document.querySelector('.bid-input').value;
 
@@ -101,15 +109,24 @@ function confirmBid(email,phone_name) {
         let currentDate = new Date().toISOString();
         console.log("Bid date: ",currentDate);
 
-        // Send the bid to the web socket
-        let message = {
-            action : "send",
-            phone_name : phone_name,
-            email : email,
-            date: currentDate,
-            value: bidAmount
-        };
-        send(message);
+        // Get the current Bid value
+        var currentBidValue = document.getElementById("current-bid").innerText;
+
+        if (bidAmount <= currentBidValue) {
+            document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
+        }
+        else {
+            document.getElementById("bidError").innerText = "";
+            // Send the bid to the web socket
+            let message = {
+                action : "send",
+                phone_name : phone_name,
+                email : email,
+                date: currentDate,
+                value: bidAmount
+            };
+            send(message);
+        }
     } else {
         console.error("Invalid bid input.");
     }
@@ -192,3 +209,101 @@ function sendJoinAuctionRequest(email, phoneName) {
     console.log("sendJoinAuctionRequest sent");
 }
 
+
+// Global declaration of getTimerId and updateTimerId
+let getTimerId;
+let updateTimerId;
+
+// Function to send a get auction timer request to Erlang Server and start the local timer (by using updateTimer function)
+function sendGetTimerRequest(email, phoneName) {
+    // Function to send the get auction timer message
+    function sendMessage() {
+        const message = {
+            action: "timer",
+            email: email,
+            phone_name: phoneName
+        };
+        ws.send(JSON.stringify(message));
+    }
+
+    // Send the get auction timer message after 1 seconds from the first call
+    setTimeout(function () {
+        sendMessage();
+        // Set interval to send the message every 10 seconds
+        getTimerId = setInterval(sendMessage, 10000);
+    }, 1000);
+
+    // Start the update timer function just after (5 ms) the join message
+    setTimeout( function () {
+        updateTimer();
+    },5)
+}
+
+
+// Function to update the auction timer in the web page (using both local timer and updates from Erlang server)
+function updateTimer() {
+    var elapsedTime = 0; //elapsed time for local visualization
+    var newRemainingTime = ""; //local variable to store the last erlang update
+
+    // Set interval to update the timer every 1 second
+    updateTimerId = setInterval( function () {
+        // if remainingTimer is empty (no join message sent)
+        if (remainingTime !== "") {
+            // Extract the values of remaining days, hours, minutes and seconds from remainingTime variable
+            var regex = /(\d+) d (\d+) h (\d+) m (\d+) s/;
+            var matches = remainingTime.match(regex);
+            var days = parseInt(matches[1]);
+            var hours = parseInt(matches[2]);
+            var minutes = parseInt(matches[3]);
+            var seconds = parseInt(matches[4]);
+
+            // if the received timer update from erlang server
+            if (newRemainingTime !== remainingTime) {
+                // If the received timer is already expired, set the timer to 0 and stop the timer
+                if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
+                    document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                    stopTimer();
+                }
+
+                // If the received timer is not expired, set the timer to the current value
+                document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                elapsedTime = 0; //reset the elapsed time for local visualization
+                // Update the local variable to store the last erlang update
+                newRemainingTime = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+            }
+
+            // If no timer update from erlang arrived, manage a local timer
+            else {
+                // Update the elapsed time for local visualization
+                elapsedTime += 1000;
+                // Compute the remaining time in milliseconds
+                var remainingMilliseconds = (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000 - elapsedTime;
+
+                // Convert the remaining time in days, hours, minutes and seconds
+                var remainingDays = Math.floor(remainingMilliseconds / (1000 * 60 * 60 * 24));
+                var remainingHours = Math.floor((remainingMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var remainingMinutes = Math.floor((remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+                var remainingSeconds = Math.floor((remainingMilliseconds % (1000 * 60)) / 1000);
+
+                // If the local timer is expired, set the timer to 0 and stop the timer and conclude the function
+                if (remainingMilliseconds <= 0) {
+                    elapsedTime = 0;
+                    document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                    stopTimer();
+                    return;
+                }
+
+                // If the local timer is not expired, update the remaining time value
+                document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+            }
+        }
+    }, 1000);
+}
+
+
+// Function to stop the timer
+function stopTimer() {
+    clearInterval(getTimerId);
+    clearInterval(updateTimerId);
+    console.log("Timer stopped");
+}
