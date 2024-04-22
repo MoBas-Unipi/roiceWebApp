@@ -19,19 +19,16 @@ function validateForm() {
 
     var error = false;
     if (startingDate === "") {
-        document.getElementById("startingDateError").innerText = "Starting Date is required";
         error = true;
     } else {
         document.getElementById("startingDateError").innerText = "";
     }
     if (endDate === "") {
-        document.getElementById("endDateError").innerText = "End Date is required";
         error = true;
     } else {
         document.getElementById("endDateError").innerText = "";
     }
     if (minimumPrice === "") {
-        document.getElementById("minimumPriceError").innerText = "Minimum Price is required";
         error = true;
     } else {
         document.getElementById("minimumPriceError").innerText = "";
@@ -42,12 +39,10 @@ function validateForm() {
     }
 
     if (new Date(endDate) <= new Date(startingDate)) {
-        document.getElementById("dateError").innerText = "End Date must be after Starting Date!";
         return false;
     }
 
     if (new Date(startingDate) <= now) {
-        document.getElementById("dateError").innerText = "Starting Date must be in the future!";
         return false;
     }
 
