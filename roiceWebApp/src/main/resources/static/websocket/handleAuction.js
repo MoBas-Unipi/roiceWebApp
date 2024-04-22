@@ -88,7 +88,10 @@ function send(message) {
 
 
 // Function to send a message containing the bid
-function confirmBid(email,phone_name) {
+function confirmBid(email, phone_name, event) {
+    // Prevent the call to a url on form submission
+    event.preventDefault();
+
     // Check if the time remaining is not zero
     let timeRemaining = document.getElementById("time-remaining-user").innerText;
     if (timeRemaining === "0 d 0 h 0 m 0 s") {
@@ -97,38 +100,42 @@ function confirmBid(email,phone_name) {
         return;
     }
 
-    // Get the input value from "bid-input" field
-    let bidInput = document.querySelector('.bid-input').value;
+    // Get the input value from the form
+    let bidInput = document.getElementById("bidinput").value;
 
     // Convert the bid input to an integer
-    let bidAmount = parseFloat(bidInput);
+    let bidAmount = parseInt(bidInput);
 
     // Check if the bid input is not empty and is a valid integer
     if (!isNaN(bidAmount)) {
-        // Get current date and time as a string in ISO format
-        let currentDate = new Date().toISOString();
-        console.log("Bid date: ",currentDate);
+        // Check if the bid amount is a positive integer
+        if (bidAmount <= 0) {
+            document.getElementById("bidError").innerText = "Bid amount must be a positive integer";
+        } else {
+            // Get current date and time as a string in ISO format
+            let currentDate = new Date().toISOString();
+            console.log("Bid date: ", currentDate);
 
-        // Get the current Bid value
-        var currentBidValue = document.getElementById("current-bid").innerText;
+            // Get the current Bid value
+            var currentBidValue = document.getElementById("current-bid").innerText;
 
-        if (bidAmount <= currentBidValue) {
-            document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
-        }
-        else {
-            document.getElementById("bidError").innerText = "";
-            // Send the bid to the web socket
-            let message = {
-                action : "send",
-                phone_name : phone_name,
-                email : email,
-                date: currentDate,
-                value: bidAmount
-            };
-            send(message);
+            if (bidAmount <= currentBidValue) {
+                document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
+            } else {
+                document.getElementById("bidError").innerText = "";
+                // Send the bid to the web socket
+                let message = {
+                    action: "send",
+                    phone_name: phone_name,
+                    email: email,
+                    date: currentDate,
+                    value: bidAmount
+                };
+                send(message);
+            }
         }
     } else {
-        console.error("Invalid bid input.");
+        document.getElementById("bidError").innerText = "Invalid bid input.";
     }
 }
 
@@ -161,7 +168,7 @@ function createErlangAuction(phoneName) {
     var socket = new WebSocket(webSocketUrl);
 
     // Event handler for successful connection
-    socket.onopen = function(event) {
+    socket.onopen = function (event) {
         console.log('WebSocket connection opened');
 
         // Send JSON message
@@ -169,18 +176,18 @@ function createErlangAuction(phoneName) {
     };
 
     // Event handler for receiving messages
-    socket.onmessage = function(event) {
+    socket.onmessage = function (event) {
         console.log('Message received from server:', event.data);
         // Handle server response if needed
     };
 
     // Event handler for connection close
-    socket.onclose = function(event) {
+    socket.onclose = function (event) {
         console.log('WebSocket connection closed');
     };
 
     // Event handler for errors
-    socket.onerror = function(error) {
+    socket.onerror = function (error) {
         console.error('WebSocket error:', error);
     };
 }
@@ -234,9 +241,9 @@ function sendGetTimerRequest(email, phoneName) {
     }, 1000);
 
     // Start the update timer function just after (5 ms) the join message
-    setTimeout( function () {
+    setTimeout(function () {
         updateTimer();
-    },5)
+    }, 5)
 }
 
 
@@ -246,7 +253,7 @@ function updateTimer() {
     var newRemainingTime = ""; //local variable to store the last erlang update
 
     // Set interval to update the timer every 1 second
-    updateTimerId = setInterval( function () {
+    updateTimerId = setInterval(function () {
         // if remainingTimer is empty (no join message sent)
         if (remainingTime !== "") {
             // Extract the values of remaining days, hours, minutes and seconds from remainingTime variable

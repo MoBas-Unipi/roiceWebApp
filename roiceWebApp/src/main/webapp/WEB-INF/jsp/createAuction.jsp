@@ -71,7 +71,7 @@
                 </div>
                 <div class="form-group">
                     <label for="minimumPrice">Minimum Price:</label>
-                    <input type="number" id="minimumPrice" name="minimumPrice" step="0.01" min="1" style="margin-left: 20px">
+                    <input type="number" id="minimumPrice" name="minimumPrice" step="1" min="1" style="margin-left: 20px">
                     <span id="minimumPriceError" style="color: red;"></span>
                 </div>
                 <button type="submit" class="create-auction-button">Create Auction</button>
