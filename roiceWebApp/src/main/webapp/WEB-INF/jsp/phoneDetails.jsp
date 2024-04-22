@@ -64,6 +64,8 @@
                 <p class="phone-detail-item">Battery Type: ${phone.batteryType}</p>
                 <p class="phone-detail-item">Release Year: ${phone.releaseYear}</p>
             </div>
+
+            <!-- User case -->
             <c:if test="${not empty phone.auction && userClass == 'user'}">
                 <!-- Check if the auction is started-->
                 <c:set var="currentTimeMillis" value="<%=System.currentTimeMillis() %>" />
@@ -75,22 +77,17 @@
                         sendJoinAuctionRequest(email, phoneName);
                         sendGetTimerRequest(email,phoneName);
                     </script>
-                    <c:if test="${not empty isPhoneInFavorites}">
-                        <!-- User Auction container -->
-                        <div class="content-block" style="margin-left: 100px">
-                            <h3>Auction</h3>
-                            <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
-                            <p>Current Bid: $<span class="current-bid">100</span></p> <!-- Placeholder for current bid -->
-                            <input type="text" class="bid-input" placeholder="Enter your bid">
-                            <script>
-                                var phone_name = "${phone.name}";
-                            </script>
-                            <button class="confirm-bid-button" onclick="confirmBid(email,phone_name)">Confirm Bid</button>
-                            <span id="bidError" style="color: red; display: block;"></span>
-                            <span class="winner" style="color: #239800"></span>
-                            <span class="winning-bid" style="color: #239800; display: block;"></span>
-                        </div>
-                    </c:if>
+                    <!-- User Auction container -->
+                    <div class="content-block" style="margin-left: 100px">
+                        <h3>Auction</h3>
+                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
+                        <p>Current Bid: $<span class="current-bid">100</span></p> <!-- Placeholder for current bid -->
+                        <input type="text" class="bid-input" placeholder="Enter your bid">
+                        <button class="confirm-bid-button" onclick="confirmBid(email,phoneName)">Confirm Bid</button>
+                        <span id="bidError" style="color: red; display: block;"></span>
+                        <span class="winner" style="color: #239800"></span>
+                        <span class="winning-bid" style="color: #239800; display: block;"></span>
+                    </div>
                 </c:if>
 
                 <!-- Check if the auction has not started yet-->
@@ -103,6 +100,7 @@
                     </div>
                 </c:if>
             </c:if>
+
             <!-- Admin case (cannot make bids, just check the auction time and users bids)-->
             <c:if test="${not empty phone.auction && userClass == 'admin'}">
                 <!-- Check if the auction is started-->
