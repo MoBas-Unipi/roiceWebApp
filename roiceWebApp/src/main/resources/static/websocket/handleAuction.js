@@ -90,7 +90,8 @@ function send(message) {
 // Function to send a message containing the bid
 function confirmBid(email,phone_name) {
     // Check if the time remaining is not zero
-    let timeRemaining = document.getElementById("time-remaining-user").innerText;
+    let timeRemaining = document.querySelector('.time-remaining-user').innerText;
+    //let timeRemaining = document.getElementById("time-remaining-user").innerText;
     if (timeRemaining === "0 d 0 h 0 m 0 s") {
         // Time is zero, prevent bid confirmation
         document.getElementById("bidError").innerText = "Not Possible to make bids. The Auction has not started yet or it's already terminated!";
@@ -110,7 +111,8 @@ function confirmBid(email,phone_name) {
         console.log("Bid date: ",currentDate);
 
         // Get the current Bid value
-        var currentBidValue = document.getElementById("current-bid").innerText;
+        var currentBidValue = document.querySelector('.current-bid').innerText;
+        //var currentBidValue = document.getElementById("current-bid").innerText;
 
         if (bidAmount <= currentBidValue) {
             document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
@@ -261,12 +263,14 @@ function updateTimer() {
             if (newRemainingTime !== remainingTime) {
                 // If the received timer is already expired, set the timer to 0 and stop the timer
                 if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
-                    document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                    document.querySelector('.time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                    //document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
                     stopTimer();
                 }
 
                 // If the received timer is not expired, set the timer to the current value
-                document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                document.querySelector('.time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                //document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
                 elapsedTime = 0; //reset the elapsed time for local visualization
                 // Update the local variable to store the last erlang update
                 newRemainingTime = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
@@ -288,13 +292,15 @@ function updateTimer() {
                 // If the local timer is expired, set the timer to 0 and stop the timer and conclude the function
                 if (remainingMilliseconds <= 0) {
                     elapsedTime = 0;
-                    document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                    document.querySelector('.time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                    //document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
                     stopTimer();
                     return;
                 }
 
                 // If the local timer is not expired, update the remaining time value
-                document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                document.querySelector('.time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                //document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
             }
         }
     }, 1000);

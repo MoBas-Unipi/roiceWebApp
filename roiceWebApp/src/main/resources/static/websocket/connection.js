@@ -33,7 +33,8 @@ function connect() {
         var bidValue = bidMatch ? bidMatch[1] : "N/A";
         // If a bid message is arrived from Erlang Server
         if (bidValue !== "N/A") {
-            document.getElementById('current-bid').innerText = bidValue;
+            document.querySelector('.current-bid').innerText = bidValue;
+            //document.getElementById('current-bid').innerText = bidValue;
         }
 
 
@@ -47,7 +48,8 @@ function connect() {
             if (remainingTime === "0 d 0 h 0 m 0 s") {
                 stopTimer();
             }
-            document.getElementById('time-remaining-user').innerText = remainingTime;
+            document.querySelector('.time-remaining-user').innerText = remainingTime;
+            //document.getElementById('time-remaining-user').innerText = remainingTime;
         }
 
 
@@ -56,7 +58,8 @@ function connect() {
         var winnerMatch = received_msg.match(/Winner:<<"([^"]+)">>/);
         var winner = winnerMatch ? winnerMatch[1] : "N/A";
         if (winner !== "N/A") {
-            document.getElementById("winner").innerText = "Winner: " + winner;
+            document.querySelector('.winner').innerText = "Winner: " + winner;
+            //document.getElementById("winner").innerText = "Winner: " + winner;
         }
 
 
@@ -65,7 +68,8 @@ function connect() {
         var winningBidMatch = received_msg.match(/Winning Bid:(\d+)/);
         var winningBidValue = winningBidMatch ? winningBidMatch[1] : "N/A";
         if (winningBidValue !== "N/A") {
-            document.getElementById("winning-bid").innerText = "With a Bid of: " + winningBidValue + "$";
+            document.querySelector('.winning-bid').innerText = "With a Bid of: " + winningBidValue + "$";
+            //document.getElementById("winning-bid").innerText = "With a Bid of: " + winningBidValue + "$";
         }
 
     };
