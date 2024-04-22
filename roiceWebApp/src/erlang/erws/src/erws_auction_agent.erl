@@ -60,8 +60,9 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
     case erws_mnesia:get_winner_bidder(Phone) of
       not_found ->
         logger:info("No bidders for the auction of the phone: ~p~n", [Phone]),
-        Response = "No bidders for the phone",
-        gproc:send({p,l,{?MODULE,Phone}}, {no_bidders, Response});
+        RemainingTime = get_time_remaining(EndDate),
+        Response = <<"No bidders for the phone">>,
+        gproc:send({p,l,{?MODULE,Phone}}, {no_bidders, Response, RemainingTime});
       {WinnerEmail, WinningBid} ->
         RemainingTime = get_time_remaining(EndDate),
         logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
@@ -275,9 +276,9 @@ receive_joined(State) ->
       logger:info("[receive_joined] => Received Bid < Current Max Bid"),
       Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
-    {no_bidders, Text} ->
+    {no_bidders, Text, RemainingTime} ->
       logger:info("[receive_joined] => Auction terminated, no bidders"),
-      Response = io_lib:format("~p", [Text]),
+      Response = io_lib:format("Winner:~p RemainingTime:~p", [Text,RemainingTime]),
       {reply, {text, Response}, State, hibernate};
     {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime} ->
       logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
@@ -331,9 +332,9 @@ websocket_info(Info, State) ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
       Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
-    {no_bidders, Text} ->
+    {no_bidders, Text, RemainingTime} ->
       logger:info("[receive_joined] => Auction terminated, no bidders"),
-      Response = io_lib:format("~p", [Text]),
+      Response = io_lib:format("Winner:~p RemainingTime:~p", [Text,RemainingTime]),
       {reply, {text, Response}, State, hibernate};
     {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime} ->
       logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
