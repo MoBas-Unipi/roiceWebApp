@@ -151,35 +151,14 @@ function createErlangAuction(phoneName) {
     // Convert JSON to string
     var jsonMessage = JSON.stringify(auctionData);
 
-    // WebSocket endpoint URL
-    var webSocketUrl = 'ws://localhost:8300';
-
-    // Create WebSocket connection
-    var socket = new WebSocket(webSocketUrl);
-
     // Event handler for successful connection
-    socket.onopen = function(event) {
+    ws.onopen = function(event) {
         console.log('WebSocket connection opened');
 
         // Send JSON message
-        socket.send(jsonMessage);
+        ws.send(jsonMessage);
     };
 
-    // Event handler for receiving messages
-    socket.onmessage = function(event) {
-        console.log('Message received from server:', event.data);
-        // Handle server response if needed
-    };
-
-    // Event handler for connection close
-    socket.onclose = function(event) {
-        console.log('WebSocket connection closed');
-    };
-
-    // Event handler for errors
-    socket.onerror = function(error) {
-        console.error('WebSocket error:', error);
-    };
 }
 
 function validateAndCreateAuction(phoneName) {

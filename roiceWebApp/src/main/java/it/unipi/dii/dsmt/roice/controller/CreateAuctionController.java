@@ -81,7 +81,8 @@ public class CreateAuctionController {
         }
         session.setAttribute("isAuctionPresent", true);
         session.setAttribute("phone", phoneDTO);
-        return "phoneDetails";
+        session.setAttribute(phoneName, phoneDTO.getName());
+        return "redirect:/phoneDetails?phoneName=" + phoneName;
     }
 
     private Date parseDateString(String dateString) throws ParseException {

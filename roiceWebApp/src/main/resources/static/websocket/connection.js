@@ -74,10 +74,14 @@ function connect() {
 
     };
 
-
     // Event handler for WebSocket connection close
     ws.onclose = function() {
         console.log('Connection closed');
+    };
+
+    // Event handler for errors
+    ws.onerror = function(error) {
+        console.error('WebSocket error:', error);
     };
 }
 
