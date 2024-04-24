@@ -83,7 +83,7 @@ function send(message) {
 
 
 // Function to send a message containing the bid
-function confirmBid(email,phone_name) {
+function confirmBid(email, phone_name) {
     // Check if the time remaining is not zero
     let timeRemaining = document.querySelector('.time-remaining-user').innerText;
     //let timeRemaining = document.getElementById("time-remaining-user").innerText;
@@ -103,7 +103,7 @@ function confirmBid(email,phone_name) {
     if (!isNaN(bidAmount)) {
         // Get current date and time as a string in ISO format
         let currentDate = new Date().toISOString();
-        console.log("Bid date: ",currentDate);
+        console.log("Bid date: ", currentDate);
 
         // Get the current Bid value
         var currentBidValue = document.querySelector('.current-bid').innerText;
@@ -111,14 +111,13 @@ function confirmBid(email,phone_name) {
 
         if (bidAmount <= currentBidValue) {
             document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
-        }
-        else {
+        } else {
             document.getElementById("bidError").innerText = "";
             // Send the bid to the web socket
             let message = {
-                action : "send",
-                phone_name : phone_name,
-                email : email,
+                action: "send",
+                phone_name: phone_name,
+                email: email,
                 date: currentDate,
                 value: bidAmount
             };
@@ -151,12 +150,35 @@ function createErlangAuction(phoneName) {
     // Convert JSON to string
     var jsonMessage = JSON.stringify(auctionData);
 
+    // WebSocket endpoint URL
+    var webSocketUrl = 'ws://localhost:8300';
+
+    // Create WebSocket connection
+    var socket = new WebSocket(webSocketUrl);
+
     // Event handler for successful connection
-    ws.onopen = function(event) {
+    socket.onopen = function (event) {
         console.log('WebSocket connection opened');
 
         // Send JSON message
-        ws.send(jsonMessage);
+        socket.send(jsonMessage);
+    };
+
+    // Event handler for receiving messages
+    socket.onmessage = function (event) {
+        console.log('Message received from server:', event.data);
+        // Handle server response if needed
+        socket.send(jsonMessage);
+    };
+
+    // Event handler for connection close
+    socket.onclose = function (event) {
+        console.log('WebSocket connection closed');
+    };
+
+    // Event handler for errors
+    socket.onerror = function (error) {
+        console.error('WebSocket error:', error);
     };
 
 }
@@ -210,9 +232,9 @@ function sendGetTimerRequest(email, phoneName) {
     }, 1000);
 
     // Start the update timer function just after (5 ms) the join message
-    setTimeout( function () {
+    setTimeout(function () {
         updateTimer();
-    },5)
+    }, 5)
 }
 
 
@@ -222,7 +244,7 @@ function updateTimer() {
     var newRemainingTime = ""; //local variable to store the last erlang update
 
     // Set interval to update the timer every 1 second
-    updateTimerId = setInterval( function () {
+    updateTimerId = setInterval(function () {
         // if remainingTimer is empty (no join message sent)
         if (remainingTime !== "") {
             // Extract the values of remaining days, hours, minutes and seconds from remainingTime variable

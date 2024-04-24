@@ -43,10 +43,6 @@
     </div>
 
     <div class="all-container">
-        <script type="text/javascript">
-            // If there is an auction init websocket connection
-            connect();
-        </script>
         <h1>Create Auction</h1>
         <div class="phone-details" style="margin-left: 210px; margin-top: 20px">
             <h2>${phone.name}</h2>
