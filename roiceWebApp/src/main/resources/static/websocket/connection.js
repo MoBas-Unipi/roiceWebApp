@@ -27,6 +27,17 @@ function connect() {
         var received_msg = event.data;
         console.log("Received: " + received_msg);
 
+        //----------------------CURRENT WINNER HANDLING----------------------//
+        // Extract the current winner if available (if not assign N/A)
+        var winnerMatch = received_msg.match(/CurrentWin:<<"([^"]+)">>/);
+        var currentWinner = winnerMatch ? winnerMatch[1] : "N/A";
+        // If a current winner message is arrived from Erlang Server
+        if (currentWinner !== "N/A") {
+            document.querySelector('.current-winner').innerText = currentWinner;
+        } else {
+            document.querySelector('.current-winner').innerText = "N/A";
+        }
+
         //----------------------BID HANDLING----------------------//
         // Extract bid value if available (if not assign N/A)
         var bidMatch = received_msg.match(/Bid:(\d+)/);

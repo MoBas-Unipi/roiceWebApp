@@ -80,10 +80,11 @@
                     <!-- User Auction container -->
                     <div class="content-block" style="margin-left: 100px">
                         <h3>Auction</h3>
-                        <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for current bid -->
-                        <p>End Date: <span class="end-date">${endDate}</span></p> <!-- Placeholder for current bid -->
+                        <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for the start date -->
+                        <p>End Date: <span class="end-date">${endDate}</span></p> <!-- Placeholder for end date -->
+                        <p>Current Winner: <span class="current-winner"></span></p> <!-- Placeholder for current winner -->
                         <p>Current Bid: $<span class="current-bid">100</span></p> <!-- Placeholder for current bid -->
-                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for current bid -->
+                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
                         <input type="text" class="bid-input" placeholder="Enter your bid">
                         <button class="confirm-bid-button" onclick="confirmBid(email,phoneName)">Confirm Bid</button>
                         <span id="bidError" style="color: red; display: block;"></span>
@@ -121,8 +122,9 @@
                         <h3>Auction</h3>
                         <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for current bid -->
                         <p>End Date: <span class="end-date">${endDate}</span></p>
-                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
+                        <p>Current Winner: <span class="current-winner"></span></p> <!-- Placeholder for current winner -->
                         <p>Current Bid: $<span class="current-bid">50</span></p> <!-- Placeholder for current bid -->
+                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
                         <span class="winner" style="color: #239800"></span>
                         <span class="winning-bid" style="color: #239800; display: block;"></span>
                     </div>

@@ -32,13 +32,25 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
   %% Receive JOIN request from a Bidder
     {bidder_join, PhoneName} ->
       RemainingTime = get_time_remaining(EndDate),
-      gproc:send({p,l,{?MODULE,PhoneName}},{joined,Bid,RemainingTime}),
+      CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
+      case CurrentWinner of
+        {WinnerEmail, WinnerBid} ->
+          gproc:send({p,l,{?MODULE,PhoneName}}, {joined, Bid, RemainingTime, WinnerEmail});
+        not_found ->
+          gproc:send({p,l,{?MODULE,PhoneName}}, {joined, Bid, RemainingTime, []})
+      end,
       auction_handle(Phone, Bid, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive TIMER message from a Bidder
     {timer, PhoneName} ->
       RemainingTime = get_time_remaining(EndDate),
-      gproc:send({p,l,{?MODULE,PhoneName}},{send_timer,Bid,RemainingTime}),
+      CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
+      case CurrentWinner of
+        {WinnerEmail, WinnerBid} ->
+          gproc:send({p,l,{?MODULE,PhoneName}}, {send_timer, Bid, RemainingTime, WinnerEmail});
+        not_found ->
+          gproc:send({p,l,{?MODULE,PhoneName}}, {send_timer, Bid, RemainingTime, []})
+      end,
       auction_handle(Phone, Bid, EndDate - erlang:system_time(second), EndDate);
 
   %% Receive BID message from a Bidder
@@ -49,7 +61,13 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
         Bid < NewBid ->
           logger:info("NewBid: ~p > Current Bid: ~p!~n", [NewBid, Bid]),
           logger:info("Send update bid to bidders"),
-          gproc:send({p,l,{?MODULE,PhoneName}},{new_bid,NewBid,RemainingTime}),
+          CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
+          case CurrentWinner of
+            {WinnerEmail, WinnerBid} ->
+              gproc:send({p,l,{?MODULE,PhoneName}}, {new_bid, Bid, RemainingTime, WinnerEmail});
+            not_found ->
+              gproc:send({p,l,{?MODULE,PhoneName}}, {new_bid, Bid, RemainingTime, []})
+          end,
           erws_mnesia:save_bid(PhoneName, BidderEmail, NewBid),
           auction_handle(Phone, NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
@@ -222,9 +240,9 @@ handle_send_bid(Map, State) ->
 
   erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidValue, self(), PhoneName),
   receive
-    {new_bid, NewBid, RemainingTime} ->
+    {new_bid, NewBid, RemainingTime, CurrentWinner} ->
       logger:info("[handle_send_bid] => Received New Bid"),
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [NewBid, RemainingTime]),
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
@@ -250,9 +268,9 @@ handle_get_timer(Map, State) ->
   erws_bidder_handler:process_timer(AuctionPid,PhoneName),
 
   receive
-    {send_timer, Bid, RemainingTime} ->
+    {send_timer, Bid, RemainingTime, CurrentWinner} ->
       logger:info("[handle_get_timer] => Get Auction Timer"),
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [Bid,RemainingTime]),
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid,RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate}
   end.
 
@@ -273,15 +291,15 @@ get_time_remaining(EndDate) ->
 
 receive_joined(State) ->
   receive
-    {joined, Bid,RemainingTime} ->
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [Bid,RemainingTime]),
+    {joined, Bid,RemainingTime, CurrentWinner} ->
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid,RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {not_joined} ->
       logger:info("[receive_joined] => Bidder not joined!"),
       {ok, State};
-    {new_bid, NewBid, RemainingTime} ->
-      logger:info("[receive_joined] => Received New Bid"),
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [NewBid,RemainingTime]),
+    {new_bid, NewBid, RemainingTime, CurrentWinner} ->
+      logger:info("[handle_send_bid] => Received New Bid"),
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
       logger:info("[receive_joined] => Received Bid < Current Max Bid"),
@@ -295,9 +313,9 @@ receive_joined(State) ->
       logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
       Response = io_lib:format("Phone:~p Winner:~p Winning Bid:~p RemainingTime:~p", [Phone, WinnerEmail, WinningBid, RemainingTime]),
       {reply, {text, Response}, State, hibernate};
-    {send_timer, Bid, RemainingTime} ->
+    {send_timer, Bid, RemainingTime, CurrentWinner} ->
       logger:info("[handle_get_timer] => Get Auction Timer"),
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [Bid,RemainingTime]),
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid,RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate}
   end.
 
@@ -329,15 +347,15 @@ websocket_info(Msg, Req, State) ->
 
 websocket_info(Info, State) ->
   case Info of
-    {joined, Bid, RemainingTime} ->
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [Bid, RemainingTime]),
+    {joined, Bid,RemainingTime, CurrentWinner} ->
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid,RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {not_joined} ->
       logger:info("[receive_joined] => Bidder not joined!"),
       {ok, State};
-    {new_bid, NewBid, RemainingTime} ->
-      logger:info("[receive_joined] => Received New Bid"),
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [NewBid, RemainingTime]),
+    {new_bid, NewBid, RemainingTime, CurrentWinner} ->
+      logger:info("[handle_send_bid] => Received New Bid"),
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
       logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
@@ -351,9 +369,9 @@ websocket_info(Info, State) ->
       logger:info("Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
       Response = io_lib:format("Phone:~p Winner:~p Winning Bid:~p RemainingTime:~p", [Phone, WinnerEmail, WinningBid, RemainingTime]),
       {reply, {text, Response}, State, hibernate};
-    {send_timer, Bid, RemainingTime} ->
+    {send_timer, Bid, RemainingTime, CurrentWinner} ->
       logger:info("[handle_get_timer] => Get Auction Timer"),
-      Response = io_lib:format("Bid:~p RemainingTime:~p", [Bid,RemainingTime]),
+      Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid,RemainingTime,CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {live_auctions_update, Text} ->
       Response = io_lib:format("~p", [Text]),
