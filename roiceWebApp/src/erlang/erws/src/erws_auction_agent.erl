@@ -144,6 +144,8 @@ handle_websocket_frame(Map, State) ->
       logger:debug("EMAIL of the new join user: ~p~n", [BidderEmail]),
       handle_join_auction(Map, State);
 
+    <<"live_auctions">> ->
+      handle_live_auctions(State);
     <<"send">> ->
       handle_send_bid(Map,State);
 
@@ -173,6 +175,8 @@ handle_new_auction(Map) ->
           AuctionPid = spawn(fun() -> auction_handle(PhoneName, MinimumPrice, AuctionTime, EndDate) end),
           logger:info("Auction process spawned with pid: ~p~n", [AuctionPid]),
           erws_mnesia:save_auction(PhoneName, AuctionPid),
+          Text = "Live auctions update requested!",
+          gproc:send({p,l,{?MODULE,{live_auctions}}},{live_auctions_update, Text}),
           {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
         false ->
           logger:info("Start date has already passed, cannot spawn auction process.~n"),
@@ -196,6 +200,14 @@ handle_join_auction(Map, State) ->
       logger:info("WEBSOCKET_INIT process started here: ~p~n", [Pid]),
       receive_joined(State).
 
+handle_live_auctions(State) ->
+  gproc:reg({p,l,{?MODULE, {live_auctions}}}),
+  logger:info("Client registered to the live auctions session!"),
+  receive
+    {live_auctions_update, Text} ->
+      Response = io_lib:format("~p", [Text]),
+      {reply, {text, Response}, State, hibernate}
+  end.
 
 handle_send_bid(Map, State) ->
   % Get attributes from map
@@ -342,5 +354,8 @@ websocket_info(Info, State) ->
     {send_timer, Bid, RemainingTime} ->
       logger:info("[handle_get_timer] => Get Auction Timer"),
       Response = io_lib:format("Bid:~p RemainingTime:~p", [Bid,RemainingTime]),
+      {reply, {text, Response}, State, hibernate};
+    {live_auctions_update, Text} ->
+      Response = io_lib:format("~p", [Text]),
       {reply, {text, Response}, State, hibernate}
   end.
