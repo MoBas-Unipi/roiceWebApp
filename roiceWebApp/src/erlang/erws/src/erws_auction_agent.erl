@@ -60,7 +60,7 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
     case erws_mnesia:get_winner_bidder(Phone) of
       not_found ->
         logger:info("No bidders for the auction of the phone: ~p~n", [Phone]),
-        Response = "No bidders for the phone",
+        Response = "Auction Terminated! No bidders for this phone!",
         gproc:send({p,l,{?MODULE,Phone}}, {no_bidders, Response});
       {WinnerEmail, WinningBid} ->
         RemainingTime = get_time_remaining(EndDate),

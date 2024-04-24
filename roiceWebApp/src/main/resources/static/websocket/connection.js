@@ -57,9 +57,18 @@ function connect() {
         // Extract the winner
         var winnerMatch = received_msg.match(/Winner:<<"([^"]+)">>/);
         var winner = winnerMatch ? winnerMatch[1] : "N/A";
-        if (winner !== "N/A") {
-            document.querySelector('.winner').innerText = "Winner: " + winner;
-            //document.getElementById("winner").innerText = "Winner: " + winner;
+
+        // Check if the received message indicates no bidders
+        if (received_msg.includes("Auction Terminated! No bidders for this phone!")) {
+            document.querySelector('.winner').innerText = "Auction Terminated! No bidders for this phone!";
+            // Clear the fields related to time remaining and current bid
+            document.querySelector('.time-remaining-user').innerText = "";
+            document.querySelector('.current-bid').innerText = "";
+        } else {
+            if (winner !== "N/A") {
+                document.querySelector('.winner').innerText = "Winner: " + winner;
+                //document.getElementById("winner").innerText = "Winner: " + winner;
+            }
         }
 
 
