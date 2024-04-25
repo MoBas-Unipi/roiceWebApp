@@ -34,7 +34,7 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
       RemainingTime = get_time_remaining(EndDate),
       CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
       case CurrentWinner of
-        {WinnerEmail, WinnerBid} ->
+        {WinnerEmail, _} ->
           gproc:send({p,l,{?MODULE,PhoneName}}, {joined, Bid, RemainingTime, WinnerEmail});
         not_found ->
           gproc:send({p,l,{?MODULE,PhoneName}}, {joined, Bid, RemainingTime, []})
@@ -46,7 +46,7 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
       RemainingTime = get_time_remaining(EndDate),
       CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
       case CurrentWinner of
-        {WinnerEmail, WinnerBid} ->
+        {WinnerEmail, _} ->
           gproc:send({p,l,{?MODULE,PhoneName}}, {send_timer, Bid, RemainingTime, WinnerEmail});
         not_found ->
           gproc:send({p,l,{?MODULE,PhoneName}}, {send_timer, Bid, RemainingTime, []})
@@ -61,13 +61,7 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
         Bid < NewBid ->
           logger:info("NewBid: ~p > Current Bid: ~p!~n", [NewBid, Bid]),
           logger:info("Send update bid to bidders"),
-          CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
-          case CurrentWinner of
-            {WinnerEmail, WinnerBid} ->
-              gproc:send({p,l,{?MODULE,PhoneName}}, {new_bid, Bid, RemainingTime, WinnerEmail});
-            not_found ->
-              gproc:send({p,l,{?MODULE,PhoneName}}, {new_bid, Bid, RemainingTime, []})
-          end,
+          gproc:send({p,l,{?MODULE,PhoneName}}, {new_bid, NewBid, RemainingTime, BidderEmail}),
           erws_mnesia:save_bid(PhoneName, BidderEmail, NewBid),
           auction_handle(Phone, NewBid, EndDate - erlang:system_time(second), EndDate);
         true ->
@@ -88,42 +82,6 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
         logger:error("Unexpected result from get_winner_bidder")
     end
   end.
-
-%%    %% Your timeout logic here
-%%    case Bidders of
-%%      [] ->
-%%        %% If there are no bidders
-%%        logger:info("Timeout! No bidders! Auction terminated!~n");
-%%      _ ->
-%%        %% Else, if there are bidders but no high bids
-%%        ModBidders = changeStrc(Bidders, []),
-%%        case lists:max(ModBidders) of
-%%          {Bid2, [User, _]} when Bid2 > 0 ->
-%%            logger:info("Sold to ~s! Final price: ~p~n", [User, Bid2]);
-%%          _ ->
-%%            logger:info("Timeout! No high bids! Auction terminated~n")
-%%        end
-%%    end
-%%  end.
-
-% Local Functions
-%%% broadcast - send message to list of peers
-%%broadcast(PeerList, Message) ->
-%%  logger:info("PeerList: ~p", [PeerList]),
-%%  Fun = fun({Peer, _, _}) -> Peer ! Message end,
-%%  lists:map(Fun, PeerList).
-
-%%broadcast_to_clients(_, []) ->
-%%  ok;
-%%broadcast_to_clients(Msg, [Client|Rest]) ->
-%%  Client ! {new_bid, Msg},
-%%  broadcast_to_clients(Msg,Rest).
-
-%%% changeStrc - change structure of list with bidders
-%%changeStrc([{Peer, Name, Value} | T], Tail) ->
-%%  [{Value, [Name, Peer]} | changeStrc(T, Tail)];
-%%changeStrc([], Tail) ->    % End of recursion
-%%  Tail.
 
 % Handles incoming WebSocket text frames
 websocket_handle(Frame = {text, Message}, State) ->
@@ -211,7 +169,6 @@ handle_join_auction(Map, State) ->
       logger:info("[erws_handler] handle_join_auction => The phone ~p has the following PID: ~p~n", [PhoneName, AuctionPid]),
       logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n", [AuctionPid]),
 
-      % Return BidderPid
       erws_bidder_handler:start(AuctionPid, PhoneName),
       gproc:reg({p,l,{?MODULE,PhoneName}}),
       Pid = gproc:lookup_pids({p,l,{?MODULE,PhoneName}}),
@@ -257,13 +214,9 @@ handle_send_bid(Map, State) ->
 
 handle_get_timer(Map, State) ->
   PhoneName = maps:get(<<"phone_name">>, Map),
-  %BidderEmail = maps:get(<<"email">>, Map),
 
   AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
   logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
-
-  %BidderPid = erws_mnesia:get_bidder_pid(BidderEmail),
-  %logger:info("Retrieved BidderPid saved in BIDDER table of MNESIA DB: ~p~n", [BidderPid]),
 
   erws_bidder_handler:process_timer(AuctionPid,PhoneName),
 
@@ -319,20 +272,6 @@ receive_joined(State) ->
       {reply, {text, Response}, State, hibernate}
   end.
 
-% Handle WebSocket timeout messages
-%%websocket_info({text, NewBid}, State) ->
-%%  receive
-%%    {new_bid, NewBid} ->
-%%      logger:info("[receive_joined] => Received New Bid"),
-%%      Response = io_lib:format("~p", [NewBid]),
-%%      {reply, {text, Response}, State, hibernate}
-%%  end.
-
-% Handle other WebSocket info messages
-%%websocket_info(_Info, Req, State) ->
-%%  logger:debug("[erws_handler] websocket_info => websocket info"),
-%%  {ok, Req, State, hibernate}.
-
 % Terminate WebSocket connection
 websocket_terminate(_Reason, _Req, _State) ->
   ok.
@@ -351,18 +290,18 @@ websocket_info(Info, State) ->
       Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid,RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {not_joined} ->
-      logger:info("[receive_joined] => Bidder not joined!"),
+      logger:info("[websocket_info] => Bidder not joined!"),
       {ok, State};
     {new_bid, NewBid, RemainingTime, CurrentWinner} ->
-      logger:info("[handle_send_bid] => Received New Bid"),
+      logger:info("[websocket_info] => Received New Bid"),
       Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {no_bid, Bid} ->
-      logger:info("[handle_send_bid] => Received Bid < Current Max Bid"),
+      logger:info("[websocket_info] => Received Bid < Current Max Bid"),
       Response = io_lib:format("Bid:~p", [Bid]),
       {reply, {text, Response}, State, hibernate};
     {no_bidders, Text} ->
-      logger:info("[receive_joined] => Auction terminated, no bidders"),
+      logger:info("[websocket_info] => Auction terminated, no bidders"),
       Response = io_lib:format("~p", [Text]),
       {reply, {text, Response}, State, hibernate};
     {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime} ->
@@ -370,7 +309,7 @@ websocket_info(Info, State) ->
       Response = io_lib:format("Phone:~p Winner:~p Winning Bid:~p RemainingTime:~p", [Phone, WinnerEmail, WinningBid, RemainingTime]),
       {reply, {text, Response}, State, hibernate};
     {send_timer, Bid, RemainingTime, CurrentWinner} ->
-      logger:info("[handle_get_timer] => Get Auction Timer"),
+      logger:info("[websocket_info] => Get Auction Timer"),
       Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid,RemainingTime,CurrentWinner]),
       {reply, {text, Response}, State, hibernate};
     {live_auctions_update, Text} ->

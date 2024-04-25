@@ -208,13 +208,13 @@ function sendJoinAuctionRequest(email, phoneName) {
 }
 
 
-// Global declaration of getTimerId and updateTimerId
+// Global declaration of timer-related variables
+let timerMessageSent = false;
 let getTimerId;
 let updateTimerId;
 
-// Function to send a get auction timer request to Erlang Server and start the local timer (by using updateTimer function)
+// Function to send a get auction timer request to Erlang Server and start the local timer
 function sendGetTimerRequest(email, phoneName) {
-    // Function to send the get auction timer message
     function sendMessage() {
         const message = {
             action: "timer",
@@ -222,32 +222,28 @@ function sendGetTimerRequest(email, phoneName) {
             phone_name: phoneName
         };
         ws.send(JSON.stringify(message));
+        console.log("Timer request sent!");
     }
 
-    // Send the get auction timer message after 1 seconds from the first call
     setTimeout(function () {
-        sendMessage();
-        // Set interval to send the message every 10 seconds
-        getTimerId = setInterval(sendMessage, 10000);
+        if (!timerMessageSent) {
+            sendMessage();
+            timerMessageSent = true;
+        }
     }, 1000);
 
-    // Start the update timer function just after (5 ms) the join message
     setTimeout(function () {
         updateTimer();
     }, 5)
 }
 
-
-// Function to update the auction timer in the web page (using both local timer and updates from Erlang server)
+// Function to update the auction timer in the web page
 function updateTimer() {
-    var elapsedTime = 0; //elapsed time for local visualization
-    var newRemainingTime = ""; //local variable to store the last erlang update
+    var elapsedTime = 0;
+    var newRemainingTime = "";
 
-    // Set interval to update the timer every 1 second
     updateTimerId = setInterval(function () {
-        // if remainingTimer is empty (no join message sent)
         if (remainingTime !== "") {
-            // Extract the values of remaining days, hours, minutes and seconds from remainingTime variable
             var regex = /(\d+) d (\d+) h (\d+) m (\d+) s/;
             var matches = remainingTime.match(regex);
             var days = parseInt(matches[1]);
@@ -255,48 +251,32 @@ function updateTimer() {
             var minutes = parseInt(matches[3]);
             var seconds = parseInt(matches[4]);
 
-            // if the received timer update from erlang server
             if (newRemainingTime !== remainingTime) {
-                // If the received timer is already expired, set the timer to 0 and stop the timer
                 if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
                     document.querySelector('.time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
-                    //document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
                     stopTimer();
                 }
 
-                // If the received timer is not expired, set the timer to the current value
                 document.querySelector('.time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
-                //document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
-                elapsedTime = 0; //reset the elapsed time for local visualization
-                // Update the local variable to store the last erlang update
+                elapsedTime = 0;
                 newRemainingTime = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
-            }
-
-            // If no timer update from erlang arrived, manage a local timer
-            else {
-                // Update the elapsed time for local visualization
+            } else {
                 elapsedTime += 1000;
-                // Compute the remaining time in milliseconds
                 var remainingMilliseconds = (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000 - elapsedTime;
 
-                // Convert the remaining time in days, hours, minutes and seconds
                 var remainingDays = Math.floor(remainingMilliseconds / (1000 * 60 * 60 * 24));
                 var remainingHours = Math.floor((remainingMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 var remainingMinutes = Math.floor((remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
                 var remainingSeconds = Math.floor((remainingMilliseconds % (1000 * 60)) / 1000);
 
-                // If the local timer is expired, set the timer to 0 and stop the timer and conclude the function
                 if (remainingMilliseconds <= 0) {
                     elapsedTime = 0;
                     document.querySelector('.time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
-                    //document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
                     stopTimer();
                     return;
                 }
 
-                // If the local timer is not expired, update the remaining time value
                 document.querySelector('.time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
-                //document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
             }
         }
     }, 1000);

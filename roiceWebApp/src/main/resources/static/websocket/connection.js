@@ -78,7 +78,7 @@ function connect() {
         } else {
             if (winner !== "N/A") {
                 document.querySelector('.winner').innerText = "Winner: " + winner;
-                //document.getElementById("winner").innerText = "Winner: " + winner;
+                document.querySelector('.current-winner').innerText = winner;
             }
         }
 
