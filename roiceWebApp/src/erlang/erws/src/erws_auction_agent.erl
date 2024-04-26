@@ -61,7 +61,7 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
       not_found ->
         logger:info("No bidders for the auction of the phone: ~p~n", [Phone]),
         RemainingTime = get_time_remaining(EndDate),
-        Response = <<"No bidders for the phone">>,
+        Response = <<"No bidders">>,
         gproc:send({p,l,{?MODULE,Phone}}, {no_bidders, Response, RemainingTime});
       {WinnerEmail, WinningBid} ->
         RemainingTime = get_time_remaining(EndDate),

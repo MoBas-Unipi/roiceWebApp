@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class PhoneDetailsController {
@@ -130,16 +131,18 @@ public class PhoneDetailsController {
     @PostMapping("/handleWinnerMessage")
     public String handleWinnerMessage(Model model, HttpSession session,
                                       @RequestParam("phoneName") String phoneName,
-                                      @RequestBody String winner) {
+                                      @RequestBody Map<String, Object> requestBody) {
 
-        // Prints the phoneName and the winner on java log
-        System.out.println("Phone Name: " + phoneName);
-        System.out.println("Winner: " + winner);
+        UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
+        if(currentUser == null) {
+            return "redirect:/login";
+        }
 
+        // Add auction won to the current user
+        userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
 
         // Remove the auction attribute from the phone document searching with phone name
         phoneService.removeAuctionByName(phoneName);
-
 
 
         return "phoneDetails";

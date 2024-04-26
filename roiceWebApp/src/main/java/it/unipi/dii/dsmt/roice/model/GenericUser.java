@@ -28,5 +28,7 @@ public abstract class GenericUser {
 		this._class = _class;
 	}
 
+	public abstract void addAuctionWon(AuctionWon auctionWon);
+
 }
 
