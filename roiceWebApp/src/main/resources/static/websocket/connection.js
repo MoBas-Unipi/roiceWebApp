@@ -70,7 +70,7 @@ function connect() {
         var winner = winnerMatch ? winnerMatch[1] : "N/A";
 
         // Check if the received message indicates no bidders
-        if (received_msg.includes("Auction Terminated! No bidders for this phone!")) {
+        if (received_msg.includes("No bidders")) {
             document.querySelector('.winner').innerText = "Auction Terminated! No bidders for this phone!";
             // Clear the fields related to time remaining and current bid
             document.querySelector('.time-remaining-user').innerText = "";

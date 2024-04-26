@@ -159,25 +159,26 @@ public class PhoneDetailsController {
                                       @RequestParam("phoneName") String phoneName,
                                       @RequestBody Map<String, Object> requestBody) {
 
-        UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-        if(currentUser == null) {
-            return "redirect:/login";
-        }
-
-        // Check if the winner user is the current one
-        if (currentUser.getEmail().equals(requestBody.get("winner"))) {
-
-            // Add auction won to the current user
-            UserDTO userDTO = userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
-            if (userDTO == null) {
-                model.addAttribute("message", "Error in adding the auction won in user collection!");
-            }
-            else {
-                session.setAttribute("currentUser", userDTO);
+        if(session.getAttribute("userClass") == "user") {
+            UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
+            if (currentUser == null) {
+                return "redirect:/login";
             }
 
-            // Remove the auction attribute from the phone document searching with phone name
-            phoneService.removeAuctionByName(phoneName);
+            // Check if the winner user is the current one
+            if (currentUser.getEmail().equals(requestBody.get("winner"))) {
+
+                // Add auction won to the current user
+                UserDTO userDTO = userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
+                if (userDTO == null) {
+                    model.addAttribute("message", "Error in adding the auction won in user collection!");
+                } else {
+                    session.setAttribute("currentUser", userDTO);
+                }
+
+                // Remove the auction attribute from the phone document searching with phone name
+                phoneService.removeAuctionByName(phoneName);
+            }
         }
 
         return "phoneDetails";
