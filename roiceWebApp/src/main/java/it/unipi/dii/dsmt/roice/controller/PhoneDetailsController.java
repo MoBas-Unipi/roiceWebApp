@@ -6,6 +6,7 @@ import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
+import it.unipi.dii.dsmt.roice.service.PhoneService;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class PhoneDetailsController {
 
     @Autowired
     private IPhoneRepository phoneRepository;
+
+    @Autowired
+    private PhoneService phoneService;
 
     @Autowired
     private UserService userService;
@@ -147,5 +152,37 @@ public class PhoneDetailsController {
         }
         return "phoneDetails";
     }
+
+
+    @PostMapping("/handleWinnerMessage")
+    public String handleWinnerMessage(Model model, HttpSession session,
+                                      @RequestParam("phoneName") String phoneName,
+                                      @RequestBody Map<String, Object> requestBody) {
+
+        UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
+        if(currentUser == null) {
+            return "redirect:/login";
+        }
+
+        // Check if the winner user is the current one
+        if (currentUser.getEmail().equals(requestBody.get("winner"))) {
+
+            // Add auction won to the current user
+            UserDTO userDTO = userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
+            if (userDTO == null) {
+                model.addAttribute("message", "Error in adding the auction won in user collection!");
+            }
+            else {
+                session.setAttribute("currentUser", userDTO);
+            }
+
+            // Remove the auction attribute from the phone document searching with phone name
+            phoneService.removeAuctionByName(phoneName);
+        }
+
+        return "phoneDetails";
+    }
+
+
 
 }

@@ -92,8 +92,40 @@ function connect() {
             //document.getElementById("winning-bid").innerText = "With a Bid of: " + winningBidValue + "$";
         }
 
-    };
 
+        // Check if winner is not empty and remaining time is 0
+        if (winner !== "N/A" && winner !== "No bidders" && remainingTime === "0 d 0 h 0 m 0 s") {
+            console.log("Auction Finished. CONTROLLER CALLED!");
+            const winMessage = {
+                winner: winner,
+                winningBidValue: winningBidValue // Assicurati di avere questa variabile definita e valorizzata prima di usarla qui
+            };
+            // Send a Post request to the java controller
+            fetch('/handleWinnerMessage?phoneName=' + encodeURIComponent(phoneName), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(winMessage)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text(); // Leggi il testo dalla risposta
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .then(data => {
+                    // Reload the phoneDetails jsp
+                    //window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Error handling winner message:", error);
+                });
+        }
+
+    };
+  
     // Event handler for WebSocket connection close
     ws.onclose = function() {
         console.log('Connection closed');
