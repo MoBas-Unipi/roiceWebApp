@@ -2,15 +2,14 @@ package it.unipi.dii.dsmt.roice.service;
 
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.dto.mapper.UserMapper;
-import it.unipi.dii.dsmt.roice.model.GenericUser;
-import it.unipi.dii.dsmt.roice.model.Phone;
-import it.unipi.dii.dsmt.roice.model.PhonePreview;
-import it.unipi.dii.dsmt.roice.model.User;
+import it.unipi.dii.dsmt.roice.model.*;
 import it.unipi.dii.dsmt.roice.repository.IGenericUserRepository;
+import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
 import it.unipi.dii.dsmt.roice.utils.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,6 +19,10 @@ public class UserService {
 
     @Autowired
     private IGenericUserRepository userRepository;
+    @Autowired
+    private IPhoneRepository phoneRepository;
+    @Autowired
+    private PhoneService phoneService;
 
     public boolean registerUser(UserDTO userDTO) {
         // Generate salt
@@ -91,5 +94,34 @@ public class UserService {
         }
         return null;
     }
+
+
+    public UserDTO addWonAuction(String phoneName, String winnerEmail, double winningBidValue) {
+        try {
+            // Retrieve the phone image
+            Phone phone = phoneRepository.findByName(phoneName);
+            String phonePicture = phone != null ? phone.getPicture() : null;
+
+            // Retrieve the user from the repository through the email
+            Optional<GenericUser> winnerUser = userRepository.findByEmail(winnerEmail);
+            if (winnerUser.isPresent()) {
+                User winner = (User) winnerUser.get();
+
+                // Create an AuctionWon instance
+                AuctionWon auctionWon = new AuctionWon(phoneName, phonePicture, new Date(), winningBidValue);
+
+                // Add the AuctionWon object in the winner user collection
+                winner.addAuctionWon(auctionWon);
+
+                // Update the user repository
+                userRepository.save(winner);
+                return UserMapper.toUserDTO(winner);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

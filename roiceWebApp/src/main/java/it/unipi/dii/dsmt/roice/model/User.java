@@ -40,6 +40,10 @@ public class User extends GenericUser{
 		this.auctionsWon = new ArrayList<>();
 	}
 
+	public void addAuctionWon(AuctionWon auctionWon) {
+		this.auctionsWon.add(0, auctionWon);
+	}
+
 	@Override
 	public String toString() {
 		return "User{" +
