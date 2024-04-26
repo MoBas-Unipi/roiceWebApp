@@ -138,11 +138,20 @@ public class PhoneDetailsController {
             return "redirect:/login";
         }
 
-        // Add auction won to the current user
-        userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
+        // Check if the winner user is the current one
+        if (currentUser.getEmail().equals(requestBody.get("winner"))) {
+            System.out.println("User: " + currentUser.getEmail());
+            // Print the phoneName and the winner on java console
+            System.out.println("Phone Name: " + phoneName);
+            System.out.println("Winner: " + requestBody.get("winner"));
+            System.out.println("Winning Bid Value: " + requestBody.get("winningBidValue"));
 
-        // Remove the auction attribute from the phone document searching with phone name
-        phoneService.removeAuctionByName(phoneName);
+            // Add auction won to the current user
+            userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
+
+            // Remove the auction attribute from the phone document searching with phone name
+            phoneService.removeAuctionByName(phoneName);
+        }
 
 
         return "phoneDetails";
