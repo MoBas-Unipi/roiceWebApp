@@ -96,7 +96,7 @@ public class UserService {
     }
 
 
-    public void addWonAuction(String phoneName, String winnerEmail, double winningBidValue) {
+    public UserDTO addWonAuction(String phoneName, String winnerEmail, double winningBidValue) {
         try {
             // Retrieve the phone image
             Phone phone = phoneRepository.findByName(phoneName);
@@ -105,7 +105,7 @@ public class UserService {
             // Retrieve the user from the repository through the email
             Optional<GenericUser> winnerUser = userRepository.findByEmail(winnerEmail);
             if (winnerUser.isPresent()) {
-                GenericUser winner = winnerUser.get();
+                User winner = (User) winnerUser.get();
 
                 // Create an AuctionWon instance
                 AuctionWon auctionWon = new AuctionWon(phoneName, phonePicture, new Date(), winningBidValue);
@@ -115,12 +115,12 @@ public class UserService {
 
                 // Update the user repository
                 userRepository.save(winner);
-            } else {
-                // User Not found
+                return UserMapper.toUserDTO(winner);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 

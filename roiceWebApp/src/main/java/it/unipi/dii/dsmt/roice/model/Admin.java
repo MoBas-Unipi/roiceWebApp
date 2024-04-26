@@ -14,8 +14,6 @@ public class Admin extends GenericUser{
 		super(email, salt, hashedPassword, _class);
 	}
 
-	public void addAuctionWon(AuctionWon auctionWon) {
-	}
 
 	@Override
 	public String toString() {

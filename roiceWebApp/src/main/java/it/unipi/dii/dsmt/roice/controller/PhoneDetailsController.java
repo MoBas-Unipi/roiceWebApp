@@ -142,12 +142,17 @@ public class PhoneDetailsController {
         if (currentUser.getEmail().equals(requestBody.get("winner"))) {
 
             // Add auction won to the current user
-            userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
+            UserDTO userDTO = userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
+            if (userDTO == null) {
+                model.addAttribute("message", "Error in adding the auction won in user collection!");
+            }
+            else {
+                session.setAttribute("currentUser", userDTO);
+            }
 
             // Remove the auction attribute from the phone document searching with phone name
             phoneService.removeAuctionByName(phoneName);
         }
-
 
         return "phoneDetails";
     }
