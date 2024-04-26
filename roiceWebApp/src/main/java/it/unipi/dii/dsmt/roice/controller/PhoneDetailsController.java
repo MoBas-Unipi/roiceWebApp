@@ -2,6 +2,7 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
+import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +43,19 @@ public class PhoneDetailsController {
         if (phone == null) {
             return "redirect:/homePage";
         }
-        if (phone.getAuction() != null) {
+        Auction auction = phone.getAuction();
+        if (auction!= null) {
             session.setAttribute("isAuctionPresent", true);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try {
+                String startDateString = sdf.format(auction.getStartingDate());
+                String endDateString = sdf.format(auction.getEndDate());
+                model.addAttribute("startDate", startDateString);
+                model.addAttribute("endDate", endDateString);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/homePage";
+            }
         } else {
             session.setAttribute("isAuctionPresent", false);
         }
@@ -69,8 +84,19 @@ public class PhoneDetailsController {
             if (currentAdmin == null) {
                 return "redirect:/login";
             }
-            if (phone.getAuction() != null) {
+            if (auction != null) {
                 model.addAttribute("message", "Auction added for this phone!");
+                session.setAttribute("isAuctionPresent", true);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                try {
+                    String startDateString = sdf.format(auction.getStartingDate());
+                    String endDateString = sdf.format(auction.getEndDate());
+                    model.addAttribute("startDate", startDateString);
+                    model.addAttribute("endDate", endDateString);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "redirect:/homePage";
+                }
             }
         }
         session.setAttribute("phone", phone);
