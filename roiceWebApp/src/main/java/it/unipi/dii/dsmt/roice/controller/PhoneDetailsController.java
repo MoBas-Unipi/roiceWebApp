@@ -5,6 +5,7 @@ import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
+import it.unipi.dii.dsmt.roice.service.PhoneService;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class PhoneDetailsController {
 
     @Autowired
     private IPhoneRepository phoneRepository;
+
+    @Autowired
+    private PhoneService phoneService;
 
     @Autowired
     private UserService userService;
@@ -121,5 +125,26 @@ public class PhoneDetailsController {
         }
         return "phoneDetails";
     }
+
+
+    @PostMapping("/handleWinnerMessage")
+    public String handleWinnerMessage(Model model, HttpSession session,
+                                      @RequestParam("phoneName") String phoneName,
+                                      @RequestBody String winner) {
+
+        // Prints the phoneName and the winner on java log
+        System.out.println("Phone Name: " + phoneName);
+        System.out.println("Winner: " + winner);
+
+
+        // Remove the auction attribute from the phone document searching with phone name
+        phoneService.removeAuctionByName(phoneName);
+
+
+
+        return "phoneDetails";
+    }
+
+
 
 }

@@ -116,4 +116,22 @@ public class PhoneService {
         return result;
     }
 
+
+    /**
+     * Removes the auction from the specific phone document
+     * @param phoneName name of the phone to update removing the auction
+     */
+    public void removeAuctionByName(String phoneName) {
+        try {
+            Phone phone = phoneRepository.findByName(phoneName);
+            if (phone != null) {
+                phone.setAuction(null);
+                phoneRepository.save(phone);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
