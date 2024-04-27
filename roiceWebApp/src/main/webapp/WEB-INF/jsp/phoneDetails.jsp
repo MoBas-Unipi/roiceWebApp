@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
@@ -14,7 +14,7 @@
     <jsp:include page="templates/header.jsp"/>
 </head>
 
-<body class="fix-header fix-sidebar card-no-border" onload = "connect()">
+<body class="fix-header fix-sidebar card-no-border" onload="connect()">
 <div class="preloader">
     <svg class="circular" viewBox="25 25 50 50">
         <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
@@ -50,19 +50,19 @@
             </div>
             <div class="phone-details">
                 <h2>${phone.name}</h2>
-                <p class="phone-detail-item">Brand: ${phone.brand}</p>
-                <p class="phone-detail-item">Body: ${phone.body}</p>
-                <p class="phone-detail-item">OS: ${phone.os}</p>
-                <p class="phone-detail-item">Storage: ${phone.storage}</p>
-                <p class="phone-detail-item">Display Size: ${phone.displaySize}</p>
-                <p class="phone-detail-item">Display Resolution: ${phone.displayResolution}</p>
-                <p class="phone-detail-item">Camera Pixels: ${phone.cameraPixels}</p>
-                <p class="phone-detail-item">Video Pixels: ${phone.videoPixels}</p>
-                <p class="phone-detail-item">RAM: ${phone.ram}</p>
-                <p class="phone-detail-item">Chipset: ${phone.chipset}</p>
-                <p class="phone-detail-item">Battery Size: ${phone.batterySize}</p>
-                <p class="phone-detail-item">Battery Type: ${phone.batteryType}</p>
-                <p class="phone-detail-item">Release Year: ${phone.releaseYear}</p>
+                <p class="phone-detail-item"><strong>Brand: </strong>${phone.brand}</p>
+                <p class="phone-detail-item"><strong>Body: </strong>${phone.body}</p>
+                <p class="phone-detail-item"><strong>OS: </strong>${phone.os}</p>
+                <p class="phone-detail-item"><strong>Storage: </strong>${phone.storage}</p>
+                <p class="phone-detail-item"><strong>Display Size: </strong>${phone.displaySize}</p>
+                <p class="phone-detail-item"><strong>Display Resolution: </strong>${phone.displayResolution}</p>
+                <p class="phone-detail-item"><strong>Camera Pixels: </strong>${phone.cameraPixels}</p>
+                <p class="phone-detail-item"><strong>Video Pixels: </strong>${phone.videoPixels}</p>
+                <p class="phone-detail-item"><strong>RAM: </strong>${phone.ram}</p>
+                <p class="phone-detail-item"><strong>Chipset: </strong>${phone.chipset}</p>
+                <p class="phone-detail-item"><strong>Battery Size: </strong>${phone.batterySize}</p>
+                <p class="phone-detail-item"><strong>Battery Type: </strong>${phone.batteryType}</p>
+                <p class="phone-detail-item"><strong>Release Year: </strong>${phone.releaseYear}</p>
             </div>
 
             <!-- User case -->
@@ -80,13 +80,20 @@
                     <!-- User Auction container -->
                     <div class="content-block" style="margin-left: 100px">
                         <h3>Auction</h3>
-                        <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for the start date -->
-                        <p>End Date: <span class="end-date">${endDate}</span></p> <!-- Placeholder for end date -->
-                        <p>Current Winner: <span class="current-winner"></span></p> <!-- Placeholder for current winner -->
-                        <p>Current Bid: $<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
-                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
-                        <input type="text" class="bid-input" placeholder="Enter your bid">
-                        <button class="confirm-bid-button" onclick="confirmBid(email,phoneName)">Confirm Bid</button>
+                        <p><strong>Start Date: </strong><span class="start-date">${startDate}</span></p> <!-- Placeholder for the start date -->
+                        <p><strong>End Date: </strong><span class="end-date">${endDate}</span></p> <!-- Placeholder for end date -->
+                        <p><strong>Current Winner: </strong><span class="current-winner"></span></p> <!-- Placeholder for current winner -->
+                        <p><strong>Current Bid: </strong>$<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
+                        <p><strong>Time Remaining: </strong><span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
+                        <form id="bidForm" onsubmit="return confirmBid(email, phone_name, event)">
+                            <div class="form-group" style="display: flex; align-items: center;">
+                                <label for="bidinput">Enter your bid:</label>
+                                <input type="number" id="bidinput" name="bidinput" step="1" min="1"
+                                       style="margin-left: 20px; width: 100px">
+                                <button type="submit" class="confirm-bid-button" style="margin-left: 10px;">Confirm Bid</button>
+                            </div>
+                        </form>
+                      
                         <span id="bidError" style="color: red; display: block;"></span>
                         <span class="winner" style="color: #239800"></span>
                         <span class="winning-bid" style="color: #239800; display: block;"></span>
@@ -120,11 +127,12 @@
                     </script>
                     <div class="content-block" style="margin-left: 100px">
                         <h3>Auction</h3>
-                        <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for current bid -->
-                        <p>End Date: <span class="end-date">${endDate}</span></p>
-                        <p>Current Winner: <span class="current-winner"></span></p> <!-- Placeholder for current winner -->
-                        <p>Current Bid: $<span class="current-bid">50</span></p> <!-- Placeholder for current bid -->
-                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
+                        <p><strong>Start Date: </strong><span class="start-date">${startDate}</span></p> <!-- Placeholder for the start date -->
+                        <p><strong>End Date: </strong><span class="end-date">${endDate}</span></p> <!-- Placeholder for end date -->
+                        <p><strong>Current Winner: </strong><span class="current-winner"></span></p> <!-- Placeholder for current winner -->
+                        <p><strong>Current Bid: </strong>$<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
+                        <p><strong>Time Remaining: </strong><span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
+                      
                         <span class="winner" style="color: #239800"></span>
                         <span class="winning-bid" style="color: #239800; display: block;"></span>
                     </div>
@@ -149,9 +157,15 @@
             <div class="favorites-container">
                 <c:if test="${isPhoneInFavorites}">
                     <p id="message-field" style="color: green;">${message}</p>
-                    <form method="post" action="/phoneDetails/phone?phoneName=${phone.name}" id="removeFromFavoritesForm">
+
+                    <c:url var="removeFromFavoritesUrl" value="/phoneDetails/phone">
+                        <c:param name="phoneName" value="${phone.name}"/>
+                    </c:url>
+
+                    <form method="post" action="${removeFromFavoritesUrl}">
                         <button type="submit" class="favorites-button">Remove from Favorites</button>
                     </form>
+
                 </c:if>
                 <c:if test="${!isPhoneInFavorites}">
                     <p id="message-field" style="color: green;">${message}</p>
@@ -178,14 +192,14 @@
 
     <footer class="footer">
         <div class="text-left copyright-text">
-            <c:out value="© 2024 ROICE Web Application" />
+            <c:out value="© 2024 ROICE Web Application"/>
         </div>
     </footer>
 </div>
 <!-- Stop the timer before leaving the page -->
 <script>
     // Beforeunload event listener to stop the timer when the user leave the page
-    window.addEventListener('beforeunload', function(event) {
+    window.addEventListener('beforeunload', function (event) {
         stopTimer();
     });
 </script>

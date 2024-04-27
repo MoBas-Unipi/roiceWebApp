@@ -83,7 +83,9 @@ function send(message) {
 
 
 // Function to send a message containing the bid
-function confirmBid(email, phone_name) {
+function confirmBid(email, phone_name, event) {
+    // Prevent the call to a url on form submission
+    event.preventDefault();
     // Check if the time remaining is not zero
     let timeRemaining = document.querySelector('.time-remaining-user').innerText;
     //let timeRemaining = document.getElementById("time-remaining-user").innerText;
@@ -93,38 +95,42 @@ function confirmBid(email, phone_name) {
         return;
     }
 
-    // Get the input value from "bid-input" field
-    let bidInput = document.querySelector('.bid-input').value;
+    // Get the input value from the form
+    let bidInput = document.getElementById("bidinput").value;
 
     // Convert the bid input to an integer
-    let bidAmount = parseFloat(bidInput);
+    let bidAmount = parseInt(bidInput);
 
     // Check if the bid input is not empty and is a valid integer
     if (!isNaN(bidAmount)) {
-        // Get current date and time as a string in ISO format
-        let currentDate = new Date().toISOString();
-        console.log("Bid date: ", currentDate);
-
-        // Get the current Bid value
-        var currentBidValue = document.querySelector('.current-bid').innerText;
-        //var currentBidValue = document.getElementById("current-bid").innerText;
-
-        if (bidAmount <= currentBidValue) {
-            document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
+        // Check if the bid amount is a positive integer
+        if (bidAmount <= 0) {
+            document.getElementById("bidError").innerText = "Bid amount must be a positive integer";
         } else {
-            document.getElementById("bidError").innerText = "";
-            // Send the bid to the web socket
-            let message = {
-                action: "send",
-                phone_name: phone_name,
-                email: email,
-                date: currentDate,
-                value: bidAmount
-            };
-            send(message);
+            // Get current date and time as a string in ISO format
+            let currentDate = new Date().toISOString();
+            console.log("Bid date: ", currentDate);
+
+            // Get the current Bid value
+            var currentBidValue = document.getElementById("current-bid").innerText;
+
+            if (bidAmount <= currentBidValue) {
+                document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
+            } else {
+                document.getElementById("bidError").innerText = "";
+                // Send the bid to the web socket
+                let message = {
+                    action: "send",
+                    phone_name: phone_name,
+                    email: email,
+                    date: currentDate,
+                    value: bidAmount
+                };
+                send(message);
+            }
         }
     } else {
-        console.error("Invalid bid input.");
+        document.getElementById("bidError").innerText = "Invalid bid input.";
     }
 }
 
