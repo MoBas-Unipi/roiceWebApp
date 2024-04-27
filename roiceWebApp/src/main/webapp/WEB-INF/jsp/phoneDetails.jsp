@@ -64,25 +64,27 @@
                 <p class="phone-detail-item"><strong>Battery Type: </strong>${phone.batteryType}</p>
                 <p class="phone-detail-item"><strong>Release Year: </strong>${phone.releaseYear}</p>
             </div>
+
+            <!-- User case -->
             <c:if test="${not empty phone.auction && userClass == 'user'}">
-                <script>
-                    // If there is an auction init websocket connection
-                    var email = "${currentUser.email}";
-                    var phoneName = "${phone.name}";
-                    sendJoinAuctionRequest(email, phoneName);
-                    sendGetTimerRequest(email, phoneName);
-                </script>
-                <c:if test="${not empty isPhoneInFavorites}">
+                <!-- Check if the auction is started-->
+                <c:set var="currentTimeMillis" value="<%=System.currentTimeMillis() %>" />
+                <c:if test="${currentTimeMillis ge phone.auction.startingDate.time and currentTimeMillis le phone.auction.endDate.time}">
+                    <script>
+                        // If there is an auction init websocket connection
+                        var email = "${currentUser.email}";
+                        var phoneName = "${phone.name}";
+                        sendJoinAuctionRequest(email, phoneName);
+                        sendGetTimerRequest(email,phoneName);
+                    </script>
                     <!-- User Auction container -->
                     <div class="content-block" style="margin-left: 100px">
                         <h3>Auction</h3>
-                        <p><strong>Time Remaining: </strong><span id="time-remaining-user">0 d 0 h 0 m 0 s</span></p>
-                        <p><strong>Current Bid: </strong>$<span id="current-bid">100</span></p> <!-- Placeholder for current bid -->
-
-                        <script>
-                            var phone_name = "${phone.name}";
-                        </script>
-
+                        <p><strong>Start Date: </strong><span class="start-date">${startDate}</span></p> <!-- Placeholder for the start date -->
+                        <p><strong>End Date: </strong><span class="end-date">${endDate}</span></p> <!-- Placeholder for end date -->
+                        <p><strong>Current Winner: </strong><span class="current-winner"></span></p> <!-- Placeholder for current winner -->
+                        <p><strong>Current Bid: </strong>$<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
+                        <p><strong>Time Remaining: </strong><span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
                         <form id="bidForm" onsubmit="return confirmBid(email, phone_name, event)">
                             <div class="form-group" style="display: flex; align-items: center;">
                                 <label for="bidinput">Enter your bid:</label>
@@ -91,19 +93,64 @@
                                 <button type="submit" class="confirm-bid-button" style="margin-left: 10px;">Confirm Bid</button>
                             </div>
                         </form>
+                      
                         <span id="bidError" style="color: red; display: block;"></span>
-                        <span id="winner" style="color: #239800"></span>
-                        <span id="winning-bid" style="color: #239800; display: block;"></span>
+                        <span class="winner" style="color: #239800"></span>
+                        <span class="winning-bid" style="color: #239800; display: block;"></span>
                     </div>
                 </c:if>
-                <c:if test="${empty isPhoneInFavorites}">
+
+                <!-- Check if the auction has not started yet-->
+                <c:if test="${not (currentTimeMillis ge phone.auction.startingDate.time and currentTimeMillis le phone.auction.endDate.time)}">
                     <div class="content-block" style="margin-left: 100px">
                         <h3>Auction</h3>
-                        <p>Time Remaining: <span id="time-remaining-admin">0 d 0 h 0 m 0 s</span></p>
-                        <p>Current Bid: $100</p>
+                        <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for current bid -->
+                        <p>End Date: <span class="end-date">${endDate}</span></p>
+<%--                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>--%>
+<%--                        <p>Current Bid: $50</p>--%>
+                        <span style="color: #ff6c02;">The Auction has not started yet</span>
                     </div>
                 </c:if>
             </c:if>
+
+            <!-- Admin case (cannot make bids, just check the auction time and users bids)-->
+            <c:if test="${not empty phone.auction && userClass == 'admin'}">
+                <!-- Check if the auction is started-->
+                <c:set var="currentTimeMillis" value="<%=System.currentTimeMillis() %>" />
+                <c:if test="${currentTimeMillis ge phone.auction.startingDate.time and currentTimeMillis le phone.auction.endDate.time}">
+                    <script>
+                        // If there is an auction init websocket connection
+                        var email = "${currentUser.email}";
+                        var phoneName = "${phone.name}";
+                        sendJoinAuctionRequest(email, phoneName);
+                        sendGetTimerRequest(email,phoneName);
+                    </script>
+                    <div class="content-block" style="margin-left: 100px">
+                        <h3>Auction</h3>
+                        <p><strong>Start Date: </strong><span class="start-date">${startDate}</span></p> <!-- Placeholder for the start date -->
+                        <p><strong>End Date: </strong><span class="end-date">${endDate}</span></p> <!-- Placeholder for end date -->
+                        <p><strong>Current Winner: </strong><span class="current-winner"></span></p> <!-- Placeholder for current winner -->
+                        <p><strong>Current Bid: </strong>$<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
+                        <p><strong>Time Remaining: </strong><span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
+                      
+                        <span class="winner" style="color: #239800"></span>
+                        <span class="winning-bid" style="color: #239800; display: block;"></span>
+                    </div>
+                </c:if>
+
+                <!-- Check if the auction has not started yet-->
+                <c:if test="${not (currentTimeMillis ge phone.auction.startingDate.time and currentTimeMillis le phone.auction.endDate.time)}">
+                    <div class="content-block" style="margin-left: 100px">
+                        <h3>Auction</h3>
+                        <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for current bid -->
+                        <p>End Date: <span class="end-date">${endDate}</span></p>
+<%--                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>--%>
+<%--                        <p>Current Bid: $50</p>--%>
+                        <span style="color: #ff6c02;">The Auction has not started yet</span>
+                    </div>
+                </c:if>
+            </c:if>
+
         </div>
         <c:if test="${not empty isPhoneInFavorites}">
             <!-- Handle the case when isPhoneInFavorites is set -->

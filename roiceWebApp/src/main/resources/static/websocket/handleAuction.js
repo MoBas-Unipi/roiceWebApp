@@ -19,19 +19,16 @@ function validateForm() {
 
     var error = false;
     if (startingDate === "") {
-        document.getElementById("startingDateError").innerText = "Starting Date is required";
         error = true;
     } else {
         document.getElementById("startingDateError").innerText = "";
     }
     if (endDate === "") {
-        document.getElementById("endDateError").innerText = "End Date is required";
         error = true;
     } else {
         document.getElementById("endDateError").innerText = "";
     }
     if (minimumPrice === "") {
-        document.getElementById("minimumPriceError").innerText = "Minimum Price is required";
         error = true;
     } else {
         document.getElementById("minimumPriceError").innerText = "";
@@ -42,12 +39,10 @@ function validateForm() {
     }
 
     if (new Date(endDate) <= new Date(startingDate)) {
-        document.getElementById("dateError").innerText = "End Date must be after Starting Date!";
         return false;
     }
 
     if (new Date(startingDate) <= now) {
-        document.getElementById("dateError").innerText = "Starting Date must be in the future!";
         return false;
     }
 
@@ -91,12 +86,12 @@ function send(message) {
 function confirmBid(email, phone_name, event) {
     // Prevent the call to a url on form submission
     event.preventDefault();
-
     // Check if the time remaining is not zero
-    let timeRemaining = document.getElementById("time-remaining-user").innerText;
+    let timeRemaining = document.querySelector('.time-remaining-user').innerText;
+    //let timeRemaining = document.getElementById("time-remaining-user").innerText;
     if (timeRemaining === "0 d 0 h 0 m 0 s") {
         // Time is zero, prevent bid confirmation
-        document.getElementById("bidError").innerText = "Not Possible to make bids. The Auction has not started yet or it's already terminated!";
+        document.getElementById("bidError").innerText = "Not Possible to make bids. The Auction it's already terminated!";
         return;
     }
 
@@ -179,6 +174,7 @@ function createErlangAuction(phoneName) {
     socket.onmessage = function (event) {
         console.log('Message received from server:', event.data);
         // Handle server response if needed
+        socket.send(jsonMessage);
     };
 
     // Event handler for connection close
@@ -190,6 +186,7 @@ function createErlangAuction(phoneName) {
     socket.onerror = function (error) {
         console.error('WebSocket error:', error);
     };
+
 }
 
 function validateAndCreateAuction(phoneName) {
@@ -268,12 +265,14 @@ function updateTimer() {
             if (newRemainingTime !== remainingTime) {
                 // If the received timer is already expired, set the timer to 0 and stop the timer
                 if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
-                    document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                    document.querySelector('.time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                    //document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
                     stopTimer();
                 }
 
                 // If the received timer is not expired, set the timer to the current value
-                document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                document.querySelector('.time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
+                //document.getElementById('time-remaining-user').innerText = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
                 elapsedTime = 0; //reset the elapsed time for local visualization
                 // Update the local variable to store the last erlang update
                 newRemainingTime = days + ' d ' + hours + ' h ' + minutes + ' m ' + seconds + ' s';
@@ -295,13 +294,15 @@ function updateTimer() {
                 // If the local timer is expired, set the timer to 0 and stop the timer and conclude the function
                 if (remainingMilliseconds <= 0) {
                     elapsedTime = 0;
-                    document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                    document.querySelector('.time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                    //document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
                     stopTimer();
                     return;
                 }
 
                 // If the local timer is not expired, update the remaining time value
-                document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                document.querySelector('.time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
+                //document.getElementById('time-remaining-user').innerText = remainingDays + ' d ' + remainingHours + ' h ' + remainingMinutes + ' m ' + remainingSeconds + ' s';
             }
         }
     }, 1000);

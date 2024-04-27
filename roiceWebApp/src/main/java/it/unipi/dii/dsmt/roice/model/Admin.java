@@ -14,6 +14,7 @@ public class Admin extends GenericUser{
 		super(email, salt, hashedPassword, _class);
 	}
 
+
 	@Override
 	public String toString() {
 		return "Admin{" +

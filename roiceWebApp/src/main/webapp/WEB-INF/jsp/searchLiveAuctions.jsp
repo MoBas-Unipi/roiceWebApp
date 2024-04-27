@@ -2,6 +2,7 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+<script src="/websocket/liveAuctions.js"></script>
 
 <head>
     <!-- ============================================================== -->
@@ -10,7 +11,7 @@
     <jsp:include page="templates/header.jsp"/>
 </head>
 
-<body class="fix-header fix-sidebar card-no-border">
+<body class="fix-header fix-sidebar card-no-border" onload="createWebSocketConnection()">
 <!-- ============================================================== -->
 <!-- Preloader - style you can find in spinners.css -->
 <!-- ============================================================== -->

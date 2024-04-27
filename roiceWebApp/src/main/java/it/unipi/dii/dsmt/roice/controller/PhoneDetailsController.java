@@ -2,9 +2,11 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
+import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.model.Phone;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
+import it.unipi.dii.dsmt.roice.service.PhoneService;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +14,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class PhoneDetailsController {
 
     @Autowired
     private IPhoneRepository phoneRepository;
+
+    @Autowired
+    private PhoneService phoneService;
 
     @Autowired
     private UserService userService;
@@ -34,8 +43,19 @@ public class PhoneDetailsController {
         if (phone == null) {
             return "redirect:/homePage";
         }
-        if (phone.getAuction() != null) {
+        Auction auction = phone.getAuction();
+        if (auction!= null) {
             session.setAttribute("isAuctionPresent", true);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try {
+                String startDateString = sdf.format(auction.getStartingDate());
+                String endDateString = sdf.format(auction.getEndDate());
+                model.addAttribute("startDate", startDateString);
+                model.addAttribute("endDate", endDateString);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/homePage";
+            }
         } else {
             session.setAttribute("isAuctionPresent", false);
         }
@@ -64,8 +84,19 @@ public class PhoneDetailsController {
             if (currentAdmin == null) {
                 return "redirect:/login";
             }
-            if (phone.getAuction() != null) {
+            if (auction != null) {
                 model.addAttribute("message", "Auction added for this phone!");
+                session.setAttribute("isAuctionPresent", true);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                try {
+                    String startDateString = sdf.format(auction.getStartingDate());
+                    String endDateString = sdf.format(auction.getEndDate());
+                    model.addAttribute("startDate", startDateString);
+                    model.addAttribute("endDate", endDateString);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "redirect:/homePage";
+                }
             }
         }
         session.setAttribute("phone", phone);
@@ -121,5 +152,38 @@ public class PhoneDetailsController {
         }
         return "phoneDetails";
     }
+
+
+    @PostMapping("/handleWinnerMessage")
+    public String handleWinnerMessage(Model model, HttpSession session,
+                                      @RequestParam("phoneName") String phoneName,
+                                      @RequestBody Map<String, Object> requestBody) {
+
+        if(session.getAttribute("userClass") == "user") {
+            UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
+            if (currentUser == null) {
+                return "redirect:/login";
+            }
+
+            // Check if the winner user is the current one
+            if (currentUser.getEmail().equals(requestBody.get("winner"))) {
+
+                // Add auction won to the current user
+                UserDTO userDTO = userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
+                if (userDTO == null) {
+                    model.addAttribute("message", "Error in adding the auction won in user collection!");
+                } else {
+                    session.setAttribute("currentUser", userDTO);
+                }
+
+                // Remove the auction attribute from the phone document searching with phone name
+                phoneService.removeAuctionByName(phoneName);
+            }
+        }
+
+        return "phoneDetails";
+    }
+
+
 
 }

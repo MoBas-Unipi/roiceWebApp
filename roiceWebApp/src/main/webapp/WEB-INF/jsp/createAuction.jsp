@@ -43,10 +43,6 @@
     </div>
 
     <div class="all-container">
-        <script type="text/javascript">
-            // If there is an auction init websocket connection
-            connect();
-        </script>
         <h1>Create Auction</h1>
         <div class="phone-details" style="margin-left: 210px; margin-top: 20px">
             <h2>${phone.name}</h2>
@@ -62,12 +58,12 @@
                 <div class="form-group">
                     <label for="startingDate">Starting Date:</label>
                     <input type="datetime-local" id="startingDate" name="startingDate" style="margin-left: 33px">
-                    <span id="startingDateError" style="color: red;"></span>
+                    <p id="startingDateError" style="color: red;">${startingDateErrorMessage}</p>
                 </div>
                 <div class="form-group">
                     <label for="endDate">End Date:</label>
                     <input type="datetime-local" id="endDate" name="endDate" style="margin-left: 66px">
-                    <span id="endDateError" style="color: red;"></span>
+                    <p id="endDateError" style="color: red;">${endDateErrorMessage}</p>
                 </div>
                 <div class="form-group">
                     <label for="minimumPrice">Minimum Price:</label>
@@ -78,7 +74,7 @@
             </form>
             <span id="dateError" style="color: red;"></span>
         </div>
-        <p id="auctionMessage" style="color: #3F51B5; margin-left: 418px;">${auctionMessage}</p>
+        <p id="auctionMessage" style="color: red; margin-left: 418px;">${auctionMessage}</p>
     </div>
 </div>
 <footer class="footer">

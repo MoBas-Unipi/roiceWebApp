@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,15 +40,37 @@ public class CreateAuctionController {
                                 @RequestParam("startingDate") String startingDateString, @RequestParam("endDate") String endDateString,
                                 @RequestParam("minimumPrice") String minimumPriceString) {
 
-        Date startingDate = parseDateString(startingDateString);
-        Date endDate = parseDateString(endDateString);
-        Double minimumPrice = parseDouble(minimumPriceString);
+        Date startingDate = null;
+        Date endDate = null;
+        Double minimumPrice = null;
 
-        if (startingDate == null || endDate == null || minimumPrice == null) {
-            model.addAttribute("auctionMessage", "Error parsing input data!");
+        try {
+            startingDate = parseDateString(startingDateString);
+            endDate = parseDateString(endDateString);
+            minimumPrice = parseDouble(minimumPriceString);
+
+            if(startingDate == null || endDate == null || minimumPrice == null) {
+                model.addAttribute("auctionMessage", "Please, compile all the fields!");
+                return "createAuction";
+            }
+
+            // Validate if starting date is in the future
+            Date now = new Date();
+            if (startingDate.before(now)) {
+                model.addAttribute("auctionMessage", "Starting date must be in the future!");
+                return "createAuction";
+            }
+
+            // Validate if end date is after starting date
+            if (endDate.compareTo(startingDate) <= 0) {
+                model.addAttribute("auctionMessage", "End date must be after starting date!");
+                return "createAuction";
+            }
+
+        } catch (ParseException | NumberFormatException e) {
+            model.addAttribute("auctionMessage", "Please, compile all the fields!");
             return "createAuction";
         }
-
         PhoneDTO phoneDTO = phoneService.addAuction(phoneName, new Auction(startingDate, endDate, minimumPrice));
 
         if (phoneDTO == null) {
@@ -58,18 +81,13 @@ public class CreateAuctionController {
         }
         session.setAttribute("isAuctionPresent", true);
         session.setAttribute("phone", phoneDTO);
-        return "phoneDetails";
+        session.setAttribute(phoneName, phoneDTO.getName());
+        return "redirect:/phoneDetails?phoneName=" + phoneName;
     }
 
-    private Date parseDateString(String dateString) {
+    private Date parseDateString(String dateString) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        try {
             return dateFormat.parse(dateString);
-        } catch (Exception e) {
-            // Handle parse exception
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private Double parseDouble(String doubleString) {
