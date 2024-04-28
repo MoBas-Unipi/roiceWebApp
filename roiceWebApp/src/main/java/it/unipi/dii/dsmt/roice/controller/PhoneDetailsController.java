@@ -165,6 +165,12 @@ public class PhoneDetailsController {
                 return "redirect:/login";
             }
 
+            // Case in which there are no bidders
+            if (requestBody.get("winner").equals("No bidders")) {
+                // Remove the auction attribute from the phone document searching with phone name
+                phoneService.removeAuctionByName(phoneName);
+            }
+
             // Check if the winner user is the current one
             if (currentUser.getEmail().equals(requestBody.get("winner"))) {
 
