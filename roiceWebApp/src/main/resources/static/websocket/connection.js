@@ -94,7 +94,7 @@ function connect() {
 
 
         // Check if winner is not empty and remaining time is 0
-        if (winner !== "N/A" && winner !== "No bidders" && remainingTime === "0 d 0 h 0 m 0 s") {
+        if (winner !== "N/A" && remainingTime === "0 d 0 h 0 m 0 s") {
             console.log("Auction Finished. CONTROLLER CALLED!");
             const winMessage = {
                 winner: winner,
