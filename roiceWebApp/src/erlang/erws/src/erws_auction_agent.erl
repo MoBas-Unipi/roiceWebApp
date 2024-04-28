@@ -9,7 +9,6 @@
   receive_joined/1,
   websocket_handle/2,
   websocket_info/2,
-  websocket_info/3,
   websocket_terminate/3
 ]).
 
@@ -100,11 +99,7 @@ websocket_handle(Frame = {text, Message}, State) ->
                  logger:info("[erws_handler] websocket_handle => Failed to decode JSON: ~p~n", [Message]),
                  {ok, State}
              end,
-  Response;
-
-% Handle other WebSocket messages (if necessary)
-websocket_handle(_Any, State) ->
-  {reply, {text, <<"whut?">>}, State, hibernate}.
+  Response.
 
 % Handle a frame after JSON decoding
 handle_websocket_frame(Map, State) ->
@@ -281,9 +276,6 @@ websocket_terminate(_Reason, _Req, _State) ->
 terminate(_Reason, _Req, _State) ->
   ok.
 
-websocket_info(Msg, Req, State) ->
-  io:format("[chatroom_websocket] websocket_info({send_message, Msg}, State) => Send message ~p~n", [Msg]),
-  {reply,{text, Msg}, Req, State}.
 
 websocket_info(Info, State) ->
   case Info of
