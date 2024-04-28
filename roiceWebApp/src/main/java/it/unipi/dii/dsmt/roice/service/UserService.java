@@ -21,8 +21,6 @@ public class UserService {
     private IGenericUserRepository userRepository;
     @Autowired
     private IPhoneRepository phoneRepository;
-    @Autowired
-    private PhoneService phoneService;
 
     public boolean registerUser(UserDTO userDTO) {
         // Generate salt

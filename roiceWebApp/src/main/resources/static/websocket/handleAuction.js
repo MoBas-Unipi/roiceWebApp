@@ -83,9 +83,7 @@ function send(message) {
 
 
 // Function to send a message containing the bid
-function confirmBid(email, phone_name, event) {
-    // Prevent the call to a url on form submission
-    event.preventDefault();
+function confirmBid(email, phone_name) {
     // Check if the time remaining is not zero
     let timeRemaining = document.querySelector('.time-remaining-user').innerText;
     //let timeRemaining = document.getElementById("time-remaining-user").innerText;
@@ -112,7 +110,7 @@ function confirmBid(email, phone_name, event) {
             console.log("Bid date: ", currentDate);
 
             // Get the current Bid value
-            var currentBidValue = document.getElementById("current-bid").innerText;
+            var currentBidValue = document.querySelector('.current-bid').innerText;
 
             if (bidAmount <= currentBidValue) {
                 document.getElementById("bidError").innerText = "Your bid is lower than the current one!";

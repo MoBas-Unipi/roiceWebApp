@@ -85,12 +85,12 @@
                         <p><strong>Current Winner: </strong><span class="current-winner"></span></p> <!-- Placeholder for current winner -->
                         <p><strong>Current Bid: </strong>$<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
                         <p><strong>Time Remaining: </strong><span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
-                        <form id="bidForm" onsubmit="return confirmBid(email, phone_name, event)">
+                        <form id="bidForm" onsubmit="event.preventDefault();">
                             <div class="form-group" style="display: flex; align-items: center;">
                                 <label for="bidinput">Enter your bid:</label>
                                 <input type="number" id="bidinput" name="bidinput" step="1" min="1"
                                        style="margin-left: 20px; width: 100px">
-                                <button type="submit" class="confirm-bid-button" style="margin-left: 10px;">Confirm Bid</button>
+                                <button onclick="confirmBid(email, phoneName)" class="confirm-bid-button" style="margin-left: 10px;">Confirm Bid</button>
                             </div>
                         </form>
                       
@@ -142,8 +142,8 @@
                 <c:if test="${not (currentTimeMillis ge phone.auction.startingDate.time and currentTimeMillis le phone.auction.endDate.time)}">
                     <div class="content-block" style="margin-left: 100px">
                         <h3>Auction</h3>
-                        <p>Start Date: <span class="start-date">${startDate}</span></p> <!-- Placeholder for current bid -->
-                        <p>End Date: <span class="end-date">${endDate}</span></p>
+                        <p><strong>Start Date: </strong><span class="start-date">${startDate}</span></p> <!-- Placeholder for current bid -->
+                        <p><strong>End Date: </strong><span class="end-date">${endDate}</span></p>
 <%--                        <p>Time Remaining: <span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p>--%>
 <%--                        <p>Current Bid: $50</p>--%>
                         <span style="color: #ff6c02;">The Auction has not started yet</span>

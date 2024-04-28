@@ -66,7 +66,7 @@ function connect() {
 
         //----------------------WINNER HANDLING----------------------//
         // Extract the winner
-        var winnerMatch = received_msg.match(/Winner:<<"([^"]+)">>/);
+        winnerMatch = received_msg.match(/Winner:<<"([^"]+)">>/);
         var winner = winnerMatch ? winnerMatch[1] : "N/A";
 
         // Check if the received message indicates no bidders
