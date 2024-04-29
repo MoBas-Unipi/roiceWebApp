@@ -16,15 +16,17 @@
 
 % Start the supervisor process
 start_link() ->
-  supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 % Initialize the supervisor with supervision flags and child specs
 init([]) ->
-  SupFlags = #{strategy => one_for_one,
-    intensity => 5,
-    period => 10},
-  ChildSpecs = [],
-  {ok, {SupFlags, ChildSpecs}}.
+    SupFlags = #{strategy => one_for_one,
+                intensity => 5,
+                period => 10},
+    ChildSpecs = [#{id => erws_server,
+                start => {erws_server, start_link, []},
+                restart => permanent}],
+    {ok, {SupFlags, ChildSpecs}}.
 
 %% sup_flags() = #{strategy => strategy(),         % optional
 %%                 intensity => non_neg_integer(), % optional

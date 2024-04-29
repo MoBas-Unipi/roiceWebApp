@@ -73,7 +73,7 @@ create_bid_table() ->
 % Function to save a bid entry into the Mnesia bid table.
 save_bid(PhoneName, WinnerEmail, BidValue) ->
     F = fun() ->
-        mnesia:write(#bid{phone_name=PhoneName, current_winner_user_email=WinnerEmail, bid_value=BidValue})
+        mnesia:write(#bid{phone_name = PhoneName, current_winner_user_email = WinnerEmail, bid_value = BidValue})
         end,
     mnesia:activity(transaction, F).
 

@@ -130,7 +130,7 @@
                         <p><strong>Start Date: </strong><span class="start-date">${startDate}</span></p> <!-- Placeholder for the start date -->
                         <p><strong>End Date: </strong><span class="end-date">${endDate}</span></p> <!-- Placeholder for end date -->
                         <p><strong>Current Winner: </strong><span class="current-winner"></span></p> <!-- Placeholder for current winner -->
-                        <p><strong>Current Bid: </strong>$<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
+                        <p><strong>Current Bid: </strong>€<span class="current-bid"></span></p> <!-- Placeholder for current bid -->
                         <p><strong>Time Remaining: </strong><span class="time-remaining-user">0 d 0 h 0 m 0 s</span></p><!-- Placeholder for remaining time -->
                       
                         <span class="winner" style="color: #239800"></span>

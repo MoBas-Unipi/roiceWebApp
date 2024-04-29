@@ -1,21 +1,21 @@
 {application, erws,
- [{description, "An OTP application"},
-  {vsn, "0.1.0"},
-  {registered, []},
-  {mod, {erws_app, []}},
-  {applications,
-   [kernel,stdlib,crypto,cowboy,
-    compiler,syntax_tools, jsone, gproc
-   ]},
-  {env,
-   [
-    {websocket_endpoint, "/"},
-    {websocket_port, 8300}
-   ]
-  },
-  {modules, []},
+    [{description, "An OTP application"},
+        {vsn, "0.1.0"},
+        {registered, []},
+        {mod, {erws_app, []}},
+        {applications,
+            [kernel, stdlib, crypto, cowboy,
+                compiler, syntax_tools, jsone, gproc
+            ]},
+        {env,
+            [
+                {websocket_endpoint, "/"},
+                {websocket_port, 8300}
+            ]
+        },
+        {modules, []},
 
-  {licenses, ["Apache-2.0"]},
-  {links, []}
- ]}.
+        {licenses, ["Apache-2.0"]},
+        {links, []}
+    ]}.
 
