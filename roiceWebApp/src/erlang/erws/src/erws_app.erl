@@ -11,7 +11,8 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    erws_mnesia:setup_tables(),
+    mnesia:start(),
+%%    ok = mnesia:wait_for_tables([auction], 30000),
     % Start the supervisor for handling WebSocket connections
     case erws_sup:start_link() of
         {ok, Pid} ->

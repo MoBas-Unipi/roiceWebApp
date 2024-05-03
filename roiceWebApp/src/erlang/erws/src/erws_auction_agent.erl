@@ -27,6 +27,7 @@ handle(Req, State) ->
 
 % Handle auction messages
 auction_handle(Phone, Bid, AuctionTime, EndDate) ->
+%%    gproc:reg({p, l, {?MODULE, {Phone, auction}}}),
     receive
     %% Receive JOIN request from a Bidder
         {bidder_join, PhoneName} ->
@@ -162,6 +163,7 @@ handle_new_auction(Map) ->
 handle_join_auction(Map, State) ->
     PhoneName = maps:get(<<"phoneName">>, Map),
     AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+%%    AuctionPid = gproc:lookup_pid({p, l, {?MODULE, {PhoneName, auction}}}),
     logger:info("[erws_handler] handle_join_auction => The phone ~p has the following PID: ~p~n", [PhoneName, AuctionPid]),
     logger:info("[erws_handler] handle_join_auction => Starting to spawning a bidder for the auction with pid: ~p~n", [AuctionPid]),
 
@@ -189,6 +191,7 @@ handle_send_bid(Map, State) ->
     logger:info("Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n", [PhoneName, BidderEmail, BidDate, BidValue]),
 
     AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+%%    AuctionPid = gproc:lookup_pid({p, l, {?MODULE, {PhoneName, auction}}}),
     logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
 
     erws_bidder_handler:process_bid(AuctionPid, BidderEmail, BidValue, self(), PhoneName),
@@ -212,6 +215,7 @@ handle_get_timer(Map, State) ->
     PhoneName = maps:get(<<"phone_name">>, Map),
 
     AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+%%    AuctionPid = gproc:lookup_pid({p, l, {?MODULE, {PhoneName, auction}}}),
     logger:info("Retrieved AuctionPid saved in AUCTION table of MNESIA DB: ~p~n", [AuctionPid]),
 
     erws_bidder_handler:process_timer(AuctionPid, PhoneName),

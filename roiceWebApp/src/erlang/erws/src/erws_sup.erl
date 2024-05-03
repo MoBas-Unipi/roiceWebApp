@@ -42,8 +42,8 @@ init([]) ->
 
 %%% Function to start an auction process
 start_auction_process(PhoneName, MinimumPrice, AuctionTime, EndDate) ->
-    {ok, AuctionPid} = supervisor:start_child(
-        ?SERVER, #{
+    {ok, AuctionPid} = supervisor:start_child(?SERVER,
+        #{
             id => PhoneName,
             start => {erws_auction_agent, auction_handle, [PhoneName, MinimumPrice, AuctionTime, EndDate]},
             restart => transient
