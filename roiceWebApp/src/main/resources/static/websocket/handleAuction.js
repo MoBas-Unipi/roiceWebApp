@@ -156,6 +156,7 @@ function createErlangAuction(phoneName) {
 
     // WebSocket endpoint URL
     var webSocketUrl = 'ws://localhost:8300';
+    // var webSocketUrl = 'ws://10.2.1.41:8300';
 
     // Create WebSocket connection
     var socket = new WebSocket(webSocketUrl);

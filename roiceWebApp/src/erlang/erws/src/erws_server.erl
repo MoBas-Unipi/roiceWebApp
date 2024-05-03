@@ -27,12 +27,14 @@ init(_Arg) ->
         [{port, Port}],
         #{env => #{dispatch => Dispatch}}
     ),
+    % Set logger level to debug
+    logger:set_primary_config(level, debug),
     logger:info("[erws_server] init => Cowboy is listening from process ~p~n", [Pid]),
     {ok, []}.
 
-handle_call(Req, _, State) ->
-    {reply, Req, State}.
+handle_call(Request, _From, State) ->
+    {noreply, Request, State, hibernate}.
 
-handle_cast(_, State) ->
-    {noreply, State}.
+handle_cast(_Request, State) ->
+    {noreply, State, hibernate}.
 

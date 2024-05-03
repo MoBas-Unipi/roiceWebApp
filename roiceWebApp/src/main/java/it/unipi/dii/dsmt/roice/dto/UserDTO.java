@@ -1,7 +1,6 @@
 package it.unipi.dii.dsmt.roice.dto;
 
 import it.unipi.dii.dsmt.roice.model.AuctionWon;
-import it.unipi.dii.dsmt.roice.model.Notification;
 import it.unipi.dii.dsmt.roice.model.PhonePreview;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -50,12 +49,10 @@ public class UserDTO {
     private int streetNumber;
 
     private List<PhonePreview> favoritePhones;
-    private List<Notification> notifications;
     private List<AuctionWon> auctionsWon;
 
     public UserDTO(String firstName, String lastName, int streetNumber, String streetName, String city, String country,
-                   String email, String password, List<PhonePreview> favoritePhones, List<Notification> notifications,
-                   List<AuctionWon> auctionsWon) {
+                   String email, String password, List<PhonePreview> favoritePhones, List<AuctionWon> auctionsWon) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.streetNumber = streetNumber;
@@ -65,19 +62,7 @@ public class UserDTO {
         this.email = email;
         this.password = password;
         this.favoritePhones = favoritePhones;
-        this.notifications = notifications;
         this.auctionsWon = auctionsWon;
     }
 
-    public void addAuctionWon(AuctionWon auctionWon) {
-        this.auctionsWon.add(0, auctionWon);
-    }
-
-    public void addNotification(Notification notification) {
-        this.notifications.add(0, notification);
-    }
-
-    public void addFavoritePhone(PhonePreview phonePreview) {
-        this.favoritePhones.add(0, phonePreview);
-    }
 }

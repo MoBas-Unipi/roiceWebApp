@@ -12,9 +12,6 @@
 
 start(_StartType, _StartArgs) ->
     erws_mnesia:setup_tables(),
-
-    % Set logger level to debug
-    logger:set_primary_config(level, debug),
     % Start the supervisor for handling WebSocket connections
     case erws_sup:start_link() of
         {ok, Pid} ->
