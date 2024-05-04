@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%% @doc master public API
+%% @doc
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -12,17 +12,23 @@
 start(_StartType, _StartArgs) ->
     % Connect to cluster nodes
     {ok, Nodes} = application:get_env(nodes),
+
     logger:info("[master] start => Nodes ~p~n", [Nodes]),
     connect_nodes(Nodes),
 
     % Init Mnesia
     logger:info("[master] start => Init Mnesia~n"),
-    mnesia_setup:init(Nodes),
+    case mnesia_setup:init(Nodes) of
+        ok ->
+            % Start application on remote nodes
+%%            start_application(Nodes),
+            {ok, self(), Nodes};
 
-    % Start application on remote nodes
-    start_application(Nodes),
-
-    {ok, self(), Nodes}.
+        {error, Reason} ->
+            % Handle the error appropriately
+            logger:error("[master] start => Error setting up Mnesia: ~p~n", [Reason]),
+            {error, Reason}
+    end.
 
 
 %% Connect to remote nodes

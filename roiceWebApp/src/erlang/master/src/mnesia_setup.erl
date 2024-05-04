@@ -21,6 +21,10 @@ init(Nodes) ->
     % Create Mnesia schema and start Mnesia.
     mnesia:create_schema([node()] ++ Nodes),
     mnesia:start(),
+    rpc:call('server@127.0.0.1', mnesia, start, []),
+%%    rpc:call('root@10.2.1.42', mnesia, start, []),
+%%    rpc:call('root@10.2.1.43', mnesia, start, []),
+%%    rpc:call('root@10.2.1.44', mnesia, start, []),
     % Create auction and bid tables.
     create_auction_table(Nodes),
     create_bid_table(Nodes),
@@ -32,13 +36,10 @@ init(Nodes) ->
 create_auction_table(Nodes) ->
     case mnesia:create_table(auction, [
         {attributes, record_info(fields, auction)},
-        {ram_copies, Nodes}
+        {disc_copies, Nodes}
     ]) of
         {atomic, ok} ->
             logger:info("[mnesia_setup] create_auction_table => Auction table created!~n"),
-            ok;
-        {atomic, {already_exists, _Table}} ->
-            logger:info("[mnesia_setup] create_auction_table => Auction table already exists: ~p~n", [_Table]),
             ok;
         {aborted, Reason} ->
             logger:error("[mnesia_setup] create_auction_table => Auction table not created: ~p~n", [Reason])
@@ -48,13 +49,10 @@ create_auction_table(Nodes) ->
 create_bid_table(Nodes) ->
     case mnesia:create_table(bid, [
         {attributes, record_info(fields, bid)},
-        {ram_copies, Nodes}
+        {disc_copies, Nodes}
     ]) of
         {atomic, ok} ->
             logger:info("[mnesia_setup] create_bid_table => Bid table created!~n"),
-            ok;
-        {atomic, {already_exists, _Table}} ->
-            logger:info("[mnesia_setup] create_bid_table => Bid table already exists: ~p~n", [_Table]),
             ok;
         {aborted, Reason} ->
             logger:info("[mnesia_setup] create_bid_table => Bid table not created: ~p~n", [Reason])
