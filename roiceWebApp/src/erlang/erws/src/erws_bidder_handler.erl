@@ -5,6 +5,8 @@
 %% Create a bidder process
 start(AuctionPid, PhoneName) ->
     spawn(erws_bidder_handler, init_bidder, [AuctionPid, PhoneName]).
+%%    spawn(fun() -> erws_sup:start_bidder_process(AuctionPid, PhoneName) end).
+
 
 %% Initialize bidder process - send to the auction agent bidder's information
 init_bidder(AgentPid, PhoneName) ->

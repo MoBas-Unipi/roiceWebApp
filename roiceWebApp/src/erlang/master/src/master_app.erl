@@ -20,8 +20,6 @@ start(_StartType, _StartArgs) ->
     logger:info("[master] start => Init Mnesia~n"),
     case mnesia_setup:init(Nodes) of
         ok ->
-            % Start application on remote nodes
-%%            start_application(Nodes),
             {ok, self(), Nodes};
 
         {error, Reason} ->
@@ -39,16 +37,6 @@ connect_nodes([H | T]) ->
     logger:info("[master] connect_nodes => Connected node ~p~n", [H]),
     true = net_kernel:connect_node(H),
     connect_nodes(T).
-
-
-%% Start remote nodes
-start_application([]) ->
-    ok;
-
-start_application([Node | T]) ->
-    logger:info("[master] Started node => ~p~n", [Node]),
-    spawn(Node, application, start, [erws]),
-    start_application(T).
 
 
 stop(Nodes) ->
