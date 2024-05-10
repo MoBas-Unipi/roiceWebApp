@@ -19,7 +19,16 @@ save_auction(PhoneName, AuctionPid) ->
     F = fun() ->
             mnesia:write(#auction{phone_name = PhoneName, auction_pid = AuctionPid})
         end,
-    mnesia:activity(transaction, F).
+    case mnesia:activity(transaction, F) of
+        {atomic, Result} ->
+            logger:info("[erws_mnesia] save_auction => Result: ~p for ~p with PID ~p ~n", [Result, PhoneName, AuctionPid]),
+            ok;
+        {aborted, Reason} ->
+            logger:error("[erws_mnesia] save_auction => save_auction failed: ~p~n", [Reason]),
+            exit({aborted, Reason});
+        ok ->
+            ok
+    end.
 
 % Function to get the auction PID by phone name.
 get_auction_pid(PhoneName) ->
@@ -28,17 +37,36 @@ get_auction_pid(PhoneName) ->
                 [AuctionRecord] ->
                     AuctionRecord#auction.auction_pid;
                 [] ->
-                    not_found
+                    logger:error("[erws_mnesia] get_auction_pid => get_auction_pid failed: PID not found"),
+                    exit({aborted, "PID not found"})
             end
         end,
-    mnesia:activity(transaction, F).
+    case mnesia:activity(transaction, F) of
+        {atomic, AuctionPid} ->
+            logger:info("[erws_mnesia] get_auction_pid => Result of get_auction_pid for the phone ~p: ~p~n",
+                [PhoneName, AuctionPid]),
+            {ok, AuctionPid};
+        {aborted, Reason} ->
+            logger:error("[erws_mnesia] get_auction_pid => get_auction_pid failed: ~p~n", [Reason]),
+            exit({aborted, Reason});
+        AuctionPid ->
+            logger:info("[erws_mnesia] get_auction_pid => Result of get_auction_pid for the phone ~p: ~p~n", [PhoneName, AuctionPid]),
+            {ok, AuctionPid}
+    end.
 
 % Function to delete an auction based on phone_name.
 delete_auction(PhoneName) ->
     F = fun() ->
             mnesia:delete({auction, PhoneName})
         end,
-    mnesia:activity(transaction, F).
+    case mnesia:activity(transaction, F) of
+        {atomic, Result} ->
+            logger:info("[erws_mnesia] delete_auction for the phone ~p => Result: ~p~n", [PhoneName, Result]),
+            ok;
+        {aborted, Reason} ->
+            logger:error("[erws_mnesia] delete_auction => delete_auction failed: ~p~n", [Reason]),
+            exit({aborted, Reason})
+    end.
 
 
 %-------------------------BID Table Functions------------------------%
@@ -46,10 +74,16 @@ delete_auction(PhoneName) ->
 % Function to save a bid entry into the Mnesia bid table.
 save_bid(PhoneName, WinnerEmail, BidValue) ->
     F = fun() ->
-            mnesia:write(#bid{phone_name = PhoneName, current_winner_user_email = WinnerEmail, bid_value = BidValue}),
-            logger:info("[erws_mnesia] save_bid => Bid saved, user: ~p, phone: ~p, value: ~p ~n", [WinnerEmail, PhoneName, BidValue])
+            mnesia:write(#bid{phone_name = PhoneName, current_winner_user_email = WinnerEmail, bid_value = BidValue})
         end,
-    mnesia:activity(transaction, F).
+    case mnesia:activity(transaction, F) of
+        {atomic, Result} ->
+            logger:info("[erws_mnesia] save_bid => Bid of ~p from ~p for ~p, result: ~p ~n", [BidValue, WinnerEmail, PhoneName, Result]),
+            ok;
+        {aborted, Reason} ->
+            logger:error("[erws_mnesia] save_bid => save_auction failed: ~p~n", [Reason]),
+            exit({aborted, Reason})
+    end.
 
 % Function to get the winner bidder's email and bid value by phone name.
 get_winner_bidder(PhoneName) ->
@@ -61,14 +95,27 @@ get_winner_bidder(PhoneName) ->
                     not_found
             end
         end,
-    mnesia:activity(transaction, F).
+    case mnesia:activity(transaction, F) of
+        {atomic, CurrentWinner} ->
+            logger:info("[erws_mnesia] get_winner_bidder =>
+                            Result of get_winner_bidder for the phone ~p: ~p~n", [PhoneName, CurrentWinner]),
+            CurrentWinner;
+        {aborted, Reason} ->
+            logger:error("[erws_mnesia] get_winner_bidder => get_auction_pid failed: ~p~n", [Reason]),
+            exit({aborted, Reason})
+    end.
 
 % Function to delete a bid based on phone_name.
 delete_bid(PhoneName) ->
     F = fun() ->
-            mnesia:delete({bid, PhoneName}),
-            logger:info("[erws_mnesia] delete_bid => Bid deleted for ~p: ~n", [PhoneName])
+            mnesia:delete({bid, PhoneName})
         end,
-    mnesia:activity(transaction, F).
-
+    case mnesia:activity(transaction, F) of
+        {atomic, Result} ->
+            logger:info("[erws_mnesia] delete_bid for the phone ~p => Result: ~p~n", [PhoneName, Result]),
+            ok;
+        {aborted, Reason} ->
+            logger:error("[erws_mnesia] delete_bid => delete_bid failed: ~p~n", [Reason]),
+            exit({aborted, Reason})
+    end.
 

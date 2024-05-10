@@ -86,16 +86,8 @@ handle_new_auction(Map) ->
                     PhoneName = maps:get(<<"phoneName">>, Map),
                     MinimumPrice = maps:get(<<"minimumPrice">>, Map),
                     erws_dynamic_sup:start_auction_process(PhoneName, MinimumPrice, AuctionTime, EndDate),
-
-                    case erws_mnesia:get_auction_pid(PhoneName) of
-                        {atomic, AuctionPid} ->
-                            logger:debug("[erws_auction_agent] handle_new_auction =>
-                            Result of get_auction_pid for the phone ~p: ~p~n", [PhoneName, AuctionPid]),
-                            {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
-                        {aborted, Reason} ->
-                            logger:error("[erws_auction_agent] handle_new_auction => get_auction_pid failed: ~p~n", [Reason]),
-                            exit({aborted, Reason})
-                    end;
+                    erws_mnesia:get_auction_pid(PhoneName);
+%%                    {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
                 false ->
                     logger:error("[handle_new_auction] => Start date has already passed, cannot spawn auction process.~n"),
                     undefined % Return undefined or any other value to indicate failure
@@ -107,21 +99,12 @@ handle_new_auction(Map) ->
 
 handle_join_auction(Map, State) ->
     PhoneName = maps:get(<<"phoneName">>, Map),
-
-    case erws_mnesia:get_auction_pid(PhoneName) of
-        {atomic, AuctionPid} ->
-            logger:debug("[erws_auction_agent] handle_join_auction =>
-                            Result of get_auction_pid for the phone ~p: ~p~n", [PhoneName, AuctionPid]),
-            init_bidder(AuctionPid, PhoneName),
-            gproc:reg({p, l, {?MODULE, PhoneName}}),
-            Pid = gproc:lookup_pids({p, l, {?MODULE, PhoneName}}),
-            logger:info("[erws_auction_agent] handle_join_auction => WEBSOCKET_INIT process started here: ~p~n", [Pid]),
-            receive_joined(State);
-
-        {aborted, Reason} ->
-            logger:error("[erws_auction_agent] handle_join_auction => get_auction_pid failed: ~p~n", [Reason]),
-            exit({aborted, Reason})
-    end.
+    AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+    init_bidder(AuctionPid, PhoneName),
+    gproc:reg({p, l, {?MODULE, PhoneName}}),
+    Pid = gproc:lookup_pids({p, l, {?MODULE, PhoneName}}),
+    logger:info("[erws_auction_agent] handle_join_auction => WEBSOCKET_INIT process started here: ~p~n", [Pid]),
+    receive_joined(State).
 
 
 handle_live_auctions(State) ->
@@ -141,48 +124,38 @@ handle_send_bid(Map, State) ->
     BidValue = maps:get(<<"value">>, Map),
     logger:info("[erws_auction_agent] handle_send_bid => Successfully received bid from client: ~p~n, ~p~n, ~p~n, ~p~n", [PhoneName, BidderEmail, BidDate, BidValue]),
 
-    case erws_mnesia:get_auction_pid(PhoneName) of
-        {atomic, AuctionPid} ->
-            logger:debug("[erws_auction_agent] handle_send_bid =>
-                            Result of get_auction_pid for the phone ~p: ~p~n", [PhoneName, AuctionPid]),
-            process_bid(AuctionPid, BidderEmail, BidValue, self(), PhoneName),
-            receive
-                {new_bid, NewBid, RemainingTime, CurrentWinner} ->
-                    logger:info("[erws_auction_agent] handle_send_bid => Received New Bid"),
-                    Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
-                    {reply, {text, Response}, State, hibernate};
-                {no_bid, Bid} ->
-                    logger:info("[erws_auction_agent] handle_send_bid => Received Bid < Current Max Bid"),
-                    Response = io_lib:format("Bid:~p", [Bid]),
-                    {reply, {text, Response}, State, hibernate};
-                {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime} ->
-                    logger:info("[erws_auction_agent] handle_send_bid => Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
-                    Response = io_lib:format("Phone:~p Winner:~p Winning Bid:~p RemainingTime:~p", [Phone, WinnerEmail, WinningBid, RemainingTime]),
-                    {reply, {text, Response}, State, hibernate}
-            end;
-        {aborted, Reason} ->
-            logger:error("[erws_auction_agent] handle_send_bid => get_auction_pid failed: ~p~n", [Reason]),
-            exit({aborted, Reason})
+    AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+
+    % Send message with the bid to the auction process
+    process_bid(AuctionPid, BidderEmail, BidValue, self(), PhoneName),
+
+    receive
+        {new_bid, NewBid, RemainingTime, CurrentWinner} ->
+            logger:info("[erws_auction_agent] handle_send_bid => Received New Bid"),
+            Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
+            {reply, {text, Response}, State, hibernate};
+        {no_bid, Bid} ->
+            logger:info("[erws_auction_agent] handle_send_bid => Received Bid < Current Max Bid"),
+            Response = io_lib:format("Bid:~p", [Bid]),
+            {reply, {text, Response}, State, hibernate};
+        {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime} ->
+            logger:info("[erws_auction_agent] handle_send_bid => Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
+            Response = io_lib:format("Phone:~p Winner:~p Winning Bid:~p RemainingTime:~p", [Phone, WinnerEmail, WinningBid, RemainingTime]),
+            {reply, {text, Response}, State, hibernate}
     end.
 
 
 handle_get_timer(Map, State) ->
     PhoneName = maps:get(<<"phone_name">>, Map),
+    AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
 
-    case erws_mnesia:get_auction_pid(PhoneName) of
-        {atomic, AuctionPid} ->
-            logger:debug("[erws_auction_agent] handle_new_auction =>
-                            Result of get_auction_pid for the phone ~p: ~p~n", [PhoneName, AuctionPid]),
-            process_timer(AuctionPid, PhoneName),
-            receive
-                {send_timer, Bid, RemainingTime, CurrentWinner} ->
-                    logger:info("[handle_get_timer] => Get Auction Timer"),
-                    Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
-                    {reply, {text, Response}, State, hibernate}
-            end;
-        {aborted, Reason} ->
-            logger:error("[erws_auction_agent] handle_get_timer => get_auction_pid failed: ~p~n", [Reason]),
-            exit({aborted, Reason})
+    % Send timer request message to the auction process
+    process_timer(AuctionPid, PhoneName),
+    receive
+        {send_timer, Bid, RemainingTime, CurrentWinner} ->
+            logger:info("[handle_get_timer] => Get Auction Timer"),
+            Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
+            {reply, {text, Response}, State, hibernate}
     end.
 
 receive_joined(State) ->
