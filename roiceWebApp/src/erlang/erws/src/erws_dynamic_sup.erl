@@ -11,7 +11,7 @@
 -export([start_link/0]).
 
 %% Supervisor callbacks
--export([init/1, start_auction_process/4]).
+-export([init/1, start_auction_process/4, terminate_auction_process/1]).
 
 start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
@@ -29,7 +29,7 @@ init([]) ->
     ChildSpecs = [
         #{
             id => erws_auction_handler,
-            start => {erws_auction_handler, auction_handle, []},
+            start => {erws_auction_handler, start_link, []},
             restart => transient,
             shutdown => 2000,
             type => worker,
@@ -41,9 +41,7 @@ init([]) ->
 
 %%% Function to start an auction process
 start_auction_process(PhoneName, MinimumPrice, AuctionTime, EndDate) ->
-    {A, B, _C} = now(),
-    MY_ID = A * 1000000 + B,
-    logger:info("[erws_dynamic_sup] start_auction_process => called for: ~p, time: ~p ~n", [PhoneName, MY_ID]),
+    logger:debug("[erws_dynamic_sup] start_auction_process => called for: ~p, time: ~p ~n", [PhoneName, erlang:system_time()]),
 
     case supervisor:start_child(?MODULE,
         [PhoneName, MinimumPrice, AuctionTime, EndDate]
@@ -52,7 +50,10 @@ start_auction_process(PhoneName, MinimumPrice, AuctionTime, EndDate) ->
             logger:info("[erws_dynamic_sup] start_auction_process => Start child executed correctly, PID: ~p~n", [AuctionPid]),
             AuctionPid;
         Error ->
-            logger:info("[erws_dynamic_sup] start_auction_process => Error: ~p~n", [Error]),
+            logger:error("[erws_dynamic_sup] start_auction_process => Error: ~p~n", [Error]),
             Error
     end.
+
+terminate_auction_process(ChildId) ->
+    supervisor:terminate_child(?MODULE, ChildId).
 

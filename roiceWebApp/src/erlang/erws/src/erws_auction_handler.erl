@@ -6,17 +6,33 @@
 -module(erws_auction_handler).
 
 %% gen_server callbacks
--export([auction_handle/4]).
+-export([auction_handle/4, start_link/4]).
+
+% Name of the agent module
+-define(AGENT, erws_auction_agent).
+
+% Spawn a new auction process executing auction_handle
+start_link(Phone, Bid, AuctionTime, EndDate) ->
+    Pid = spawn_link(?MODULE, auction_handle, [Phone, Bid, AuctionTime, EndDate]),
+    {ok, Pid}.
 
 %% Init auction process
 auction_handle(Phone, Bid, AuctionTime, EndDate) ->
-    logger:debug("[erws_auction_handler] auction_handle => Auction process started with pid: ~p~n", [self()]),
-    erws_mnesia:save_auction(Phone, self()),
+    AuctionPid = self(),
+    logger:debug("[erws_auction_handler] auction_handle => Auction process started with pid: ~p~n", [AuctionPid]),
+
+    case erws_mnesia:save_auction(Phone, AuctionPid) of
+        {atomic, Result} ->
+            logger:info("[erws_auction_handler] auction_handle => Result of save_auction: ~p for ~p with PID ~p ~n", [Result, Phone, AuctionPid]);
+        {aborted, Reason} ->
+            logger:error("[erws_auction_handler] auction_handle => save_auction failed: ~p~n", [Reason]),
+            exit({aborted, Reason})
+    end,
 
     Text = "Live auctions update requested!",
-    gproc:send({p, l, {erws_auction_agent, {live_auctions}}}, {live_auctions_update, Text}),
-
+    gproc:send({p, l, {?AGENT, {live_auctions}}}, {live_auctions_update, Text}),
     auction_receive(Phone, Bid, AuctionTime, EndDate).
+%%    erws_dynamic_sup:terminate_auction_process(self()).
 
 %% Handle auction messages
 auction_receive(Phone, Bid, AuctionTime, EndDate) ->
@@ -27,9 +43,9 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
             CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
             case CurrentWinner of
                 {WinnerEmail, _} ->
-                    gproc:send({p, l, {erws_auction_agent, PhoneName}}, {joined, Bid, RemainingTime, WinnerEmail});
+                    gproc:send({p, l, {?AGENT, PhoneName}}, {joined, Bid, RemainingTime, WinnerEmail});
                 not_found ->
-                    gproc:send({p, l, {erws_auction_agent, PhoneName}}, {joined, Bid, RemainingTime, []})
+                    gproc:send({p, l, {?AGENT, PhoneName}}, {joined, Bid, RemainingTime, []})
             end,
             auction_receive(Phone, Bid, EndDate - erlang:system_time(second), EndDate);
 
@@ -39,9 +55,9 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
             CurrentWinner = erws_mnesia:get_winner_bidder(PhoneName),
             case CurrentWinner of
                 {WinnerEmail, _} ->
-                    gproc:send({p, l, {erws_auction_agent, PhoneName}}, {send_timer, Bid, RemainingTime, WinnerEmail});
+                    gproc:send({p, l, {?AGENT, PhoneName}}, {send_timer, Bid, RemainingTime, WinnerEmail});
                 not_found ->
-                    gproc:send({p, l, {erws_auction_agent, PhoneName}}, {send_timer, Bid, RemainingTime, []})
+                    gproc:send({p, l, {?AGENT, PhoneName}}, {send_timer, Bid, RemainingTime, []})
             end,
             auction_receive(Phone, Bid, EndDate - erlang:system_time(second), EndDate);
 
@@ -52,12 +68,12 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
             if
                 Bid < NewBid ->
                     logger:info("[auction_receive] => NewBid: ~p > Current Bid: ~p!~n", [NewBid, Bid]),
-                    logger:info("[auction_receive] => Send update bid to bidders"),
-                    gproc:send({p, l, {erws_auction_agent, PhoneName}}, {new_bid, NewBid, RemainingTime, BidderEmail}),
+                    logger:debug("[auction_receive] => Send update bid to bidders"),
+                    gproc:send({p, l, {?AGENT, PhoneName}}, {new_bid, NewBid, RemainingTime, BidderEmail}),
                     erws_mnesia:save_bid(PhoneName, BidderEmail, NewBid),
                     auction_receive(Phone, NewBid, EndDate - erlang:system_time(second), EndDate);
                 true ->
-                    gproc:send({p, l, {erws_auction_agent, PhoneName}}, {no_bid, Bid, RemainingTime}),
+                    gproc:send({p, l, {?AGENT, PhoneName}}, {no_bid, Bid, RemainingTime}),
                     auction_receive(Phone, Bid, EndDate - erlang:system_time(second), EndDate)
             end
     after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
@@ -66,15 +82,19 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
                 logger:info("[auction_receive] => No bidders for the auction of the phone: ~p~n", [Phone]),
                 RemainingTime = get_time_remaining(EndDate),
                 Response = <<"No bidders">>,
-                gproc:send({p, l, {erws_auction_agent, Phone}}, {no_bidders, Response, RemainingTime});
+                gproc:send({p, l, {?AGENT, Phone}}, {no_bidders, Response, RemainingTime});
+%%                erws_mnesia:delete_auction(Phone),
             {WinnerEmail, WinningBid} ->
                 RemainingTime = get_time_remaining(EndDate),
                 logger:info("[auction_receive] => Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
-                gproc:send({p, l, {erws_auction_agent, Phone}}, {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime});
-            _ ->
-                logger:error("[auction_receive] => Unexpected result from get_winner_bidder")
+                gproc:send({p, l, {?AGENT, Phone}}, {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime})
+%%                erws_mnesia:delete_bid(Phone),
+%%                erws_mnesia:delete_auction(Phone),
         end
     end.
+
+%%    timer:sleep(4000).
+
 
 % Function to compute the auction remaining time
 get_time_remaining(EndDate) ->

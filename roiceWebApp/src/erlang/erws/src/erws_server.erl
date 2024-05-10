@@ -28,7 +28,7 @@ init(_Arg) ->
         #{env => #{dispatch => Dispatch}}
     ),
     % Set logger level to debug
-    logger:set_primary_config(level, debug),
+    logger:set_primary_config(level, info),
     logger:info("[erws_server] init => Cowboy is listening from process ~p~n", [Pid]),
     {ok, []}.
 

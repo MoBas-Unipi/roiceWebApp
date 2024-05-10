@@ -36,7 +36,7 @@ init(Nodes) ->
 create_auction_table(Nodes) ->
     case mnesia:create_table(auction, [
         {attributes, record_info(fields, auction)},
-        {ram_copies, Nodes}
+        {disc_copies, Nodes}
     ]) of
         {atomic, ok} ->
             logger:info("[mnesia_setup] create_auction_table => Auction table created!~n"),
@@ -49,7 +49,7 @@ create_auction_table(Nodes) ->
 create_bid_table(Nodes) ->
     case mnesia:create_table(bid, [
         {attributes, record_info(fields, bid)},
-        {ram_copies, Nodes}
+        {disc_copies, Nodes}
     ]) of
         {atomic, ok} ->
             logger:info("[mnesia_setup] create_bid_table => Bid table created!~n"),
