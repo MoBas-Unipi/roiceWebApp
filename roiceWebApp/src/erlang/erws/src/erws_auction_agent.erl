@@ -20,33 +20,33 @@ websocket_init(_TransportName, Req, _Opts) ->
 
 % Handle HTTP requests agent
 handle(Req, State) ->
-    logger:debug("[handle] => Request not expected: ~p", [Req]),
+    logger:debug("[erws_auction_agent] handle => Request not expected: ~p~n", [Req]),
     {ok, Req2} = cowboy_http_req:reply(404, [{'Content-Type', <<"text/html">>}]),
     {ok, Req2, State}.
 
 % Handles incoming WebSocket text frames
 websocket_handle(Frame = {text, Message}, State) ->
-    logger:debug("[websocket_handle] => Frame: ~p, State: ~p~n", [Frame, State]),
-    logger:debug("[websocket_handle] => Received ~p~n", [Frame]),
+    logger:debug("[erws_auction_agent] websocket_handle => Frame: ~p, State: ~p~n", [Frame, State]),
+    logger:debug("[erws_auction_agent] websocket_handle => Received ~p~n", [Frame]),
 
     DecodedMessage = jsone:try_decode(Message),
 
     Response = case element(1, DecodedMessage) of
                    ok ->
                        Json = element(2, DecodedMessage),
-                       logger:debug("[websocket_handle] => Decoded ~p~n", [Json]),
+                       logger:debug("[erws_auction_agent] websocket_handle => Decoded ~p~n", [Json]),
                        handle_websocket_frame(Json, State);
                    error ->
-                       logger:error("[websocket_handle] => Failed to decode JSON: ~p~n", [Message]),
+                       logger:error("[erws_auction_agent] websocket_handle => Failed to decode JSON: ~p~n", [Message]),
                        {ok, State}
                end,
     Response.
 
 % Handle a frame after JSON decoding
 handle_websocket_frame(Map, State) ->
-    logger:debug("[erws_handler] handle_websocket_frame => Map is ~p~n", [Map]),
+    logger:debug("[erws_auction_agent] handle_websocket_frame => Map is ~p~n", [Map]),
     Action = maps:get(<<"action">>, Map),
-    logger:info("[handle_websocket_frame] => Action: ~p~n", [Action]),
+    logger:info("[erws_auction_agent] handle_websocket_frame => Action: ~p~n", [Action]),
 
     case Action of
         <<"new_auction">> -> % Handle new auction action
@@ -54,7 +54,7 @@ handle_websocket_frame(Map, State) ->
 
         <<"join_auction">> ->
             BidderEmail = maps:get(<<"email">>, Map),
-            logger:debug("[handle_websocket_frame] => EMAIL of the new join user: ~p~n", [BidderEmail]),
+            logger:debug("[erws_auction_agent] handle_websocket_frame => EMAIL of the new join user: ~p~n", [BidderEmail]),
             handle_join_auction(Map, State);
 
         <<"live_auctions">> ->
@@ -67,7 +67,7 @@ handle_websocket_frame(Map, State) ->
             handle_get_timer(Map, State);
 
         _ ->
-            logger:error("[handle_websocket_frame] => Unknown action: ~p~n", [Action]),
+            logger:error("[erws_auction_agent] handle_websocket_frame => Unknown action: ~p~n", [Action]),
             {ok, State}
     end.
 
@@ -76,7 +76,7 @@ handle_new_auction(Map) ->
     EndDate = maps:get(<<"endSeconds">>, Map),
     case is_integer(StartDate) andalso is_integer(EndDate) of
         true ->
-            logger:info("[handle_new_auction] => New auction scheduled for ~p~n", [StartDate]),
+            logger:info("[erws_auction_agent] handle_new_auction => New auction scheduled for ~p~n", [StartDate]),
             CurrentDate = erlang:system_time(second),
             Delay = StartDate - CurrentDate,
             AuctionTime = EndDate - StartDate,
@@ -84,16 +84,18 @@ handle_new_auction(Map) ->
                 true ->
                     timer:sleep(Delay * 1000),
                     PhoneName = maps:get(<<"phoneName">>, Map),
+                    erws_mnesia:delete_auction(PhoneName),
+                    erws_mnesia:delete_bid(PhoneName),
                     MinimumPrice = maps:get(<<"minimumPrice">>, Map),
                     erws_dynamic_sup:start_auction_process(PhoneName, MinimumPrice, AuctionTime, EndDate),
-                    erws_mnesia:get_auction_pid(PhoneName);
-%%                    {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
+                    AuctionPid = erws_mnesia:get_auction_pid(PhoneName),
+                    {ok, AuctionPid}; % Return the tuple {ok, AuctionPid}
                 false ->
-                    logger:error("[handle_new_auction] => Start date has already passed, cannot spawn auction process.~n"),
+                    logger:error("[erws_auction_agent] handle_new_auction => Start date has already passed, cannot spawn auction process. \n"),
                     undefined % Return undefined or any other value to indicate failure
             end;
         false ->
-            logger:error("[handle_new_auction] => Invalid start date~n"),
+            logger:error("[erws_auction_agent] handle_new_auction => Invalid start date \n"),
             undefined % Return undefined or any other value to indicate failure
     end.
 
@@ -109,7 +111,7 @@ handle_join_auction(Map, State) ->
 
 handle_live_auctions(State) ->
     gproc:reg({p, l, {?MODULE, {live_auctions}}}),
-    logger:info("[handle_live_auctions] => Client registered to the live auctions session!"),
+    logger:info("[erws_auction_agent] handle_live_auctions => Client registered to the live auctions session! \n"),
     receive
         {live_auctions_update, Text} ->
             Response = io_lib:format("~p", [Text]),
@@ -153,7 +155,7 @@ handle_get_timer(Map, State) ->
     process_timer(AuctionPid, PhoneName),
     receive
         {send_timer, Bid, RemainingTime, CurrentWinner} ->
-            logger:info("[handle_get_timer] => Get Auction Timer"),
+            logger:info("[erws_auction_agent] handle_get_timer => Get Auction Timer"),
             Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate}
     end.
@@ -164,26 +166,26 @@ receive_joined(State) ->
             Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate};
         {not_joined} ->
-            logger:info("[receive_joined] => Bidder not joined!"),
+            logger:info("[erws_auction_agent] receive_joined => Bidder not joined!"),
             {ok, State};
         {new_bid, NewBid, RemainingTime, CurrentWinner} ->
-            logger:info("[receive_joined] => Received New Bid"),
+            logger:info("[erws_auction_agent] receive_joined => Received New Bid"),
             Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate};
         {no_bid, Bid} ->
-            logger:info("[receive_joined] => Received Bid < Current Max Bid"),
+            logger:info("[erws_auction_agent] receive_joined => Received Bid < Current Max Bid"),
             Response = io_lib:format("Bid:~p", [Bid]),
             {reply, {text, Response}, State, hibernate};
         {no_bidders, Text, RemainingTime} ->
-            logger:info("[receive_joined] => Auction terminated, no bidders"),
+            logger:info("[erws_auction_agent] receive_joined => Auction terminated, no bidders"),
             Response = io_lib:format("Winner:~p RemainingTime:~p", [Text, RemainingTime]),
             {reply, {text, Response}, State, hibernate};
         {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime} ->
-            logger:info("[receive_joined] => Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
+            logger:info("[erws_auction_agent] receive_joined => Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
             Response = io_lib:format("Phone:~p Winner:~p Winning Bid:~p RemainingTime:~p", [Phone, WinnerEmail, WinningBid, RemainingTime]),
             {reply, {text, Response}, State, hibernate};
         {send_timer, Bid, RemainingTime, CurrentWinner} ->
-            logger:info("[receive_joined] => Get Auction Timer"),
+            logger:info("[erws_auction_agent] receive_joined => Get Auction Timer"),
             Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate}
     end.
@@ -211,29 +213,29 @@ terminate(_Reason, _Req, _State) ->
 websocket_info(Info, State) ->
     case Info of
         {joined, Bid, RemainingTime, CurrentWinner} ->
-            Response = io_lib:format("[websocket_info] => Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
+            Response = io_lib:format("[erws_auction_agent] websocket_info => Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate};
         {not_joined} ->
-            logger:debug("[websocket_info] => Bidder not joined!"),
+            logger:debug("[erws_auction_agent] websocket_info=> Bidder not joined!"),
             {ok, State};
         {new_bid, NewBid, RemainingTime, CurrentWinner} ->
-            logger:debug("[websocket_info] => Received New Bid"),
+            logger:debug("[erws_auction_agent] websocket_info => Received New Bid"),
             Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [NewBid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate};
         {no_bid, Bid} ->
-            logger:debug("[websocket_info] => Received Bid < Current Max Bid"),
+            logger:debug("[erws_auction_agent] websocket_info => Received Bid < Current Max Bid"),
             Response = io_lib:format("Bid:~p", [Bid]),
             {reply, {text, Response}, State, hibernate};
         {no_bidders, Text, RemainingTime} ->
-            logger:debug("[websocket_info] => Auction terminated, no bidders"),
+            logger:debug("[erws_auction_agent] websocket_info => Auction terminated, no bidders"),
             Response = io_lib:format("Winner:~p RemainingTime:~p", [Text, RemainingTime]),
             {reply, {text, Response}, State, hibernate};
         {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime} ->
-            logger:debug("[websocket_info] => Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
+            logger:debug("[erws_auction_agent] websocket_info => Phone: ~p, Winner: ~p, Winning Bid: ~p", [Phone, WinnerEmail, WinningBid]),
             Response = io_lib:format("Phone:~p Winner:~p Winning Bid:~p RemainingTime:~p", [Phone, WinnerEmail, WinningBid, RemainingTime]),
             {reply, {text, Response}, State, hibernate};
         {send_timer, Bid, RemainingTime, CurrentWinner} ->
-            logger:debug("[websocket_info] => Get Auction Timer"),
+            logger:debug("[erws_auction_agent] websocket_info => Get Auction Timer"),
             Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate};
         {live_auctions_update, Text} ->
