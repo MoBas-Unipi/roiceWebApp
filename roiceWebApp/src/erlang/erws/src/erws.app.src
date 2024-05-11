@@ -5,12 +5,13 @@
         {mod, {erws_app, []}},
         {applications,
             [kernel, stdlib, crypto, cowboy,
-                compiler, syntax_tools, jsone, gproc
+                compiler, syntax_tools, jsone, gproc, inets
             ]},
         {env,
             [
                 {websocket_endpoint, "/"},
                 {websocket_port, 8300}
+%%                {tomcat_server_IP, 10.2.1.39 }
             ]
         },
         {modules, []},

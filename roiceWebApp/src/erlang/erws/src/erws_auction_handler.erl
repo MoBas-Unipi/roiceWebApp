@@ -86,8 +86,15 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
                 erws_mnesia:delete_bid(Phone),
                 logger:info("[erws_auction_handler] auction_receive => Winner Bid deleted for the phone: ~p~n", [Phone])
         end,
-        erws_mnesia:delete_auction(Phone),
-        logger:info("[erws_auction_handler] auction_receive => Auction deleted for the phone: ~p~n", [Phone])
+        erws_mnesia:delete_auction(Phone)
+
+%%        WinMessage = #{<<"winner">> => Winner, <<"winningBidValue">> => WinningBidValue},
+%%        Body = gsone:encode(WinMessage), % Using gsone for JSON encoding
+%%        URL = "http://localhost:8080/handleWinnerMessage?phoneName=" ++ PhoneName,
+%%        Headers = [{"Content-Type", "application/json"}],
+%%        Options = [{body_format, binary}, {headers, Headers}],
+%%        {ok, {{_, 200, _}, _, ResponseBody}} = httpc:request(post, {URL, [], Headers, Body}, Options),
+%%        io:format("Response Body: ~s~n", [ResponseBody])
     end.
 
 

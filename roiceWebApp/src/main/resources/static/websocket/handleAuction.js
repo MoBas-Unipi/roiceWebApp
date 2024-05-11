@@ -113,7 +113,7 @@ function confirmBid(email, phone_name) {
             var currentBidValue = document.querySelector('.current-bid').innerText;
 
             if (bidAmount <= currentBidValue) {
-                document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
+                document.getElementById("bidError").innerText = "Your bid must be higher than the current one!";
             } else {
                 document.getElementById("bidError").innerText = "";
                 // Send the bid to the web socket
