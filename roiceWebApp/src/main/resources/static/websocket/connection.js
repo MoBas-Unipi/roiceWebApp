@@ -92,39 +92,6 @@ function connect() {
             document.querySelector('.winning-bid').innerText = "With a Bid of: " + winningBidValue + "€";
             //document.getElementById("winning-bid").innerText = "With a Bid of: " + winningBidValue + "€";
         }
-
-
-        // Check if winner is not empty and remaining time is 0
-        // if (winner !== "N/A" && remainingTime === "0 d 0 h 0 m 0 s") {
-        //     console.log("Auction Finished. CONTROLLER CALLED!");
-        //     const winMessage = {
-        //         winner: winner,
-        //         winningBidValue: winningBidValue
-        //     };
-        //     // Send a Post request to the java controller
-        //     fetch('/handleWinnerMessage?phoneName=' + encodeURIComponent(phoneName), {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(winMessage)
-        //     })
-        //         .then(response => {
-        //             if (response.ok) {
-        //                 return response.text();
-        //             } else {
-        //                 throw new Error('Network response was not ok');
-        //             }
-        //         })
-        //         .then(data => {
-        //             // Reload the phoneDetails jsp
-        //             //window.location.reload();
-        //         })
-        //         .catch(error => {
-        //             console.error("Error handling winner message:", error);
-        //         });
-        // }
-
     };
   
     // Event handler for WebSocket connection close

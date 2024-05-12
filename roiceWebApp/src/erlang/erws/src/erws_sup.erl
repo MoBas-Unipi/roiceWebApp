@@ -35,7 +35,7 @@ init([]) ->
             id => erws_server,
             start => {erws_server, start_link, []},
             restart => permanent,
-            shutdown => 2000,
+            shutdown => 5000,
             type => worker,
             modules => [erws_server]
         },
@@ -43,7 +43,7 @@ init([]) ->
             id => erws_dynamic_sup,
             start => {erws_dynamic_sup, start_link, []},
             restart => permanent,
-            shutdown => 2000,
+            shutdown => infinity,
             type => supervisor,
             modules => [erws_dynamic_sup]
         }

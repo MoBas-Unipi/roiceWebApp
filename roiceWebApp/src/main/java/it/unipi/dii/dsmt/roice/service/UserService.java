@@ -94,7 +94,7 @@ public class UserService {
     }
 
 
-    public UserDTO addWonAuction(GenericUser winnerUser, String phoneName, double winningBidValue) {
+    public void addWonAuction(GenericUser winnerUser, String phoneName, int winningBidValue) {
         try {
             // Retrieve the phone image
             Phone phone = phoneRepository.findByName(phoneName);
@@ -113,7 +113,6 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
 

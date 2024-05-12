@@ -31,7 +31,7 @@ init([]) ->
             id => erws_auction_handler,
             start => {erws_auction_handler, start_link, []},
             restart => transient,
-            shutdown => 2000,
+            shutdown => 5000,
             type => worker,
             modules => [erws_auction_handler]
         }

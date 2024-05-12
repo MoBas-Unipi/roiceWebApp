@@ -154,12 +154,8 @@ function createErlangAuction(phoneName) {
     // Convert JSON to string
     var jsonMessage = JSON.stringify(auctionData);
 
-    // WebSocket endpoint URL
-    var webSocketUrl = 'ws://localhost:8300';
-    // var webSocketUrl = 'ws://10.2.1.41:8300';
-
     // Create WebSocket connection
-    var socket = new WebSocket(webSocketUrl);
+    var socket = new WebSocket(server_url);
 
     // Event handler for successful connection
     socket.onopen = function (event) {

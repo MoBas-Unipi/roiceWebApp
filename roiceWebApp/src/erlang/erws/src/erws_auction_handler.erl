@@ -18,14 +18,21 @@ start_link(Phone, Bid, AuctionTime, EndDate) ->
 
 %% Init auction process
 auction_handle(Phone, Bid, AuctionTime, EndDate) ->
-    AuctionPid = self(),
-    logger:debug("[erws_auction_handler] auction_handle => Auction process started with pid: ~p~n", [AuctionPid]),
-    erws_mnesia:save_auction(Phone, AuctionPid),
-    logger:info("[erws_auction_handler] auction_handle => Auction saved for the phone: ~p ~n", [Phone]),
-    Text = "Live auctions update requested!",
-    gproc:send({p, l, {?AGENT, {live_auctions}}}, {live_auctions_update, Text}),
-    auction_receive(Phone, Bid, AuctionTime, EndDate).
-%%    erws_dynamic_sup:terminate_auction_process(self()).
+    CurrentTime = erlang:system_time(seconds),
+    if
+        CurrentTime > EndDate ->
+            logger:info("[erws_auction_handler] auction_handle => Auction ended"),
+            ok;
+        true ->
+            %% Auction is still live
+            AuctionPid = self(),
+            logger:info("[erws_auction_handler] auction_handle => Auction process started with pid: ~p~n", [AuctionPid]),
+            erws_mnesia:save_auction(Phone, AuctionPid),
+            logger:info("[erws_auction_handler] auction_handle => Auction saved for the phone: ~p ~n", [Phone]),
+            Text = "Live auctions update requested!",
+            gproc:send({p, l, {?AGENT, {live_auctions}}}, {live_auctions_update, Text}),
+            auction_receive(Phone, Bid, AuctionTime, EndDate)
+    end.
 
 %% Handle auction messages
 auction_receive(Phone, Bid, AuctionTime, EndDate) ->
@@ -72,29 +79,57 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
                     gproc:send({p, l, {?AGENT, PhoneName}}, {no_bid, Bid, RemainingTime}),
                     auction_receive(Phone, Bid, EndDate - erlang:system_time(second), EndDate)
             end
+
+    %% End of the auction
     after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
+        %% Init the HTTP message to send to the /handleWinnerMessage endpoint
+        {ok, Ip} = application:get_env(tomcat_server_IP),
+        URL = uri_string:normalize("http://" ++ Ip ++ ":8080/handleWinnerMessage"),
+        logger:debug("[erws_auction_handler] auction_receive => The URL is: ~p ~n", [URL]),
+        ContentType = "application/json",
+        HttpOptions = [],
+        Options = [],
+
         case erws_mnesia:get_winner_bidder(Phone) of
+            %% No bidders case
             not_found ->
                 logger:info("[erws_auction_handler] auction_receive => No bidders for the auction of the phone: ~p~n", [Phone]),
                 RemainingTime = get_time_remaining(EndDate),
                 Response = <<"No bidders">>,
-                gproc:send({p, l, {?AGENT, Phone}}, {no_bidders, Response, RemainingTime});
+                gproc:send({p, l, {?AGENT, Phone}}, {no_bidders, Response, RemainingTime}),
+
+                Body = jsone:encode(
+                    #{
+                        <<"winner">> => Response,
+                        <<"phone">> => Phone
+                    });
+
+            %% Winner bidder case
             {WinnerEmail, WinningBid} ->
                 RemainingTime = get_time_remaining(EndDate),
                 logger:info("[erws_auction_handler] auction_receive => Phone: ~p, Winner: ~p, Winning Bid: ~p~n", [Phone, WinnerEmail, WinningBid]),
                 gproc:send({p, l, {?AGENT, Phone}}, {winner_bidder, Phone, WinnerEmail, WinningBid, RemainingTime}),
                 erws_mnesia:delete_bid(Phone),
-                logger:info("[erws_auction_handler] auction_receive => Winner Bid deleted for the phone: ~p~n", [Phone])
-        end,
-        erws_mnesia:delete_auction(Phone)
+                logger:info("[erws_auction_handler] auction_receive => Winner Bid deleted for the phone: ~p~n", [Phone]),
 
-%%        WinMessage = #{<<"winner">> => Winner, <<"winningBidValue">> => WinningBidValue},
-%%        Body = gsone:encode(WinMessage), % Using gsone for JSON encoding
-%%        URL = "http://localhost:8080/handleWinnerMessage?phoneName=" ++ PhoneName,
-%%        Headers = [{"Content-Type", "application/json"}],
-%%        Options = [{body_format, binary}, {headers, Headers}],
-%%        {ok, {{_, 200, _}, _, ResponseBody}} = httpc:request(post, {URL, [], Headers, Body}, Options),
-%%        io:format("Response Body: ~s~n", [ResponseBody])
+                Body = jsone:encode(
+                    #{
+                        <<"winner">> => WinnerEmail,
+                        <<"winningBidValue">> => WinningBid,
+                        <<"phone">> => Phone
+                    })
+        end,
+        %% Delete the auction from Mnesia in both cases
+        erws_mnesia:delete_auction(Phone),
+        logger:info("[erws_auction_handler] auction_receive => Auction deleted for the phone: ~p~n", [Phone]),
+
+        %% Send the HTTP request to the Tomcat server
+        case httpc:request(post, {URL, [], ContentType, Body}, HttpOptions, Options) of
+            {ok, {{_, StatusCode, _}, _, ResponseBody}} ->
+                logger:info("Request executed, status Code: ~p. Response Body: ~p~n", [StatusCode, ResponseBody]);
+            {error, Reason} ->
+                logger:error("Request failed. Reason: ~p~n", [Reason])
+        end
     end.
 
 

@@ -8,16 +8,13 @@ import it.unipi.dii.dsmt.roice.service.PhoneService;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class PhoneDetailsController {
@@ -154,23 +151,22 @@ public class PhoneDetailsController {
 
 
     @PostMapping("/handleWinnerMessage")
-    public void handleWinnerMessage(@RequestParam("phoneName") String phoneName,
-                                    @RequestBody Map<String, Object> requestBody) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public void handleWinnerMessage(@RequestBody Map<String, Object> requestBody) {
+        String phoneName = (String) requestBody.get("phone");
 
-        // Case in which there are no bidders
-        if (requestBody.get("winner").equals("No bidders")) {
-            // Remove the auction attribute from the phone document searching with phone name
-            phoneService.removeAuctionByName(phoneName);
-        } else {
-            Optional<GenericUser> winnerUser = userService.findByEmail(String.valueOf((requestBody).get("winner")));
-            if (winnerUser.isPresent()) {
-                // Add auction won to the winner user
-                userService.addWonAuction(winnerUser.get(), phoneName,
-                        Double.parseDouble((String) requestBody.get("winningBidValue")));
-                // Remove the auction attribute from the phone document searching with phone name
-                phoneService.removeAuctionByName(phoneName);
-            }
+        // Case in which there are bidders
+        if (!requestBody.get("winner").equals("No bidders")) {
+            String winnerEmail = (String) requestBody.get("winner");
+            int winningBid = (Integer)requestBody.get("winningBidValue");
+
+            Optional<GenericUser> winnerUser = userService.findByEmail(winnerEmail);
+            // Add auction won to the winner user
+            winnerUser.ifPresent(genericUser ->
+                    userService.addWonAuction(genericUser, phoneName, winningBid));
         }
+        // Remove the auction attribute from the phone document searching with phone name
+        phoneService.removeAuctionByName(phoneName);
     }
 }
 

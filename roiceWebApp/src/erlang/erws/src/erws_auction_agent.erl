@@ -155,7 +155,7 @@ handle_get_timer(Map, State) ->
     process_timer(AuctionPid, PhoneName),
     receive
         {send_timer, Bid, RemainingTime, CurrentWinner} ->
-            logger:info("[erws_auction_agent] handle_get_timer => Get Auction Timer \n"),
+            logger:debug("[erws_auction_agent] handle_get_timer => Get Auction Timer \n"),
             Response = io_lib:format("Bid:~p RemainingTime:~p CurrentWin:~p", [Bid, RemainingTime, CurrentWinner]),
             {reply, {text, Response}, State, hibernate}
     end.

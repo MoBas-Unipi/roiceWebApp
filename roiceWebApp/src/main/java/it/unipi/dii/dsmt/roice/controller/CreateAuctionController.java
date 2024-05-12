@@ -2,7 +2,6 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.PhoneDTO;
-import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.model.Auction;
 import it.unipi.dii.dsmt.roice.service.PhoneService;
 import jakarta.servlet.http.HttpSession;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Controller
@@ -42,15 +39,15 @@ public class CreateAuctionController {
 
         Date startingDate = null;
         Date endDate = null;
-        Double minimumPrice = null;
+        Integer minimumPrice = null;
 
         try {
             startingDate = parseDateString(startingDateString);
             endDate = parseDateString(endDateString);
-            minimumPrice = parseDouble(minimumPriceString);
+            minimumPrice = parseInteger(minimumPriceString);
 
             if(startingDate == null || endDate == null || minimumPrice == null) {
-                model.addAttribute("auctionMessage", "Please, compile all the fields!");
+                model.addAttribute("auctionMessage", "Please, fill out all the fields!");
                 return "createAuction";
             }
 
@@ -90,9 +87,9 @@ public class CreateAuctionController {
             return dateFormat.parse(dateString);
     }
 
-    private Double parseDouble(String doubleString) {
+    private Integer parseInteger(String integerString) {
         try {
-            return Double.parseDouble(doubleString);
+            return Integer.parseInt(integerString);
         } catch (NumberFormatException e) {
             // Handle parse exception
             e.printStackTrace();
