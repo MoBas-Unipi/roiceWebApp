@@ -22,7 +22,7 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
     if
         CurrentTime > EndDate ->
             logger:info("[erws_auction_handler] auction_handle => Auction ended"),
-            ok;
+            auction_receive(Phone, Bid, 0, EndDate);
         true ->
             %% Auction is still live
             AuctionPid = self(),
@@ -84,7 +84,7 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
     after AuctionTime * 1000 -> % Convert DelayInSeconds to milliseconds
         %% Init the HTTP message to send to the /handleWinnerMessage endpoint
         {ok, Ip} = application:get_env(tomcat_server_IP),
-        URL = uri_string:normalize("http://" ++ Ip ++ ":8080/handleWinnerMessage"),
+        URL = uri_string:normalize("http://" ++ Ip ++ ":8080/handleAuctionEnd"),
         logger:debug("[erws_auction_handler] auction_receive => The URL is: ~p ~n", [URL]),
         ContentType = "application/json",
         HttpOptions = [],
@@ -126,9 +126,9 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
         %% Send the HTTP request to the Tomcat server
         case httpc:request(post, {URL, [], ContentType, Body}, HttpOptions, Options) of
             {ok, {{_, StatusCode, _}, _, ResponseBody}} ->
-                logger:info("Request executed, status Code: ~p. Response Body: ~p~n", [StatusCode, ResponseBody]);
+                logger:info("[erws_auction_handler] auction_receive => Request executed, status Code: ~p. Response Body: ~p~n", [StatusCode, ResponseBody]);
             {error, Reason} ->
-                logger:error("Request failed. Reason: ~p~n", [Reason])
+                logger:error("[erws_auction_handler] auction_receive => Request failed. Reason: ~p~n", [Reason])
         end
     end.
 

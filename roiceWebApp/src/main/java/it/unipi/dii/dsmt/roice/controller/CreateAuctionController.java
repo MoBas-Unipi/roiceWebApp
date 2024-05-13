@@ -65,7 +65,7 @@ public class CreateAuctionController {
             }
 
         } catch (ParseException | NumberFormatException e) {
-            model.addAttribute("auctionMessage", "Please, compile all the fields!");
+            model.addAttribute("auctionMessage", "Please, fill out all the fields!");
             return "createAuction";
         }
         PhoneDTO phoneDTO = phoneService.addAuction(phoneName, new Auction(startingDate, endDate, minimumPrice));

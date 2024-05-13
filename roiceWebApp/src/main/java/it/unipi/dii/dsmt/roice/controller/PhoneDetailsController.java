@@ -150,9 +150,9 @@ public class PhoneDetailsController {
     }
 
 
-    @PostMapping("/handleWinnerMessage")
+    @PostMapping("/handleAuctionEnd")
     @ResponseStatus(value = HttpStatus.OK)
-    public void handleWinnerMessage(@RequestBody Map<String, Object> requestBody) {
+    public void handleAuctionEnd(@RequestBody Map<String, Object> requestBody) {
         String phoneName = (String) requestBody.get("phone");
 
         // Case in which there are bidders
