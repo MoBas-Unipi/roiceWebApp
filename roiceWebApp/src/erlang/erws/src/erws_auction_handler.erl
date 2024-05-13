@@ -20,6 +20,7 @@ start_link(Phone, Bid, AuctionTime, EndDate) ->
 auction_handle(Phone, Bid, AuctionTime, EndDate) ->
     CurrentTime = erlang:system_time(seconds),
     if
+        %% Check if the auction is expired, in case the supervisor tries to restart it after its end
         CurrentTime > EndDate ->
             logger:info("[erws_auction_handler] auction_handle => Auction ended"),
             auction_receive(Phone, Bid, 0, EndDate);
@@ -31,7 +32,15 @@ auction_handle(Phone, Bid, AuctionTime, EndDate) ->
             logger:info("[erws_auction_handler] auction_handle => Auction saved for the phone: ~p ~n", [Phone]),
             Text = "Live auctions update requested!",
             gproc:send({p, l, {?AGENT, {live_auctions}}}, {live_auctions_update, Text}),
-            auction_receive(Phone, Bid, AuctionTime, EndDate)
+
+            case erws_mnesia:get_winner_bidder(Phone) of
+                %% When auction_handle is called for the first time
+                not_found ->
+                    auction_receive(Phone, Bid, AuctionTime, EndDate);
+                %% When the supervisor calls again the function to restart a child auction process
+                {_WinnerEmail, CurrentBid} ->
+                    auction_receive(Phone, CurrentBid, AuctionTime, EndDate)
+            end
     end.
 
 %% Handle auction messages
