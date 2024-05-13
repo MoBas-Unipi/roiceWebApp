@@ -1,6 +1,8 @@
 %%%-------------------------------------------------------------------
 %%% @doc
-%%%
+%%%   erws_dynamic_sup module manages auction processes supervision.
+%%%   It starts auction processes, sets restart strategies, and specifies child
+%%%   specifications for auction processes.
 %%% @end
 %%%-------------------------------------------------------------------
 -module(erws_dynamic_sup).

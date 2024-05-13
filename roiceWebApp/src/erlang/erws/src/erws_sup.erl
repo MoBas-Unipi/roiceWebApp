@@ -1,8 +1,8 @@
 %%%-------------------------------------------------------------------
 %%% @doc
 %%%   erws_sup module is the top-level supervisor for the erws application.
-%%%   It starts the application supervisor with the appropriate child
-%%%   specifications and supervision flags.
+%%%   It starts and monitors the erws_server (cowboy websocket server) and
+%%%   erws_dynamic_sup, the supervisor that controls auction processes.
 %%% @end
 %%%-------------------------------------------------------------------
 -module(erws_sup).

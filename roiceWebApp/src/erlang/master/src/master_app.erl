@@ -1,6 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc
-%% @end
+%%% @doc
+%%%   This module manages the master node application. It handles the start
+%%%   and stop of the application, connects the nodes of the cluster, and initializes
+%%%   Mnesia on the cluster.
+%%% @end
 %%%-------------------------------------------------------------------
 
 -module(master_app).

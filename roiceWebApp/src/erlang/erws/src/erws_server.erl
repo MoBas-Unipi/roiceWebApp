@@ -1,6 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% @doc
-%%%
+%%%   This module is responsible for starting and configuring the WebSocket server
+%%%   using Cowboy, a small, fast, and modern HTTP server for Erlang/OTP.
 %%% @end
 %%%-------------------------------------------------------------------
 -module(erws_server).

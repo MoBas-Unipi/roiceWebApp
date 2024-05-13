@@ -1,6 +1,8 @@
 %%%-------------------------------------------------------------------
 %%% @doc
-%%%
+%%%   The erws_auction_handler module is responsible of starting and
+%%%   managing auction processes. In particular, it is in charge of
+%%%   receiving messages from bidders, sending them updates and terminating auctions.
 %%% @end
 %%%-------------------------------------------------------------------
 -module(erws_auction_handler).
@@ -11,7 +13,7 @@
 % Name of the agent module
 -define(AGENT, erws_auction_agent).
 
-% Spawn a new auction process executing auction_handle
+% Spawn a new auction process that executes auction_handle
 start_link(Phone, Bid, AuctionTime, EndDate) ->
     Pid = spawn_link(?MODULE, auction_handle, [Phone, Bid, AuctionTime, EndDate]),
     {ok, Pid}.

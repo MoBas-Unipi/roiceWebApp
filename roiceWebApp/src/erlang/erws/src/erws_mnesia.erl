@@ -1,3 +1,10 @@
+%%%-------------------------------------------------------------------
+%%% @doc
+%%%   This module provides functions for interacting with the Mnesia DB.
+%%%   It includes functions for saving, retrieving and deleting auction and bid data.
+%%% @end
+%%%-------------------------------------------------------------------
+
 -module(erws_mnesia).
 -export([
     save_auction/2,

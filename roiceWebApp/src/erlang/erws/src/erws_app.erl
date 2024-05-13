@@ -1,8 +1,8 @@
 %%%-------------------------------------------------------------------
 %%% @doc
 %%%   erws_app module is the main application module responsible for
-%%%   starting and stopping the application. It initializes the WebSocket
-%%%   endpoint and starts the main Cowboy server.
+%%%   starting and stopping the application. The application is executed
+%%%   by starting the top level supervisor, erws_sup.
 %%% @end
 %%%-------------------------------------------------------------------
 

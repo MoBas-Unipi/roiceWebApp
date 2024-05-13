@@ -1,6 +1,8 @@
 %%%-------------------------------------------------------------------
 %%% @doc
-%%%
+%%%   This module is responsible for setting up Mnesia on the cluster nodes.
+%%%   It creates the schema, starts Mnesia on the remote nodes and creates
+%%%   auction and bid tables.
 %%% @end
 %%%-------------------------------------------------------------------
 -module(mnesia_setup).
@@ -29,7 +31,7 @@ init(Nodes) ->
     create_auction_table(Nodes),
     create_bid_table(Nodes),
     % Print info about Mnesia.
-    timer:sleep(5000),
+    timer:sleep(2000),
     mnesia:info().
 
 % Function to create the auction table if it doesn't exist.

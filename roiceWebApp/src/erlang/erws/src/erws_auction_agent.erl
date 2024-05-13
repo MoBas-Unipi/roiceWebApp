@@ -1,3 +1,13 @@
+%%%-------------------------------------------------------------------
+%%% @doc
+%%%   erws_auction_agent module handles WebSocket communication for auctions.
+%%%   It initializes WebSocket connections, handles requests, and manages
+%%%   incoming WebSocket text frames. This module also processes actions related
+%%%   to auctions, like new auctions, joining auctions, sending bids, and
+%%%   getting auction timer updates.
+%%% @end
+%%%-------------------------------------------------------------------
+
 -module(erws_auction_agent).
 
 -export([
