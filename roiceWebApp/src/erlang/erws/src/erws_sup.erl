@@ -22,8 +22,8 @@ start_link() ->
 %% restart strategy, maximum restart frequency and child
 %% specifications.
 init([]) ->
-    MaxRestarts = 10,
-    MaxSecondsBetweenRestarts = 3600,
+    MaxRestarts = 3,
+    MaxSecondsBetweenRestarts = 30,
     RestartStrategy = one_for_one,
 
     SupFlags = #{strategy => RestartStrategy,

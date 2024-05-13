@@ -23,8 +23,8 @@ start_link() ->
 %% this function is called by the new process to find out about
 %% restart strategy, maximum restart frequency and child specifications.
 init([]) ->
-    MaxRestarts = 10,
-    MaxSecondsBetweenRestarts = 3600,
+    MaxRestarts = 5,
+    MaxSecondsBetweenRestarts = 30,
     SupFlags = #{strategy => simple_one_for_one,
                 intensity => MaxRestarts,
                 period => MaxSecondsBetweenRestarts},
