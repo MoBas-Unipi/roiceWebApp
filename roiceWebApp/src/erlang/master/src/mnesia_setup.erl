@@ -1,7 +1,8 @@
 %%%-------------------------------------------------------------------
 %%% @doc
 %%%   This module is responsible for setting up Mnesia on the cluster nodes.
-%%%   It creates the schema and creates auction and bid tables on the remote nodes.
+%%%   It creates the schema, starts Mnesia on the remote nodes and creates
+%%%   auction and bid tables.
 %%% @end
 %%%-------------------------------------------------------------------
 -module(mnesia_setup).
@@ -22,6 +23,10 @@ init(Nodes) ->
     % Create Mnesia schema and start Mnesia.
     mnesia:create_schema([node()] ++ Nodes),
     mnesia:start(),
+    rpc:call('server@127.0.0.1', mnesia, start, []),
+%%    rpc:call('root@10.2.1.42', mnesia, start, []),
+%%    rpc:call('root@10.2.1.43', mnesia, start, []),
+%%    rpc:call('root@10.2.1.44', mnesia, start, []),
     % Create auction and bid tables.
     create_auction_table(Nodes),
     create_bid_table(Nodes),

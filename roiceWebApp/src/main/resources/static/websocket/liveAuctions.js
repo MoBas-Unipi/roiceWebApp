@@ -2,8 +2,8 @@ var wsLiveAuctions; // WebSocket object
 
 // Function to create WebSocket connection
 function createWebSocketConnection() {
-    // Create WebSocket connection to 'ws://localhost:8300'
-    wsLiveAuctions = new WebSocket('ws://localhost:8300');
+    // Create WebSocket connection
+    wsLiveAuctions = new WebSocket("ws://10.2.1.41:8300/");
 
     // Event handler for WebSocket open
     wsLiveAuctions.onopen = function(event) {
@@ -42,6 +42,3 @@ function sendLiveAuctionsMessage() {
         console.error('WebSocket connection is not open.');
     }
 }
-
-// Call the function to create WebSocket connection
-createWebSocketConnection();

@@ -144,41 +144,34 @@ function createErlangAuction(phoneName) {
     var minimumPrice = parseInt(document.getElementById("minimumPrice").value);
     // Construct JSON object
     var auctionData = {
-        action: "new_auction", // Set action to "new_auction"
+        action: 'new_auction', // Set action to "new_auction"
         startSeconds: startSeconds, // Include StartDate field in seconds
         endSeconds: endSeconds, // Include EndDate field in seconds
         minimumPrice: minimumPrice,
-        phoneName: phoneName // Include phoneName
+        phoneName: phoneName// Include phoneName
     };
+
+    console.log(auctionData);
 
     // Convert JSON to string
     var jsonMessage = JSON.stringify(auctionData);
 
-    // Create WebSocket connection
-    var socket = new WebSocket(server_url);
-
-    // Event handler for successful connection
-    socket.onopen = function (event) {
-        console.log('WebSocket connection opened');
-
-        // Send JSON message
-        socket.send(jsonMessage);
-    };
+    send(auctionData);
 
     // Event handler for receiving messages
-    socket.onmessage = function (event) {
+    ws.onmessage = function (event) {
         console.log('Message received from server:', event.data);
         // Handle server response if needed
-        socket.send(jsonMessage);
+        ws.send(jsonMessage);
     };
 
     // Event handler for connection close
-    socket.onclose = function (event) {
+    ws.onclose = function (event) {
         console.log('WebSocket connection closed');
     };
 
     // Event handler for errors
-    socket.onerror = function (error) {
+    ws.onerror = function (error) {
         console.error('WebSocket error:', error);
     };
 

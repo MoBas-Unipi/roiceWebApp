@@ -132,12 +132,12 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
         end,
         %% Delete the auction from Mnesia in both cases
         erws_mnesia:delete_auction(Phone),
-        logger:info("[erws_auction_handler] auction_receive => Auction deleted for the phone: ~p~n", [Phone]),
+        logger:info("[erws_auction_handler] auction_receive => Auction deleted on Mnesia for the phone: ~p~n", [Phone]),
 
         %% Send the HTTP request to the Tomcat server
         case httpc:request(post, {URL, [], ContentType, Body}, HttpOptions, Options) of
-            {ok, {{_, StatusCode, _}, _, ResponseBody}} ->
-                logger:info("[erws_auction_handler] auction_receive => Request executed, status Code: ~p. Response Body: ~p~n", [StatusCode, ResponseBody]);
+            {ok, {{_, StatusCode, _}, _, _ResponseBody}} ->
+                logger:info("[erws_auction_handler] auction_receive => Request to Tomcat executed, status Code: ~p.~n", [StatusCode]);
             {error, Reason} ->
                 logger:error("[erws_auction_handler] auction_receive => Request failed. Reason: ~p~n", [Reason])
         end
