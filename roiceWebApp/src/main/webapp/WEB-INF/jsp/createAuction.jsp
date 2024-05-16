@@ -89,6 +89,9 @@
     document.addEventListener("DOMContentLoaded", function() {
         setupFlatpickr();
     });
+    $(document).ready(function() {
+        connect();
+    });
 </script>
 </body>
 </html>

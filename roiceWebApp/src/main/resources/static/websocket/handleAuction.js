@@ -71,7 +71,6 @@ function setupFlatpickr() {
     });
 }
 
-//TODO send the json message as tuple and extract in the erlang handle function the various atom of a tuple
 function send(message) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify(message));
@@ -113,7 +112,7 @@ function confirmBid(email, phone_name) {
             var currentBidValue = document.querySelector('.current-bid').innerText;
 
             if (bidAmount <= currentBidValue) {
-                document.getElementById("bidError").innerText = "Your bid is lower than the current one!";
+                document.getElementById("bidError").innerText = "Your bid must be higher than the current one!";
             } else {
                 document.getElementById("bidError").innerText = "";
                 // Send the bid to the web socket
@@ -148,40 +147,23 @@ function createErlangAuction(phoneName) {
         startSeconds: startSeconds, // Include StartDate field in seconds
         endSeconds: endSeconds, // Include EndDate field in seconds
         minimumPrice: minimumPrice,
-        phoneName: phoneName // Include phoneName
+        phoneName: phoneName// Include phoneName
     };
 
-    // Convert JSON to string
-    var jsonMessage = JSON.stringify(auctionData);
-
-    // WebSocket endpoint URL
-    var webSocketUrl = 'ws://localhost:8300';
-
-    // Create WebSocket connection
-    var socket = new WebSocket(webSocketUrl);
-
-    // Event handler for successful connection
-    socket.onopen = function (event) {
-        console.log('WebSocket connection opened');
-
-        // Send JSON message
-        socket.send(jsonMessage);
-    };
+    send(auctionData);
 
     // Event handler for receiving messages
-    socket.onmessage = function (event) {
+    ws.onmessage = function (event) {
         console.log('Message received from server:', event.data);
-        // Handle server response if needed
-        socket.send(jsonMessage);
     };
 
     // Event handler for connection close
-    socket.onclose = function (event) {
+    ws.onclose = function (event) {
         console.log('WebSocket connection closed');
     };
 
     // Event handler for errors
-    socket.onerror = function (error) {
+    ws.onerror = function (error) {
         console.error('WebSocket error:', error);
     };
 

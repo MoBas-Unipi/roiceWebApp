@@ -12,6 +12,7 @@
     <artifactId>roiceWebApp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>roiceWebApp</name>
+    <packaging>war</packaging>
     <description>roiceWebApp</description>
     <properties>
         <java.version>17</java.version>

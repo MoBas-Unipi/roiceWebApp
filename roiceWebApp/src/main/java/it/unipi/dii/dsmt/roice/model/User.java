@@ -23,7 +23,6 @@ public class User extends GenericUser{
 	private String city;
 	private String country;
 	private List<PhonePreview> favoritePhones;
-	private List<Notification> notifications;
 	private List<AuctionWon> auctionsWon;
 
 	public User(String email, String salt, String hashedPassword, String _class, String firstName,
@@ -36,7 +35,6 @@ public class User extends GenericUser{
 		this.city = city;
 		this.country = country;
 		this.favoritePhones = new ArrayList<>();
-		this.notifications = new ArrayList<>();
 		this.auctionsWon = new ArrayList<>();
 	}
 

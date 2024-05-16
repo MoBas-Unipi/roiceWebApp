@@ -1,6 +1,7 @@
 let ws;
 
 const server_url = "ws://localhost:8300/";
+// const server_url = "ws://10.2.1.41:8300/";
 
 // variable to store the auction remaining time (received from Erlang Server)
 let remainingTime = "";
@@ -88,42 +89,9 @@ function connect() {
         var winningBidMatch = received_msg.match(/Winning Bid:(\d+)/);
         var winningBidValue = winningBidMatch ? winningBidMatch[1] : "N/A";
         if (winningBidValue !== "N/A") {
-            document.querySelector('.winning-bid').innerText = "With a Bid of: " + winningBidValue + "$";
-            //document.getElementById("winning-bid").innerText = "With a Bid of: " + winningBidValue + "$";
+            document.querySelector('.winning-bid').innerText = "With a Bid of: " + winningBidValue + "€";
+            //document.getElementById("winning-bid").innerText = "With a Bid of: " + winningBidValue + "€";
         }
-
-
-        // Check if winner is not empty and remaining time is 0
-        if (winner !== "N/A" && remainingTime === "0 d 0 h 0 m 0 s") {
-            console.log("Auction Finished. CONTROLLER CALLED!");
-            const winMessage = {
-                winner: winner,
-                winningBidValue: winningBidValue // Assicurati di avere questa variabile definita e valorizzata prima di usarla qui
-            };
-            // Send a Post request to the java controller
-            fetch('/handleWinnerMessage?phoneName=' + encodeURIComponent(phoneName), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(winMessage)
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.text(); // Leggi il testo dalla risposta
-                    } else {
-                        throw new Error('Network response was not ok');
-                    }
-                })
-                .then(data => {
-                    // Reload the phoneDetails jsp
-                    //window.location.reload();
-                })
-                .catch(error => {
-                    console.error("Error handling winner message:", error);
-                });
-        }
-
     };
   
     // Event handler for WebSocket connection close

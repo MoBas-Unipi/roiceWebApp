@@ -18,7 +18,6 @@ public class UserMapper {
                 user.getEmail(),
                 user.getHashedPassword(),
                 user.getFavoritePhones(),
-                user.getNotifications(),
                 user.getAuctionsWon()
         );
     }

@@ -9,8 +9,6 @@ import it.unipi.dii.dsmt.roice.model.User;
 import it.unipi.dii.dsmt.roice.repository.IGenericUserRepository;
 import it.unipi.dii.dsmt.roice.utils.Security;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +23,6 @@ public class LoginController {
 
 	@Autowired
 	private IGenericUserRepository genericUserMongo;
-	private final static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
 	@GetMapping({
 			"/",

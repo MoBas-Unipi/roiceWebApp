@@ -11,9 +11,9 @@ public class Auction {
 
 	private Date startingDate;
 	private Date endDate;
-	private Double minimumPrice;
+	private Integer minimumPrice;
 
-	public Auction(Date startingDate, Date endDate, Double minimumPrice) {
+	public Auction(Date startingDate, Date endDate, Integer minimumPrice) {
 		this.startingDate = startingDate;
 		this.endDate = endDate;
 		this.minimumPrice = minimumPrice;

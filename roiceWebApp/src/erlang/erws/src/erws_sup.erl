@@ -1,37 +1,51 @@
 %%%-------------------------------------------------------------------
 %%% @doc
 %%%   erws_sup module is the top-level supervisor for the erws application.
-%%%   It starts the application supervisor with the appropriate child
-%%%   specifications and supervision flags.
+%%%   It starts and monitors the erws_server (cowboy websocket server) and
+%%%   erws_dynamic_sup, the supervisor that controls auction processes.
 %%% @end
 %%%-------------------------------------------------------------------
 -module(erws_sup).
 
 -behaviour(supervisor).
 
--export([start_link/0]).
--export([init/1]).
+-export([start_link/0, init/1]).
 
 -define(SERVER, ?MODULE).
 
-% Start the supervisor process
 start_link() ->
-  supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
-% Initialize the supervisor with supervision flags and child specs
+%% @private
+%% @doc Whenever a supervisor is started using supervisor:start_link/[2,3],
+%% this function is called by the new process to find out about
+%% restart strategy, maximum restart frequency and child
+%% specifications.
 init([]) ->
-  SupFlags = #{strategy => one_for_one,
-    intensity => 5,
-    period => 10},
-  ChildSpecs = [],
-  {ok, {SupFlags, ChildSpecs}}.
+    MaxRestarts = 3,
+    MaxSecondsBetweenRestarts = 30,
+    RestartStrategy = one_for_one,
 
-%% sup_flags() = #{strategy => strategy(),         % optional
-%%                 intensity => non_neg_integer(), % optional
-%%                 period => pos_integer()}        % optional
-%% child_spec() = #{id => child_id(),       % mandatory
-%%                  start => mfargs(),      % mandatory
-%%                  restart => restart(),   % optional
-%%                  shutdown => shutdown(), % optional
-%%                  type => worker(),       % optional
-%%                  modules => modules()}   % optional
+    SupFlags = #{strategy => RestartStrategy,
+                intensity => MaxRestarts,
+                period => MaxSecondsBetweenRestarts},
+
+    ChildSpecs = [
+        #{
+            id => erws_server,
+            start => {erws_server, start_link, []},
+            restart => permanent,
+            shutdown => 5000,
+            type => worker,
+            modules => [erws_server]
+        },
+        #{
+            id => erws_dynamic_sup,
+            start => {erws_dynamic_sup, start_link, []},
+            restart => permanent,
+            shutdown => infinity,
+            type => supervisor,
+            modules => [erws_dynamic_sup]
+        }
+    ],
+    {ok, {SupFlags, ChildSpecs}}.

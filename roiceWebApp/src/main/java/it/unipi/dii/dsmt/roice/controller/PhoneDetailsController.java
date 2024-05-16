@@ -2,23 +2,19 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.AdminDTO;
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
-import it.unipi.dii.dsmt.roice.model.Auction;
-import it.unipi.dii.dsmt.roice.model.Phone;
-import it.unipi.dii.dsmt.roice.model.PhonePreview;
+import it.unipi.dii.dsmt.roice.model.*;
 import it.unipi.dii.dsmt.roice.repository.IPhoneRepository;
 import it.unipi.dii.dsmt.roice.service.PhoneService;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class PhoneDetailsController {
@@ -35,7 +31,7 @@ public class PhoneDetailsController {
     @GetMapping("/phoneDetails")
     public String showPhoneDetails(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
 
-        if(session.getAttribute("userClass") == null) {
+        if (session.getAttribute("userClass") == null) {
             return "redirect:/login";
         }
 
@@ -44,7 +40,7 @@ public class PhoneDetailsController {
             return "redirect:/homePage";
         }
         Auction auction = phone.getAuction();
-        if (auction!= null) {
+        if (auction != null) {
             session.setAttribute("isAuctionPresent", true);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             try {
@@ -60,7 +56,7 @@ public class PhoneDetailsController {
             session.setAttribute("isAuctionPresent", false);
         }
 
-        if(session.getAttribute("userClass").equals("user")) {
+        if (session.getAttribute("userClass").equals("user")) {
             UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
             if (currentUser == null) {
                 return "redirect:/login";
@@ -135,7 +131,7 @@ public class PhoneDetailsController {
     @PostMapping("/phoneDetails/phone")
     public String removeFromFavorites(Model model, HttpSession session, @RequestParam("phoneName") String phoneName) {
         UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-        if(currentUser == null) {
+        if (currentUser == null) {
             return "redirect:/login";
         }
         if (phoneName == null) {
@@ -143,7 +139,7 @@ public class PhoneDetailsController {
             return "phoneDetails";
         }
         UserDTO userDTO = userService.deleteFavoritePhone(currentUser.getEmail(), phoneName);
-        if(userDTO == null) {
+        if (userDTO == null) {
             model.addAttribute("message", "Error in removing the phone from the list of favorites phones!");
         } else {
             model.addAttribute("message", "Phone removed from the favorites!");
@@ -154,42 +150,23 @@ public class PhoneDetailsController {
     }
 
 
-    @PostMapping("/handleWinnerMessage")
-    public String handleWinnerMessage(Model model, HttpSession session,
-                                      @RequestParam("phoneName") String phoneName,
-                                      @RequestBody Map<String, Object> requestBody) {
+    @PostMapping("/handleAuctionEnd")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void handleAuctionEnd(@RequestBody Map<String, Object> requestBody) {
+        String phoneName = (String) requestBody.get("phone");
 
-        if(session.getAttribute("userClass") == "user") {
-            UserDTO currentUser = (UserDTO) session.getAttribute("currentUser");
-            if (currentUser == null) {
-                return "redirect:/login";
-            }
+        // Case in which there are bidders
+        if (!requestBody.get("winner").equals("No bidders")) {
+            String winnerEmail = (String) requestBody.get("winner");
+            int winningBid = (Integer)requestBody.get("winningBidValue");
 
-            // Case in which there are no bidders
-            if (requestBody.get("winner").equals("No bidders")) {
-                // Remove the auction attribute from the phone document searching with phone name
-                phoneService.removeAuctionByName(phoneName);
-            }
-
-            // Check if the winner user is the current one
-            if (currentUser.getEmail().equals(requestBody.get("winner"))) {
-
-                // Add auction won to the current user
-                UserDTO userDTO = userService.addWonAuction(phoneName, (String) requestBody.get("winner"), Double.parseDouble((String) requestBody.get("winningBidValue")));
-                if (userDTO == null) {
-                    model.addAttribute("message", "Error in adding the auction won in user collection!");
-                } else {
-                    session.setAttribute("currentUser", userDTO);
-                }
-
-                // Remove the auction attribute from the phone document searching with phone name
-                phoneService.removeAuctionByName(phoneName);
-            }
+            Optional<GenericUser> winnerUser = userService.findByEmail(winnerEmail);
+            // Add auction won to the winner user
+            winnerUser.ifPresent(genericUser ->
+                    userService.addWonAuction(genericUser, phoneName, winningBid));
         }
-
-        return "phoneDetails";
+        // Remove the auction attribute from the phone document searching with phone name
+        phoneService.removeAuctionByName(phoneName);
     }
-
-
-
 }
+

@@ -12,9 +12,9 @@ public class AuctionWon {
     private String phoneName;
     private String phonePicture;
     private Date endDate;
-    private double price;
+    private int price;
 
-    public AuctionWon(String phoneName, String phonePicture, Date endDate, double price) {
+    public AuctionWon(String phoneName, String phonePicture, Date endDate, int price) {
         this.phoneName = phoneName;
         this.phonePicture = phonePicture;
         this.endDate = endDate;
