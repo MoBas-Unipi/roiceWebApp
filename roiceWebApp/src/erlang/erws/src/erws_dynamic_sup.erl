@@ -13,7 +13,7 @@
 -export([start_link/0]).
 
 %% Supervisor callbacks
--export([init/1, start_auction_process/4, terminate_auction_process/1]).
+-export([init/1, start_auction_process/4]).
 
 start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
@@ -55,7 +55,3 @@ start_auction_process(PhoneName, MinimumPrice, AuctionTime, EndDate) ->
             logger:error("[erws_dynamic_sup] start_auction_process => Error: ~p~n", [Error]),
             Error
     end.
-
-terminate_auction_process(ChildId) ->
-    supervisor:terminate_child(?MODULE, ChildId).
-

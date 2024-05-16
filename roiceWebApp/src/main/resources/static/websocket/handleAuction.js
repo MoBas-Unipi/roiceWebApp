@@ -144,25 +144,18 @@ function createErlangAuction(phoneName) {
     var minimumPrice = parseInt(document.getElementById("minimumPrice").value);
     // Construct JSON object
     var auctionData = {
-        action: 'new_auction', // Set action to "new_auction"
+        action: "new_auction", // Set action to "new_auction"
         startSeconds: startSeconds, // Include StartDate field in seconds
         endSeconds: endSeconds, // Include EndDate field in seconds
         minimumPrice: minimumPrice,
         phoneName: phoneName// Include phoneName
     };
 
-    console.log(auctionData);
-
-    // Convert JSON to string
-    var jsonMessage = JSON.stringify(auctionData);
-
     send(auctionData);
 
     // Event handler for receiving messages
     ws.onmessage = function (event) {
         console.log('Message received from server:', event.data);
-        // Handle server response if needed
-        ws.send(jsonMessage);
     };
 
     // Event handler for connection close

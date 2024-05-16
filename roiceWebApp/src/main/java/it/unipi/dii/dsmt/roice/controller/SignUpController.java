@@ -2,7 +2,6 @@ package it.unipi.dii.dsmt.roice.controller;
 
 import it.unipi.dii.dsmt.roice.dto.UserDTO;
 import it.unipi.dii.dsmt.roice.model.GenericUser;
-import it.unipi.dii.dsmt.roice.repository.IGenericUserRepository;
 import it.unipi.dii.dsmt.roice.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

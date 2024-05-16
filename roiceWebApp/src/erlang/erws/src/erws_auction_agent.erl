@@ -115,7 +115,7 @@ handle_join_auction(Map, State) ->
     init_bidder(AuctionPid, PhoneName),
     gproc:reg({p, l, {?MODULE, PhoneName}}),
     Pid = gproc:lookup_pids({p, l, {?MODULE, PhoneName}}),
-    logger:info("[erws_auction_agent] handle_join_auction => WEBSOCKET_INIT process started here: ~p~n", [Pid]),
+    logger:debug("[erws_auction_agent] handle_join_auction => WEBSOCKET_INIT process started here: ~p~n", [Pid]),
     receive_joined(State).
 
 

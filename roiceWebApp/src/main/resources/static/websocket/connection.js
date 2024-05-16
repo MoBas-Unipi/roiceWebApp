@@ -1,7 +1,7 @@
 let ws;
 
-// const server_url = "ws://localhost:8300/";
-const server_url = "ws://10.2.1.41:8300/";
+const server_url = "ws://localhost:8300/";
+// const server_url = "ws://10.2.1.41:8300/";
 
 // variable to store the auction remaining time (received from Erlang Server)
 let remainingTime = "";

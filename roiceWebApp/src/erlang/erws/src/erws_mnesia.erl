@@ -36,7 +36,7 @@ get_auction_pid(PhoneName) ->
                     AuctionRecord#auction.auction_pid;
                 [] ->
                     logger:error("[erws_mnesia] get_auction_pid => get_auction_pid failed: PID not found"),
-                    exit({aborted, "PID not found"})
+                    not_found
             end
         end,
     mnesia:activity(transaction, F).

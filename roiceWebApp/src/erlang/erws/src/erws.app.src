@@ -11,8 +11,8 @@
             [
                 {websocket_endpoint, "/"},
                 {websocket_port, 8300},
-                {tomcat_server_IP, "10.2.1.39"}
-%%                {tomcat_server_IP, "localhost"}
+%%                {tomcat_server_IP, "10.2.1.39"}
+                {tomcat_server_IP, "localhost"}
             ]
         },
         {modules, []},

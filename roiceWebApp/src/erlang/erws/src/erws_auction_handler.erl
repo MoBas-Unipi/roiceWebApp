@@ -130,9 +130,12 @@ auction_receive(Phone, Bid, AuctionTime, EndDate) ->
                         <<"phone">> => Phone
                     })
         end,
+        %% Send update on live auctions
+        gproc:send({p, l, {?AGENT, {live_auctions}}}, {live_auctions_update, "Live auctions update requested!"}),
         %% Delete the auction from Mnesia in both cases
         erws_mnesia:delete_auction(Phone),
         logger:info("[erws_auction_handler] auction_receive => Auction deleted on Mnesia for the phone: ~p~n", [Phone]),
+        logger:info("[erws_auction_handler] auction_receive => Body of the request: ~p~n", [Body]),
 
         %% Send the HTTP request to the Tomcat server
         case httpc:request(post, {URL, [], ContentType, Body}, HttpOptions, Options) of
