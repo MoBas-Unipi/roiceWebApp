@@ -103,7 +103,7 @@ function confirmBid(email, phone_name) {
         // Check if the bid amount is a positive integer
         if (bidAmount <= 0) {
             document.getElementById("bidError").innerText = "Bid amount must be a positive integer";
-        } else {
+        } else if (bidAmount <= 1000000) { // Check if bid is less than or equal to 1 million
             // Get current date and time as a string in ISO format
             let currentDate = new Date().toISOString();
             console.log("Bid date: ", currentDate);
@@ -125,6 +125,8 @@ function confirmBid(email, phone_name) {
                 };
                 send(message);
             }
+        } else {
+            document.getElementById("bidError").innerText = "Bid amount must be <= 1.000.000 €";
         }
     } else {
         document.getElementById("bidError").innerText = "Invalid bid input.";
