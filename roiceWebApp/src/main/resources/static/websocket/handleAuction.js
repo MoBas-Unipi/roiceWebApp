@@ -71,7 +71,6 @@ function setupFlatpickr() {
     });
 }
 
-//TODO send the json message as tuple and extract in the erlang handle function the various atom of a tuple
 function send(message) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify(message));
