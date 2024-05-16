@@ -112,11 +112,13 @@ public class PhoneDetailsController {
             return "phoneDetails";
         }
         Auction auction = phone.getAuction();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String startDateString = sdf.format(auction.getStartingDate());
-        String endDateString = sdf.format(auction.getEndDate());
-        model.addAttribute("startDate", startDateString);
-        model.addAttribute("endDate", endDateString);
+        if (auction != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String startDateString = sdf.format(auction.getStartingDate());
+            String endDateString = sdf.format(auction.getEndDate());
+            model.addAttribute("startDate", startDateString);
+            model.addAttribute("endDate", endDateString);
+        }
         int result = userService.addPhonePreview(currentUser, phone);
         if (result == -2) {
             model.addAttribute("message", "Error in updating the user information in the database!");
@@ -146,11 +148,13 @@ public class PhoneDetailsController {
         }
         Phone phone = phoneRepository.findByName(phoneName);
         Auction auction = phone.getAuction();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String startDateString = sdf.format(auction.getStartingDate());
-        String endDateString = sdf.format(auction.getEndDate());
-        model.addAttribute("startDate", startDateString);
-        model.addAttribute("endDate", endDateString);
+        if (auction != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String startDateString = sdf.format(auction.getStartingDate());
+            String endDateString = sdf.format(auction.getEndDate());
+            model.addAttribute("startDate", startDateString);
+            model.addAttribute("endDate", endDateString);
+        }
         UserDTO userDTO = userService.deleteFavoritePhone(currentUser.getEmail(), phoneName);
         if (userDTO == null) {
             model.addAttribute("message", "Error in removing the phone from the list of favorites phones!");
