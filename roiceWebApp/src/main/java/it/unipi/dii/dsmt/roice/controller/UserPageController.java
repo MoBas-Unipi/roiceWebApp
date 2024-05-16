@@ -25,10 +25,11 @@ public class UserPageController {
             return "redirect:/login";
         }
         Optional<GenericUser> genericUser = userService.findByEmail(currentUser.getEmail());
-        User user = (User) genericUser.get();
-        UserDTO userDTO = UserMapper.toUserDTO(user);
-        session.setAttribute("currentUser", userDTO);
-
+        if (genericUser.isPresent()) {
+            User user = (User) genericUser.get();
+            UserDTO userDTO = UserMapper.toUserDTO(user);
+            session.setAttribute("currentUser", userDTO);
+        }
         return "userPage";
     }
 
