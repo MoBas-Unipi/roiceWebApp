@@ -174,5 +174,4 @@ db.createCollection("users")
 ```
 mongoimport --host 127.0.0.1 --port 27017 --db webApp --collection phones --jsonArray --file webApp.phones.json
 mongoimport --host 127.0.0.1 --port 27017 --db webApp --collection users --jsonArray --file webApp.users.json
-s
 ```
