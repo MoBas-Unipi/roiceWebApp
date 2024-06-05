@@ -3,8 +3,9 @@
 
 The application has been designed as a distributed system and has been deployed as shown in the following architecture diagram:
 
-
+<p align="center">
 <img src="doc/system_architecture.png" alt="System Architecture" width="600" height="auto">
+</p>
 
 ## Main Components
 
