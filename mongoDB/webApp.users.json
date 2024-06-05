@@ -1,0 +1,117 @@
+[
+  {
+    "_id": {
+      "$oid": "65e98a7acd07a9652c8c5c3a"
+    },
+    "firstName": "John",
+    "lastName": "Doe",
+    "streetNumber": 123,
+    "streetName": "Main Street",
+    "city": "New York",
+    "country": "USA",
+    "favoritePhones": [
+      {
+        "name": "Apple iPhone",
+        "picture": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone.gif"
+      },
+      {
+        "name": "Nokia 3210",
+        "picture": "https://fdn2.gsmarena.com/vv/bigpic/no3210b.gif"
+      }
+    ],
+    "auctionsWon": [],
+    "email": "a@gmail.com",
+    "salt": "zX4zPzHjiNdOfLCyHmaXog==",
+    "hashedPassword": "26908dd1d231cd5654f49f1f28ccb2c8edb529eb9e525c26ba9e2b0f0de83da2",
+    "_class": "admin"
+  },
+  {
+    "_id": {
+      "$oid": "662386b26c44935dc3c7176c"
+    },
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "streetNumber": 456,
+    "streetName": "Elm Street",
+    "city": "Los Angeles",
+    "country": "USA",
+    "favoritePhones": [
+      {
+        "name": "alcatel 1S (2021)",
+        "picture": "https://fdn2.gsmarena.com/vv/bigpic/alcatel-1s-2021.jpg"
+      },
+      {
+        "name": "Samsung Galaxy A32 5G",
+        "picture": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a32-5g.jpg"
+      }
+    ],
+    "auctionsWon": [
+      {
+        "phoneName": "ZTE Blade X1 5G",
+        "phonePicture": "https://fdn2.gsmarena.com/vv/bigpic/zte-blade-x1-5g.jpg",
+        "endDate": {
+          "$date": "2024-05-12T18:56:00.192Z"
+        },
+        "price": 3
+      },
+      {
+        "phoneName": "ZTE Blade X1 5G",
+        "phonePicture": "https://fdn2.gsmarena.com/vv/bigpic/zte-blade-x1-5g.jpg",
+        "endDate": {
+          "$date": "2024-05-12T17:58:00.584Z"
+        },
+        "price": 3
+      }
+    ],
+    "email": "ab@gmail.com",
+    "salt": "VNXEkwKFy8Bc/WasecCoXQ==",
+    "hashedPassword": "8ffcb6dd236fae1a671d4fe2fa7765583b958702b3363cd9cf387f68a6c9b02c",
+    "_class": "user"
+  },
+  {
+    "_id": {
+      "$oid": "6623941796bfc8313b7698cf"
+    },
+    "firstName": "Alice",
+    "lastName": "Wonderland",
+    "streetNumber": 789,
+    "streetName": "Magic Road",
+    "city": "Fantasia",
+    "country": "Dreamland",
+    "favoritePhones": [
+      {
+        "name": "Motorola Moto G Play (2021)",
+        "picture": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g-play-2021.jpg"
+      }
+    ],
+    "auctionsWon": [
+      {
+        "phoneName": "Motorola Moto G Play (2021)",
+        "phonePicture": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g-play-2021.jpg",
+        "endDate": {
+          "$date": "2024-05-12T19:03:00.147Z"
+        },
+        "price": 3
+      },
+      {
+        "phonePicture": "https://fdn2.gsmarena.com/vv/bigpic/zte-blade-x1-5g.jpg",
+        "endDate": {
+          "$date": "2024-05-12T18:14:00.347Z"
+        },
+        "price": 5
+      },
+      {
+        "phoneName": "ZTE Blade X1 5G",
+        "phonePicture": "https://fdn2.gsmarena.com/vv/bigpic/zte-blade-x1-5g.jpg",
+        "endDate": {
+          "$date": "2024-05-12T18:02:00.358Z"
+        },
+        "price": 3
+      }
+    ],
+    "email": "bb@gmail.com",
+    "salt": "SFc6gv300fE18Lw6F6OH9g==",
+    "hashedPassword": "25d537058ded402a3f434c597f6338068c609876bf637d110c37e803da896eb5",
+    "_class": "user"
+  }
+]
