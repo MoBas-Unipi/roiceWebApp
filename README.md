@@ -87,7 +87,7 @@ To copy the generated WAR file to a remote node (in case of distributed executio
 scp roiceWebApp-0.0.1-SNAPSHOT.war root@10.2.1.39:/root/
 ```
 
-**Basic execution (using parameters defined in application.properties): **
+**Basic execution (using parameters defined in application.properties):**
 
 ```
 java -jar roiceWebApp-0.0.1-SNAPSHOT.war
