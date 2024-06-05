@@ -2,6 +2,8 @@
 ## Architecture
 
 The application has been designed as a distributed system and has been deployed as shown in the following architecture diagram:
+
+
 <img src="doc/system_architecture.png" alt="System Architecture" width="600" height="auto">
 
 ## Main Components
