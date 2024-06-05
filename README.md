@@ -27,7 +27,7 @@ You can either run the application **locally** on a single machine or in a **dis
 
 To install **Nginx**, follow the [Nginx installation guide](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/).
 
-The **Nginx** configuration used is the following one:
+The **Nginx** configuration used is the following one (it has to be modified in /etc/nginx/nginx.conf):
 
 ```
 worker_processes 1;
